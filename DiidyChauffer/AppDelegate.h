@@ -7,9 +7,27 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "BMapKit.h"
 
+#define ShareApp ((AppDelegate*)[[UIApplication sharedApplication] delegate])
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
+{
+     BMKMapManager* _mapManager;
+    
+    NSString* reachable; //0 无连接  1 使用WiFi网络 2使用3G/GPRS网络2
+    float phoneVerion; //操作系统
+    NSString *deviceName;//终端型号
+    NSString*uniqueString;
+    NSString *logInState;
 
+}
+@property(nonatomic,retain)NSString*pageManageMent;
 @property (strong, nonatomic) UIWindow *window;
+@property(nonatomic,retain)NSString*reachable; 
+@property(nonatomic,assign)float phoneVerion;
+@property(nonatomic,retain)NSString*deviceName;
+@property(nonatomic,retain)NSString*uniqueString;
+@property(nonatomic,retain)NSString*logInState;
+@property(nonatomic,retain)NSString * mobilNumber;
 
 @end

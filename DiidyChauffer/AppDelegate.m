@@ -7,21 +7,107 @@
 //
 
 #import "AppDelegate.h"
+#import "LocationDemoViewController.h"
 
+#import "MainViewController.h"
+#import "NoviceGuidanceViewController.h"
+#import "Reachability.h"
 @implementation AppDelegate
 
-@synthesize window = _window;
+@synthesize reachable;
+@synthesize window = _window,phoneVerion,deviceName,uniqueString,logInState;
+@synthesize pageManageMent,mobilNumber;
 
 - (void)dealloc
 {
+    self.logInState =nil;
+    self.uniqueString =nil;
+    self.deviceName = nil;
+    self.reachable = nil;
+    [mobilNumber release];
+    [pageManageMent release];
     [_window release];
     [super dealloc];
+}
+
+-(void)getDeviceInformation{
+    
+    self.uniqueString = [[NSProcessInfo processInfo] globallyUniqueString];//标识号
+    
+    self.deviceName = [[UIDevice currentDevice] name];
+    float  verion = [[[UIDevice currentDevice] systemVersion] floatValue];//操作系统
+    self.phoneVerion = verion;
+    
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    switch ([r currentReachabilityStatus]) {
+        case NotReachable:
+            self.reachable = @"没有网络连接";
+            break;
+            
+        case ReachableViaWiFi:
+            self.reachable = @"使用WiFi网络";
+            break;
+        case ReachableViaWWAN:
+            self.reachable = @"使用3G/GPRS网络";
+            break;
+            
+    }
+    
+    
+}
+-(void)ShowHelpNavigation
+{
+    
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *firstUseApp = [userDefaults objectForKey:@"FirstUseApp"] ;
+    if(firstUseApp == nil)
+    {
+        [userDefaults setValue:@"1" forKey:@"FirstUseApp"];     
+        [userDefaults synchronize];
+        NoviceGuidanceViewController* guide = [[NoviceGuidanceViewController alloc] init];
+        self.window.rootViewController = guide;
+        [guide release];
+        
+    }
+    
+    
+    
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     // Override point for customization after application launch.
+    
+    _mapManager = [[BMKMapManager alloc]init];
+    // 如果要关注网络及授权验证事件，请设定generalDelegate参数
+	BOOL ret = [_mapManager start:@"96F593C80D691D61026489D7624FA74B5D18C089" generalDelegate:nil];
+    
+	if (!ret) {
+		NSLog(@"manager start failed!");
+	}
+    
+       
+    
+    [self getDeviceInformation];
+    
+    NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
+    NSString *firstUseApp = [userDefaults objectForKey:@"FirstUseApp"] ;
+    if(firstUseApp == nil)
+    {
+        //第一次进入， 显示新手导航
+        [self ShowHelpNavigation];
+        
+    }
+    else
+    {
+        MainViewController * main = [[MainViewController alloc] init];
+        self.window.rootViewController = main;
+        [main release];
+        
+    }
+
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
