@@ -1,0 +1,261 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		FF8E5598160724C4008C8DA5 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF8E5597160724C4008C8DA5 /* UIKit.framework */; };
+		FF8E559A160724C4008C8DA5 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF8E5599160724C4008C8DA5 /* Foundation.framework */; };
+		FF8E559C160724C4008C8DA5 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF8E559B160724C4008C8DA5 /* CoreGraphics.framework */; };
+		FF8E55A2160724C4008C8DA5 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = FF8E55A0160724C4008C8DA5 /* InfoPlist.strings */; };
+		FF8E55A4160724C4008C8DA5 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = FF8E55A3160724C4008C8DA5 /* main.m */; };
+		FF8E55A8160724C4008C8DA5 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = FF8E55A7160724C4008C8DA5 /* AppDelegate.m */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		FF8E5593160724C4008C8DA5 /* DiidyChauffer.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DiidyChauffer.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FF8E5597160724C4008C8DA5 /* UIKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UIKit.framework; path = System/Library/Frameworks/UIKit.framework; sourceTree = SDKROOT; };
+		FF8E5599160724C4008C8DA5 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
+		FF8E559B160724C4008C8DA5 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
+		FF8E559F160724C4008C8DA5 /* DiidyChauffer-Info.plist */ = {isa = PBXFileReference; path = "DiidyChauffer-Info.plist"; sourceTree = "<group>"; };
+		FF8E55A1160724C4008C8DA5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		FF8E55A3160724C4008C8DA5 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		FF8E55A5160724C4008C8DA5 /* DiidyChauffer-Prefix.pch */ = {isa = PBXFileReference; path = "DiidyChauffer-Prefix.pch"; sourceTree = "<group>"; };
+		FF8E55A6160724C4008C8DA5 /* AppDelegate.h */ = {isa = PBXFileReference; path = AppDelegate.h; sourceTree = "<group>"; };
+		FF8E55A7160724C4008C8DA5 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		FF8E5590160724C4008C8DA5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF8E5598160724C4008C8DA5 /* UIKit.framework in Frameworks */,
+				FF8E559A160724C4008C8DA5 /* Foundation.framework in Frameworks */,
+				FF8E559C160724C4008C8DA5 /* CoreGraphics.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		FF8E5588160724C4008C8DA5 = {
+			isa = PBXGroup;
+			children = (
+				FF8E559D160724C4008C8DA5 /* DiidyChauffer */,
+				FF8E5596160724C4008C8DA5 /* Frameworks */,
+				FF8E5594160724C4008C8DA5 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		FF8E5594160724C4008C8DA5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				FF8E5593160724C4008C8DA5 /* DiidyChauffer.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		FF8E5596160724C4008C8DA5 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FF8E5597160724C4008C8DA5 /* UIKit.framework */,
+				FF8E5599160724C4008C8DA5 /* Foundation.framework */,
+				FF8E559B160724C4008C8DA5 /* CoreGraphics.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FF8E559D160724C4008C8DA5 /* DiidyChauffer */ = {
+			isa = PBXGroup;
+			children = (
+				FF8E55A6160724C4008C8DA5 /* AppDelegate.h */,
+				FF8E55A7160724C4008C8DA5 /* AppDelegate.m */,
+				FF8E559E160724C4008C8DA5 /* Supporting Files */,
+			);
+			path = DiidyChauffer;
+			sourceTree = "<group>";
+		};
+		FF8E559E160724C4008C8DA5 /* Supporting Files */ = {
+			isa = PBXGroup;
+			children = (
+				FF8E559F160724C4008C8DA5 /* DiidyChauffer-Info.plist */,
+				FF8E55A0160724C4008C8DA5 /* InfoPlist.strings */,
+				FF8E55A3160724C4008C8DA5 /* main.m */,
+				FF8E55A5160724C4008C8DA5 /* DiidyChauffer-Prefix.pch */,
+			);
+			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		FF8E5592160724C4008C8DA5 /* DiidyChauffer */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FF8E55AB160724C4008C8DA5 /* Build configuration list for PBXNativeTarget "DiidyChauffer" */;
+			buildPhases = (
+				FF8E558F160724C4008C8DA5 /* Sources */,
+				FF8E5590160724C4008C8DA5 /* Frameworks */,
+				FF8E5591160724C4008C8DA5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = DiidyChauffer;
+			productName = DiidyChauffer;
+			productReference = FF8E5593160724C4008C8DA5 /* DiidyChauffer.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		FF8E558A160724C4008C8DA5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastUpgradeCheck = 0430;
+			};
+			buildConfigurationList = FF8E558D160724C4008C8DA5 /* Build configuration list for PBXProject "DiidyChauffer" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = FF8E5588160724C4008C8DA5;
+			productRefGroup = FF8E5594160724C4008C8DA5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				FF8E5592160724C4008C8DA5 /* DiidyChauffer */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		FF8E5591160724C4008C8DA5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF8E55A2160724C4008C8DA5 /* InfoPlist.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		FF8E558F160724C4008C8DA5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF8E55A4160724C4008C8DA5 /* main.m in Sources */,
+				FF8E55A8160724C4008C8DA5 /* AppDelegate.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		FF8E55A0160724C4008C8DA5 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				FF8E55A1160724C4008C8DA5 /* en */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		FF8E55A9160724C4008C8DA5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		FF8E55AA160724C4008C8DA5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT)";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				COPY_PHASE_STRIP = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_VERSION = com.apple.compilers.llvm.clang.1_0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 5.1;
+				OTHER_CFLAGS = "-DNS_BLOCK_ASSERTIONS=1";
+				SDKROOT = iphoneos;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		FF8E55AC160724C4008C8DA5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DiidyChauffer/DiidyChauffer-Prefix.pch";
+				INFOPLIST_FILE = "DiidyChauffer/DiidyChauffer-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Debug;
+		};
+		FF8E55AD160724C4008C8DA5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = "DiidyChauffer/DiidyChauffer-Prefix.pch";
+				INFOPLIST_FILE = "DiidyChauffer/DiidyChauffer-Info.plist";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				WRAPPER_EXTENSION = app;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		FF8E558D160724C4008C8DA5 /* Build configuration list for PBXProject "DiidyChauffer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF8E55A9160724C4008C8DA5 /* Debug */,
+				FF8E55AA160724C4008C8DA5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FF8E55AB160724C4008C8DA5 /* Build configuration list for PBXNativeTarget "DiidyChauffer" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				FF8E55AC160724C4008C8DA5 /* Debug */,
+				FF8E55AD160724C4008C8DA5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = FF8E558A160724C4008C8DA5 /* Project object */;
+}
