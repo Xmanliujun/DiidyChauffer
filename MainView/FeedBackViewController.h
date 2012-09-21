@@ -12,6 +12,10 @@
 <ASIHTTPRequestDelegate>
 {
     UITextView *feedBackText;
+    UIImageView*topImageView;
+    UIButton*returnButton;
+    UIButton*rigthbutton;
+    UILabel*centerLable;
 }
 @property(nonatomic,retain)NSString*judge;
 @end

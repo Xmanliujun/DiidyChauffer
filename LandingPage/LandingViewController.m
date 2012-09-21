@@ -20,9 +20,7 @@
 #import "OrdersPreviewViewController.h"
 #import "DriverViewController.h"
 #import "OrdersPreviewTwoViewController.h"
-@interface LandingViewController ()
-
-@end
+#import "MoreViewController.h"
 
 @implementation LandingViewController
 @synthesize couponArray;
@@ -34,6 +32,7 @@
     }
     return self;
 }
+
 -(void)creatInPutBox
 {
     UILabel * inputLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 60.0, 51.0)];
@@ -96,20 +95,26 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-     self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+    
+	self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
+    
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+
+    
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 10.0, 43.0, 25.0);
-    [returnButton setBackgroundImage:[UIImage imageNamed:@"u108_normalp.png"] forState:UIControlStateNormal];
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
     UILabel * landingLable = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 10.0, 70.0, 30.0)];
     landingLable.text = @"用户登陆";
+    landingLable.textColor = [UIColor orangeColor];
     landingLable.backgroundColor = [UIColor clearColor];
     landingLable.font = [UIFont fontWithName:@"Arial" size:16.0];
     [self.view addSubview:landingLable];
@@ -126,17 +131,17 @@
     
     UIButton * registerButton = [UIButton buttonWithType:UIButtonTypeCustom];
     registerButton.frame = CGRectMake(20.0, 185.0, 80.0, 30.0);
-    [registerButton setTitle:@"还没注册？>" forState:UIControlStateNormal];
-    [registerButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    registerButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    [registerButton setTitle:@"还没注册>" forState:UIControlStateNormal];
+    [registerButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    registerButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
     [registerButton addTarget:self action:@selector(registeredUsers:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:registerButton];
     
     UIButton * forgotButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    forgotButton.frame = CGRectMake(240.0, 185.0,60.0, 30.0);
+    forgotButton.frame = CGRectMake(220.0, 185.0,80.0, 30.0);
     [forgotButton setTitle:@"忘记密码 >" forState:UIControlStateNormal];
-    [forgotButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    forgotButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    [forgotButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    forgotButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
     [forgotButton addTarget:self action:@selector(forgotPassword:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:forgotButton];
     
@@ -175,8 +180,6 @@
 }
 -(void)clientLandedPage:(id)sender
 {
-    
-    
     NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName]; 
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL * url = [NSURL URLWithString:baseUrl];
@@ -269,11 +272,19 @@
         }else if ([ShareApp.pageManageMent isEqualToString:@"chauffer"]) {
             [self getCouponInformation];
             ShareApp.mobilNumber = inputNumberText.text;
-        }else {
+        }else if([ShareApp.pageManageMent isEqualToString:@"Driver"]){
             DriverViewController *drive = [[DriverViewController alloc] init];
             ShareApp.mobilNumber = inputNumberText.text;
             [self.navigationController pushViewController:drive animated:YES];
             [drive release];
+        }else if([ShareApp.pageManageMent isEqualToString:@"notLog"]){
+//            MoreViewController * more =[[MoreViewController alloc] init];
+//            UINavigationController * moreNav=[[UINavigationController alloc] initWithRootViewController:more];
+//            [self presentModalViewController:moreNav animated:YES];
+//            [more release];
+//            [moreNav release];
+            ShareApp.mobilNumber = inputNumberText.text;
+            [self dismissModalViewControllerAnimated:NO];
         }
     }else if ([returenNews isEqualToString:@"f"]) {
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败" 
@@ -306,6 +317,7 @@
 
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
+    NSLog(@"%@",[request responseString]);
     if(request.tag ==500){
         [self parseStringJson:[request responseString]];
     }else {
@@ -313,14 +325,22 @@
     }
 }
 
-
+-(void)viewDidDisappear:(BOOL)animated
+{
+   // LandImageView.hidden = YES;
+    topImageView.hidden = YES;
+}
 -(void)viewWillAppear:(BOOL)animated
 {
     returnButton.hidden = NO;
+    topImageView.hidden = NO;
     
 }
+
+
 -(void)dealloc
 { 
+    [topImageView release];
     [couponArray release];
     [dataArry release];
     [inputNumberText release];

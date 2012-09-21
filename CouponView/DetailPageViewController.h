@@ -18,6 +18,9 @@
     UITextView *giftNumberText;
     UITextView* contentView;
     UILabel *detailCenterLable;
+    
+    UIImageView*topImageView;
+    UIButton* returnButton;
 }
 @property(nonatomic,retain)NSString* detailCoupon;
 @property(nonatomic,retain)NSString * couponID;

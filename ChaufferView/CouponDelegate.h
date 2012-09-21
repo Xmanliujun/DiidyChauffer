@@ -7,7 +7,10 @@
 //
 
 #import <Foundation/Foundation.h>
-
+#import "BMapKit.h"
 @protocol CouponDelegate <NSObject>
+@optional
 -(void)selectedCoupon:(NSArray*)couponArray;
+-(void)selectTheCurrentLocationOnLine:(NSString *)text CLLocation:(CLLocationCoordinate2D)centers;
+-(void)selectThePlaceOfDeparture:(NSString*)placeDeparture;
 @end

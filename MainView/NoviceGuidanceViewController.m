@@ -14,7 +14,7 @@
 @end
 
 @implementation NoviceGuidanceViewController
-
+@synthesize noviceGuidan;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -41,10 +41,16 @@
     
     
     UIButton * diidyButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [diidyButton setBackgroundImage:[UIImage imageNamed:@"u13_normal.png"] forState:UIControlStateNormal];
-    [diidyButton setTitle:@"返回" forState:UIControlStateNormal];
-    diidyButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    diidyButton.frame=CGRectMake(960.0f, 300.0, 70.0, 35.0);
+    [diidyButton setBackgroundImage:[UIImage imageNamed:@"button_down.png"] forState:UIControlStateNormal];
+    if ([self.noviceGuidan isEqualToString:@"main"]) {
+        [diidyButton setTitle:@"返回主页" forState:UIControlStateNormal];
+
+    }else {
+        [diidyButton setTitle:@"返回更多" forState:UIControlStateNormal];
+    }
+   
+    diidyButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    diidyButton.frame=CGRectMake(1090.0f, 320.0, 70.0, 35.0);
     
     [diidyButton addTarget:self action:@selector(goMainView:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -78,19 +84,26 @@
 {
     [super viewDidLoad];
 	self.navigationItem.hidesBackButton = YES;
-    self.title = @"新手指导";
-   
-    UIButton * leftButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [leftButton setBackgroundImage:[UIImage imageNamed:@"u13_normal.png"] forState:UIControlStateNormal];
-    [leftButton setTitle:@"返回" forState:UIControlStateNormal];
-    leftButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftButton.frame=CGRectMake(0.0f, 100.0, 70.0, 35.0);
-    leftButton.tag = 201;
-    [leftButton addTarget:self action:@selector(returnORMoreView:) forControlEvents:UIControlEventTouchUpInside];
     
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnORMoreView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
+    centerLable.font = [UIFont systemFontOfSize:17];
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.text =@"新 手 指 导";
+    [self.navigationController.navigationBar addSubview:centerLable];
+    [centerLable release];
     
     [self creatScrollView];
 
@@ -98,27 +111,50 @@
 
 - (void)scrollViewDidScroll:(UIScrollView *)scrollView
 {
-    
     CGFloat pageWidth = scrollView.frame.size.width;
     int page = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
     couponPage.currentPage = page;
-    
-    
 }
 
 -(void)goMainView:(id)sender
 {
-    MainViewController * mainView = [[MainViewController alloc] init];
-    ShareApp.window.rootViewController = mainView;
-    [mainView release];
-
+    if ([self.noviceGuidan isEqualToString:@"main"]) {
+        
+        MainViewController * mainView = [[MainViewController alloc] init];
+        ShareApp.window.rootViewController = mainView;
+        [mainView release];
+    }else {
+        [self.navigationController popViewControllerAnimated:YES];
+    }
+   
 }
 -(void)returnORMoreView:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
 
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+  
+    
+    if ([self.noviceGuidan isEqualToString:@"main"]) {
+        
+        
+    }else {
+        topImageView.hidden = YES;
+        returnButton.hidden = YES;
+        centerLable.hidden = YES;
+    }
 
+    
+}
+
+-(void)dealloc
+{
+
+    [noviceGuidan release];
+    [super dealloc];
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];

@@ -22,21 +22,18 @@
         presentationLable.backgroundColor = [UIColor clearColor];
         presentationLable.text = @"赠送给朋友 >>";
         presentationLable.font = [UIFont fontWithName:@"Arial" size:14];
+        presentationLable.textColor = [UIColor orangeColor];
         [self.contentView addSubview:presentationLable];
         
         nameLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 100, 30)];
         nameLable.backgroundColor = [UIColor clearColor];
+        nameLable.textColor = [UIColor orangeColor];
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
         [self.contentView addSubview:nameLable];
-        
-        numberLable = [[UILabel alloc] initWithFrame:CGRectMake(115, 0, 60, 30)];
-        numberLable.backgroundColor = [UIColor clearColor];
-        numberLable.font = [UIFont fontWithName:@"Arial" size:14];
-        [self.contentView addSubview:numberLable];
-        
-        
+            
         closeDataLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 30, 140, 30)];
         closeDataLable.backgroundColor = [UIColor clearColor];
+        closeDataLable.textColor = [UIColor orangeColor];
         closeDataLable.font = [UIFont fontWithName:@"Arial" size:14];
         [self.contentView addSubview:closeDataLable];
         
@@ -44,9 +41,6 @@
         lineImageView.frame = CGRectMake(0, 57, 320, 3);
         [self.contentView addSubview:lineImageView];
 
-        
-        
-        
     }
     return self;
 }

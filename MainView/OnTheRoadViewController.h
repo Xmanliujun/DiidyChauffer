@@ -10,8 +10,8 @@
 
 @interface OnTheRoadViewController : UIViewController
 {
-    UIButton* rightButton;
-    UIButton* leftButton;
-    UITextView * numberText;
+//    UIButton* rightButton;
+//    UIButton* leftButton;
+//    UITextView * numberText;
 }
 @end

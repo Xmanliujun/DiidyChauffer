@@ -11,6 +11,9 @@
 @interface OrderDetailsViewController : UIViewController
 {
     DIIdyModel * diidyModel;
+    UIImageView* topImageView;
+    UIButton*returnButton;
+    UILabel*centerLable;
 }
 @property(nonatomic,retain)IBOutlet UILabel *orderNumberLable;//点单编号
 @property(nonatomic,retain)IBOutlet UILabel *orderStatusLable;//订单状态

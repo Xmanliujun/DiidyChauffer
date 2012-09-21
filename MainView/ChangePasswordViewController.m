@@ -31,30 +31,40 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.title = @"修改密码";
+    self.navigationItem.hidesBackButton = YES;   
+
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
     
-    UIButton *leftbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftbutton setBackgroundImage:[UIImage imageNamed:@"u13_normal.png"] forState:UIControlStateNormal];
-    [leftbutton setTitle:@"返回" forState:UIControlStateNormal];
-    leftbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftbutton.frame=RECTMAKE(0.0, 100.0, 70.0, 35.0);    
-    [leftbutton addTarget:self action:@selector(returMoreViewView:) forControlEvents:UIControlEventTouchUpInside];
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returMoreViewView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
     
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftbutton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
-    
-    
-    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"u927_normal.png"] forState:UIControlStateNormal];
+    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
     [rigthbutton setTitle:@"保存" forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rigthbutton.frame=CGRectMake(0.0, 100.0, 65.0, 34.0);
+    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
     [rigthbutton addTarget:self action:@selector(saveNewPassWord:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
+
     
-    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthbutton];
-    self.navigationItem.rightBarButtonItem = nextItem;
-    [nextItem release];
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
+    centerLable.font = [UIFont systemFontOfSize:17];
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.text =@"修 改 密 码";
+    [self.navigationController.navigationBar addSubview:centerLable];
+    [centerLable release];
+
+    
+    
 
     UIImageView * lineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
     lineImageView.frame = CGRectMake(4.0, 40.0, 290.0, 3.0);
@@ -206,6 +216,15 @@
     MoreViewController * more = [[MoreViewController alloc] init];
     [self.navigationController pushViewController:more animated:YES];
     [more release];
+    
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+    rigthbutton.hidden = YES;
+    centerLable.hidden = YES;
     
 }
 - (void)viewDidUnload

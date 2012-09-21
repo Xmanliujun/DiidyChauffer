@@ -7,8 +7,15 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "ASIHTTPRequest.h"
 @interface OrdersPreviewTwoViewController : UIViewController
+<UIAlertViewDelegate,ASIHTTPRequestDelegate>
+{
+    UIButton *rigthbutton;
+    UIImageView* topImageView;
+    UIButton* returnButton;
+    UILabel* centerLable;
+}
 @property(nonatomic,retain)NSArray * orderArray;
 @property(nonatomic,retain)IBOutlet UILabel *departureLable;//出发地
 @property(nonatomic,retain)IBOutlet UILabel *departureTimeLable;//出发时间

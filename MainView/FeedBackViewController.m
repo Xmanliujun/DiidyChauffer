@@ -26,28 +26,34 @@
 }
 -(void)creatNavigationBar
 {
-    UIButton*rightButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [rightButton setBackgroundImage:[UIImage imageNamed:@"u24_normal.png"] forState:UIControlStateNormal];
-    [rightButton setTitle:@"提交" forState:UIControlStateNormal];
-    rightButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rightButton.tag = 200;
-    rightButton.frame=CGRectMake(240.0, 4.0, 70.0, 35.0);
-    [rightButton addTarget:self action:@selector(returnORSubmit:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem* logItem = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
-    self.navigationItem.rightBarButtonItem = logItem;    
-    [logItem release];
     
-    UIButton * leftButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [leftButton setBackgroundImage:[UIImage imageNamed:@"u13_normal.png"] forState:UIControlStateNormal];
-    [leftButton setTitle:@"返回" forState:UIControlStateNormal];
-    leftButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftButton.frame=CGRectMake(0.0f, 100.0, 70.0, 35.0);
-    leftButton.tag = 201;
-    [leftButton addTarget:self action:@selector(returnORSubmit:) forControlEvents:UIControlEventTouchUpInside];
+    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    rigthbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    rigthbutton.tag = 200;
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+        [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button3.png"] forState:UIControlStateNormal];
+    [rigthbutton addTarget:self action:@selector(returnORSubmit:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
     
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
+    centerLable.text = @"意见反馈";
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:centerLable];
+    [centerLable release];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.tag = 201;
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnORSubmit:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+
     
 }
 -(void)returnORSubmit:(UIButton*)sender
@@ -95,9 +101,15 @@
     [super viewDidLoad];
     self.title = @"意见反馈";
     self.navigationItem.hidesBackButton = YES;
+   self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    
     UILabel * landingLable = [[UILabel alloc] initWithFrame:CGRectMake(15.0f, 10.0f, 300.0f, 30.0f)];
     landingLable.text = @"您的意见将帮助我们改进产品和服务";
     landingLable.backgroundColor = [UIColor clearColor];
+    landingLable.textColor = [UIColor orangeColor];
     landingLable.font = [UIFont fontWithName:@"Arial" size:16.0f];
     [self.view addSubview:landingLable];
     [landingLable release];
@@ -108,7 +120,7 @@
     
     feedBackText = [[UITextView alloc] initWithFrame:CGRectMake(10.0, 44.0, 300.0, 110.0)];
     feedBackText.textColor = [UIColor blackColor];
-    feedBackText.text = @"";
+    feedBackText.text = @"提几句建议吧。。。";
     [feedBackText becomeFirstResponder];
     feedBackText.returnKeyType = UIReturnKeyDefault;
     feedBackText.font = [UIFont fontWithName:@"Arial" size:14.0];
@@ -116,6 +128,15 @@
     [self.view addSubview:feedBackText];
     
     [self creatNavigationBar];
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    centerLable.hidden = YES;
+    returnButton.hidden = YES;
+    rigthbutton.hidden = YES;
+
 }
 -(void)dealloc
 {

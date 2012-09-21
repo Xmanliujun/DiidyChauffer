@@ -66,6 +66,7 @@
         [userDefaults setValue:@"1" forKey:@"FirstUseApp"];     
         [userDefaults synchronize];
         NoviceGuidanceViewController* guide = [[NoviceGuidanceViewController alloc] init];
+        guide.noviceGuidan = @"main";
         self.window.rootViewController = guide;
         [guide release];
         

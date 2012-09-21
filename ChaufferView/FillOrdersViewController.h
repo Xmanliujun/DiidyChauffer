@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "CouponDelegate.h"
+#import "BMapKit.h"
 @interface FillOrdersViewController : UIViewController
 <UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,CouponDelegate>
 {
@@ -21,7 +22,14 @@
     NSString * departure;
     BOOL landed;
     int total;
+    CLLocationCoordinate2D    location;
+    UIImageView*topImageView;
+    UIButton* returnButton;
+    UIButton*rigthbutton;
+    UILabel*centerLable ;
 }
+
+@property(nonatomic,retain)NSArray*couponaArray;
 @property(nonatomic,retain) NSString *departuretimes;//出发时间
 @property(nonatomic,retain) NSString *departureMinutes;//出发时间
 @property(nonatomic,assign) BOOL landed;
@@ -40,5 +48,5 @@
 -(IBAction)selectDepartureTime:(id)sender;
 -(IBAction)selectNumberPeople:(id)sender;
 -(IBAction)useCoupon:(id)sender;
--(id)initWithDeparture:(NSString*)departureString;
+-(id)initWithDeparture:(NSString*)departureString CLLocation:(CLLocationCoordinate2D)centers;
 @end

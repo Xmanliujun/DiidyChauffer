@@ -30,26 +30,26 @@
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 
-- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withLatitude:(double)lat withLongtitude:(double)lng
-{
-    
-    driveName = [drive retain];
-    driverMobile = [mobile retain];
-    _lat =lat;
-    _long = lng;
-    drivePositin = [[DrivePosition alloc] initWithTitle:driveName withSubtitle:driverMobile withLatitude:_lat withLongtitude:_long];
-    
-    NSLog(@"%f",lng);
-    NSLog(@"%f",lat);
-    [_mapView addAnnotation:drivePositin];
-    
-}
+//- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withLatitude:(double)lat withLongtitude:(double)lng
+//{
+//    
+//    driveName = [drive retain];
+//    driverMobile = [mobile retain];
+//    _lat =lat;
+//    _long = lng;
+//    drivePositin = [[DrivePosition alloc] initWithTitle:driveName withSubtitle:driverMobile withLatitude:_lat withLongtitude:_long];
+//    
+//    NSLog(@"%f",lng);
+//    NSLog(@"%f",lat);
+//    [_mapView addAnnotation:drivePositin];
+//    
+//}
 
--(void)backToTheOriginalPosition
-{
-    
-    
-}
+//-(void)backToTheOriginalPosition
+//{
+//    
+//    
+//}
 - (void)setCurrentLocation{
     
     BMKCoordinateRegion region ;
@@ -61,15 +61,19 @@
 }
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
-    NSLog(@"%@",_mapView);
+     firstLoaded = YES;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectedCityName:) name:@"SELECTCITY" object:nil];
+   
     _mapView = [[BMKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 360)];
     _mapView.delegate = self;
 	
 	_mapView.showsUserLocation = YES;
     [_mapView setZoomEnabled: YES];
-     [_mapView setScrollEnabled:YES];
+    [_mapView setScrollEnabled:YES];
     
+    
+    _search = [[BMKSearch alloc]init];
+	_search.delegate = self;
     [self.view addSubview:_mapView];
     
     if(self.readonly){
@@ -82,8 +86,7 @@
         return;
     }
     
-    _search = [[BMKSearch alloc]init];
-	_search.delegate = self;
+   
 	
 }
 
@@ -96,26 +99,6 @@
  }
  */
 
-- (void)didReceiveMemoryWarning {
-    // Releases the view if it doesn't have a superview.
-    [super didReceiveMemoryWarning];
-    
-    // Release any cached data, images, etc. that aren't in use.
-}
-
-- (void)viewDidUnload {
-    [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
-}
-
-
-- (void)dealloc {
-
-    [_markerView release];
-    [_mapView release];
-    [super dealloc];
-}
 
 -(void)cantLocateAlert:(NSString *)errorMsg{
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示信息" 
@@ -130,25 +113,21 @@
 - (void)onGetAddrResult:(BMKAddrInfo*)result errorCode:(int)error
 {
     
-    if (error == 0) {
+       if (error == 0) {
         
         [self glassMenuWithContent:result.strAddr];
-        //            BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
-        //            item.coordinate = result.geoPt;
-        //            item.title = result.strAddr;
-        //            [_mapView addAnnotation:item];
-        //            [item release];
+        CLLocationCoordinate2D center;
+        center = result.geoPt;
+        NSLog(@"fanzhuan%f",center.latitude);
+        NSLog(@"%f",center.longitude);
         
-        
-        
-        drivePositin = [[DrivePosition alloc] initWithTitle:@"beijing" withSubtitle:@"12222222" withLatitude:result.geoPt.latitude withLongtitude:result.geoPt.longitude];
-        [_mapView addAnnotation:drivePositin];
-        
-    }else {
-        
-    }
-    
-	
+        BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
+        item.coordinate = result.geoPt;
+        item.title = result.strAddr;
+        [_mapView addAnnotation:item];
+           NSLog(@"%@",item);
+        [item release];
+      }
 }
 
 - (void)mapView:(BMKMapView *)mapView didUpdateUserLocation:(BMKUserLocation *)userLocation
@@ -159,7 +138,7 @@
         CLLocationCoordinate2D center;
         center.latitude = userLocation.location.coordinate.latitude;
         center.longitude = userLocation.location.coordinate.longitude;
-        location = center;
+       //choseLocation = center;
         
         BMKCoordinateSpan span;
         span.latitudeDelta = 0.01f; //zoom level
@@ -171,23 +150,26 @@
         
         // map.showsUserLocation=NO;
         
-        firstLoaded = YES;
+        if (firstLoaded) {
+            [_mapView setRegion:region animated:YES];
+            firstLoaded = NO;
+        }
         locationPeson = YES;
-        //                NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
-        //              [_mapView removeAnnotations:array];
-        //                array = [NSArray arrayWithArray:_mapView.overlays];
-        //                [_mapView removeOverlays:array];
-        //        
-        //                CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
-        //               
-        //                    pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
-        //                
-        //                BOOL flag = [_search reverseGeocode:pt];
-        //                
-        //                if (!flag) {
-        //                    NSLog(@"search failed!");
-        //                }
-        
+    
+            NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
+            [_mapView removeAnnotations:array];
+            array = [NSArray arrayWithArray:_mapView.overlays];
+            [_mapView removeOverlays:array];
+               
+                CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
+                       
+                pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
+                       
+                BOOL flag = [_search reverseGeocode:pt];
+                        
+                if (!flag) {
+                    NSLog(@"search failed!");
+                }
     }
 	
 }
@@ -214,7 +196,7 @@
 	NSLog(@"start locate");
 }
 -(void)createMarker{
-    NSLog(@"mark  ");
+  
     
     if(!_markerView){
         CGRect f = _mapView.frame;
@@ -261,19 +243,38 @@
         [_glassMenuView removeFromSuperview];
         _glassMenuView = nil;
     }
-    NSLog(@"中心   %f",_mapView.center.x);
-    _glassMenuView = [[UIView alloc] initWithFrame:CGRectMake(-15, -50, 60, 60)];
-    _glassMenuView.backgroundColor = [UIColor blackColor];
+    CGRect f = _mapView.frame;
+    //_glassMenuView = [[UIView alloc] initWithFrame:CGRectMake(-15, -30, 60, 30)];
+     _glassMenuView = [[UIView alloc] initWithFrame:CGRectMake(f.origin.x + f.size.width/2-86, f.origin.y + f.size.height/2-53, 200, 60)];
+    _glassMenuView.backgroundColor = [UIColor clearColor];
+    UIImage *glassMenuImgMid = [UIImage imageNamed:@"main_map_loinbg_fold.9.png"];
+    
+    UIImageView * newinmage = [[UIImageView alloc] initWithImage:glassMenuImgMid];
+    newinmage.frame =CGRectMake(0, 0, 200, 60);
+    newinmage.userInteractionEnabled = YES;
+    textLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 5, _glassMenuView.frame.size.width - 50, 60)];
+    textLabel.backgroundColor = [UIColor clearColor];
+    textLabel.numberOfLines = 0;
+    textLabel.font = [UIFont fontWithName:@"Arial" size:12];
+    [textLabel setTextColor:[UIColor whiteColor]];
+    [textLabel setTextAlignment:UITextAlignmentCenter];
+    [textLabel setText:@"信息加载中..."];
+    [newinmage addSubview:textLabel];
+    [textLabel release];   
+
     
     UIActivityIndicatorView *indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-    [indicatorView setFrame:CGRectMake(26, 26, 20, 20)];
+    [indicatorView setFrame:CGRectMake(90,5, 20, 20)];
     indicatorView.hidesWhenStopped = YES;
     [indicatorView startAnimating];
-    [_glassMenuView addSubview:indicatorView];
+    [newinmage addSubview:indicatorView];
+    [_glassMenuView addSubview:newinmage];
     [indicatorView release];
     
     _markerView.backgroundColor = [UIColor clearColor];
-    [_markerView addSubview:_glassMenuView];
+    //[_markerView addSubview:_glassMenuView];
+    [self.view addSubview:_glassMenuView];
+
 }
 -(void)glassMenuWithContent:(NSString *)text{
     
@@ -304,15 +305,29 @@
     newinmage.userInteractionEnabled = YES;
     
     UIButton *newButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    newButton.frame = CGRectMake(140, 5, 60, 40);
-    [newButton setImage:[UIImage imageNamed:@"u118_normal.png"] forState:UIControlStateNormal];
+    newButton.frame = CGRectMake(150, 5, 50, 40);
+    newButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:18];
+    [newButton setTitle:@">" forState:UIControlStateNormal];
+    [newButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    //[newButton setImage:[UIImage imageNamed:@"right_orange.png"] forState:UIControlStateNormal];
     [newButton addTarget:self action:@selector(selectTheCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
+    
     _glassMenuView = [[UIView alloc] initWithFrame:CGRectMake(f.origin.x + f.size.width/2-86, f.origin.y + f.size.height/2-53, 200, 60)];
     _glassMenuView.backgroundColor = [UIColor clearColor];
-    textLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, _glassMenuView.frame.size.width - 50, 60)];
+   
+    UILabel* pickupLable = [[UILabel alloc] initWithFrame:CGRectMake(40, -1,120, 30)];
+    pickupLable.backgroundColor = [UIColor clearColor];
+    pickupLable.font = [UIFont fontWithName:@"Arial" size:14];
+    [pickupLable setTextColor:[UIColor whiteColor]];
+    [pickupLable setTextAlignment:UITextAlignmentCenter];
+    [pickupLable setText:@"到这儿接我"];
+    [newinmage addSubview:pickupLable];
+    
+    
+    textLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,20, _glassMenuView.frame.size.width - 30, 30)];
     textLabel.backgroundColor = [UIColor clearColor];
     textLabel.numberOfLines = 0;
-    [textLabel setFont:[UIFont systemFontOfSize:12]];
+     textLabel.font = [UIFont fontWithName:@"Arial" size:12];
     [textLabel setTextColor:[UIColor whiteColor]];
     [textLabel setTextAlignment:UITextAlignmentCenter];
     [textLabel setText:text];
@@ -330,23 +345,21 @@
     
     [self animateMarker:^{
         [self glassMenuWithLoadingStyle];
-        NSLog(@"donghua  ");
         if(_search != nil){
             
-            CLLocation *l = [[CLLocation alloc] initWithLatitude:centerLocation.latitude longitude:centerLocation.longitude];
+            CLLocation *locatio = [[CLLocation alloc] initWithLatitude:centerLocation.latitude longitude:centerLocation.longitude];
             CLLocationCoordinate2D pt = (CLLocationCoordinate2D){39.915101, 116.403981};
             //mapAnnon = [[MapAnnotion alloc] initWithCoordinate:l.coordinate andAddress:@""];
             drivePositin = [[DrivePosition alloc] initWithTitle:@"beijing" withSubtitle:@"12222222" withLatitude:pt.latitude withLongtitude:pt.longitude];
             
-            BOOL flag = [_search reverseGeocode:pt];
+            BOOL flag = [_search reverseGeocode:centerLocation];
+            NSLog(@"%c",flag);
             
             if (!flag) {
                 NSLog(@"search failed!");
                 [self glassMenuWithContent:@"无法定位当前位置"];
             }
         }}];
-    
-    
     
 }
 
@@ -361,37 +374,12 @@
 		
 		return newAnnotation;   
 	}
-    if ([annotation isKindOfClass:[DrivePosition class]]) {
-        NSString *mapID = @"MyMapID";
-        BMKPinAnnotationView *v = 
-        (BMKPinAnnotationView *)[mapView dequeueReusableAnnotationViewWithIdentifier:mapID];
-        if (v == nil) {
-            v = [[[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:mapID] autorelease];
-            // 创建一个 MKPinAnnotationView大头针
-            // MKPinAnnotationView : MKAnnotationView
-            // 区别2个.1 可以设置颜色 2. 动画
-            v.PinColor = BMKPinAnnotationColorRed;
-            [v setAnimatesDrop:YES];
-            
-            UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
-            [rightButton addTarget:self action:@selector(telDrive:) forControlEvents:UIControlEventTouchUpInside];
-            [v setCanShowCallout:YES]; //点击能否显示
-            [v setRightCalloutAccessoryView:rightButton];
-            // callout 把rightButton显示为右边的callout
-            
-        }
-        return v;
-        
-    }
-    
-    
 	return nil;
 }
 
 - (void)mapView:(BMKMapView *)mapView regionWillChangeAnimated:(BOOL)animated
 {
     
-    NSLog(@"ddddd");
     if(self.readonly) return;
     if(!firstLoaded) return;
     
@@ -405,7 +393,10 @@
 }
 - (void)mapView:(BMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
     
-    
+    CLLocationCoordinate2D center;
+    center.latitude = mapView.centerCoordinate.latitude;
+    center.longitude = mapView.centerCoordinate.longitude;
+    location = center;
     
     if(self.readonly) return;
     if(!firstLoaded) return;
@@ -414,20 +405,66 @@
     
     if(location.latitude == 0 && location.longitude == 0) return;
     [self searchAddress:mapView.centerCoordinate];
+   
     locationPeson = NO;
+    
     
     
 }
 
 -(void)selectTheCurrentLocation:(id)sender
 {
-     [LocationDelegate selectTheCurrentLocationOnLine:textLabel.text];
+     [LocationDelegate selectTheCurrentLocationOnLine:textLabel.text CLLocation:location];
+    
+}
+
+-(void)selectedCityName:(NSNotification*)notify
+{
+    NSDictionary *dict = notify.userInfo;
+    
+    NSString *cityName = [dict objectForKey:@"City"];
+    
+    NSString * address = [dict objectForKey:@"Address"];
+    NSString* lation =[dict objectForKey:@"lation"];
+    NSString * locations = [dict objectForKey:@"longitue"];
+    
+    NSLog(@"%@",lation);
+    NSLog(@"%@",locations);
+    
+    CLLocationCoordinate2D cityLocation;
+    cityLocation.latitude = [lation floatValue];
+    cityLocation.longitude = [locations floatValue];
+    
+    [self createMarker];
+    
+    if(cityLocation.latitude == 0 && cityLocation.longitude == 0) return;
+    [self searchAddress:cityLocation];
+    locationPeson = NO;
     
 }
 -(void)telDrive:(id)sender
 {
-    
     NSLog(@"button");
+}
+- (void)didReceiveMemoryWarning {
+    // Releases the view if it doesn't have a superview.
+    [super didReceiveMemoryWarning];
+    
+    // Release any cached data, images, etc. that aren't in use.
+}
+
+- (void)viewDidUnload {
+    [super viewDidUnload];
+    // Release any retained subviews of the main view.
+    // e.g. self.myOutlet = nil;
+}
+
+
+- (void)dealloc {
+    
+    [_markerView release];
+    [_mapView release];
+    [super dealloc];
 }
 
 @end

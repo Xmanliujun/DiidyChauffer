@@ -12,10 +12,7 @@
 {   
     BOOL price;
     BOOL server;
-   // UIImageView *smsImageView;
-   // UIButton* priceButton;
     UIImageView *priceImageView;
-    UISegmentedControl*backSctl;
 }
 
 @end

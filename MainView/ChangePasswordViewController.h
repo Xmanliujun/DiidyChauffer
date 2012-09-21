@@ -14,5 +14,10 @@
     UITextField * oldPasswordText;
     UITextField *newPassWordText;
     UITextField * confirmPassWordText;
+    
+    UIButton *rigthbutton;
+    UIImageView* topImageView;
+    UIButton* returnButton;
+    UILabel* centerLable;
 }
 @end

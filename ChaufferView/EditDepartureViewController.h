@@ -7,11 +7,26 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import "BMapKit.h"
+#import "CouponDelegate.h"
 @interface EditDepartureViewController : UIViewController
-<UITableViewDataSource,UITableViewDelegate>
+<UITableViewDataSource,UITableViewDelegate,UITextViewDelegate,BMKSearchDelegate,CouponDelegate>
 {
-    UILabel *displayLable;
+    UITableView * orderTableView;
+    UITextView *departureView ;
+    BMKSearch* _search;
+    
+    UIImageView*topImageView;
+    UIButton*returnButton;
+    UILabel*centerLable;
+    UIButton *rigthbutton;
+    CLLocationCoordinate2D    locationDe;
+    NSString*departure;
+    NSMutableArray*addressinformationArray;
 
 }
+
+@property(nonatomic,assign)id <CouponDelegate>DepartureDelegate;
+@property(nonatomic,retain)NSString* departureName;
+@property(nonatomic,assign)CLLocationCoordinate2D locationDe;
 @end

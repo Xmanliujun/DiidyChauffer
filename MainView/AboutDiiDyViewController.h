@@ -10,7 +10,10 @@
 
 @interface AboutDiiDyViewController : UIViewController
 {
-
+    UIButton *returnButton;
+    UILabel *centerLable;
+    UIImageView *topImageView;
+    IBOutlet UIButton*versionButton;
 }
 
 @end

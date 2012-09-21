@@ -27,34 +27,7 @@
     }
     return self;
 }
--(void)creatNavigationBar
-{
-    UIButton*rightButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [rightButton setBackgroundImage:[UIImage imageNamed:@"u24_normal.png"] forState:UIControlStateNormal];
-    [rightButton setTitle:@"登陆" forState:UIControlStateNormal];
-    rightButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rightButton.tag = 200;
-    rightButton.frame=CGRectMake(240.0, 4.0, 70.0, 35.0);
-    [rightButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem* logItem = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
-    self.navigationItem.rightBarButtonItem = logItem;    
-    [logItem release];
 
-    UIButton * leftButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [leftButton setBackgroundImage:[UIImage imageNamed:@"u13_normal.png"] forState:UIControlStateNormal];
-    [leftButton setTitle:@"返回" forState:UIControlStateNormal];
-    leftButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftButton.frame=CGRectMake(0.0f, 100.0, 70.0, 35.0);
-    leftButton.tag = 201;
-    [leftButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
-     
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
-    
-    
-
-}
 -(void)returnORLandingView:(UIButton*)sender
 {
     if (sender.tag==201) {
@@ -64,25 +37,39 @@
     }
 
 }
--(void)viewDidAppear:(BOOL)animated
-{
-    self.navigationItem.title = @"更多";
-    
 
-}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
-    self.title = @"更多";
-      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRequestCompelte:) name:MORE_QUEST object:nil];
-    [self creatNavigationBar];
+     self.navigationItem.hidesBackButton = YES;   
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRequestCompelte:) name:MORE_QUEST object:nil];
     
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.tag = 201;
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
+    centerLable.text = @"更 多";
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:centerLable];
+    [centerLable release];
+
     self.moreNameArray = [NSArray  arrayWithObjects:@"密码修改",@"意见反馈",@"关于滴滴",@"新手引导",@"注销", nil];
     
     UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
-    moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+    moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     [moreTableView setSeparatorColor:[UIColor blackColor]];
     moreTableView.delegate = self;
     moreTableView.dataSource = self;
@@ -112,7 +99,7 @@
     if(cell ==nil)
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-        cell.backgroundColor = [UIColor clearColor];
+        cell.backgroundColor = [UIColor whiteColor];
     
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
@@ -140,6 +127,7 @@
         [self.navigationController pushViewController:aboutDiidy animated:YES];
     }else if (indexPath.section==1&&indexPath.row==2) {
         NoviceGuidanceViewController * noviceGudice= [[NoviceGuidanceViewController alloc] init];
+        noviceGudice.noviceGuidan = @"more";
         [self.navigationController pushViewController:noviceGudice animated:YES];
     }
 
@@ -169,7 +157,20 @@
     
 }
 
+-(void)viewWillDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+    centerLable.hidden = YES;
+}
 
+-(void)viewWillAppear:(BOOL)animated{
+    
+    topImageView.hidden = NO;
+    returnButton.hidden = NO;
+    centerLable.hidden = NO;
+
+}
 -(void)dealloc
 {
    

@@ -39,16 +39,16 @@
 
 -(void)creatPriceView
 {
-    UIImage *priceImage =[UIImage imageNamed:@"u101_normal.png"];
+    UIImage *priceImage =[UIImage imageNamed:@"price.png"];
     priceImageView = [[UIImageView alloc] initWithImage:priceImage];
     priceImageView.userInteractionEnabled = YES;
-    priceImageView.frame = CGRectMake(37.0,-316.0 , 246.0, 316.0);
+    priceImageView.frame = CGRectMake(0.0,-380.0 , 320.0, 380.0);
     
     UIButton* telButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    telButton.frame=CGRectMake(20.0, 260.0, 200.0, 30.0);
+    telButton.frame=CGRectMake(60.0, 340.0, 200.0, 30.0);
     [telButton setBackgroundImage:[UIImage imageNamed:@"u106_normal.png"] forState:UIControlStateNormal];
-    [telButton setTitle:@"400-8888-8888电话查询" forState:UIControlStateNormal];
+    [telButton setTitle:@"4 0 0 6  9 6 0  6 6 6" forState:UIControlStateNormal];
     [telButton addTarget:self action:@selector(telephoneInquiries:) forControlEvents:UIControlEventTouchUpInside];
     [priceImageView addSubview:telButton];
     [self.view addSubview:priceImageView];
@@ -66,7 +66,7 @@
             UIButton*  mainButton = [UIButton buttonWithType:UIButtonTypeCustom];
             mainButton.alpha = 0.7;
             mainButton.tag = 100.0+j+i*10.0;
-            mainButton.frame=CGRectMake(60.0+j*120,100.0+i*120, 100.0,100.0);
+            mainButton.frame=CGRectMake(30.0+j*140,100.0+i*140, 120.0,120.0);
             [mainButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             [mainButton setImage:mainImage forState:UIControlStateNormal];
             [mainButton setImage:secondImage forState:UIControlStateHighlighted];
@@ -74,72 +74,35 @@
             [self.view addSubview: mainButton];
             
         }
-    [self.navigationController setToolbarHidden:NO];
-    [self.navigationController.toolbar setBarStyle:UIBarStyleBlackTranslucent];
-    [self.navigationController.navigationBar setBarStyle:UIBarStyleBlackOpaque];
-    
    
     
-    
-    
-       
-    
-    
-    
-    backSctl = [[UISegmentedControl alloc]initWithFrame:CGRectMake(15, 354, 260, 44)];
-
-    
-    [backSctl insertSegmentWithTitle:@"价格" atIndex:0 animated:YES];
-    [backSctl insertSegmentWithTitle:@"分享" atIndex:1 animated:YES];
-    [backSctl insertSegmentWithTitle:@"更多" atIndex:2 animated:YES];    
-    backSctl.segmentedControlStyle = UISegmentedControlStyleBar;
-    backSctl.tintColor = [UIColor whiteColor];
-    
-    backSctl.momentary = YES;
-    backSctl.multipleTouchEnabled = NO;//不启用多点触摸
-    [backSctl addTarget:self action:@selector(selectSctl2:) forControlEvents:UIControlEventValueChanged];
-    
-    backSctl.selectedSegmentIndex = 0;
-    backSctl.momentary = NO;
-    [self.view addSubview:backSctl];
-    
-    UIButton*  serverButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    serverButton.tag = 301;
-    [serverButton setBackgroundImage:[UIImage imageNamed:@"main_left.png"] forState:UIControlStateNormal];
-    serverButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    [serverButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    serverButton.frame=CGRectMake(0.0,400.0, 70.0, 56.0);
-    [serverButton addTarget:self action:@selector(pushPromptingView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:serverButton];
-    
-    UIImage * footImage = [UIImage imageNamed:@"u108_normal.png"];
-    UIImageView * footImageView = [[UIImageView alloc] initWithImage:footImage];
-    footImageView.frame = CGRectMake(-240.0, 400.0, 240.0, 40.0);
-    footImageView.tag = 300;
-    footImageView.userInteractionEnabled = YES;    
+    NSArray * bottonImageArray = [NSArray arrayWithObjects:@"1-1.png",@"2-1.png",@"3-1.png",nil];
+    NSArray * bSecondArray = [NSArray  arrayWithObjects:@"1-2.png",@"2-2.png",@"3-2.png", nil];
     
     for(int i= 0;i<3;i++){
+        
+        UIImage * bottonImage = [UIImage imageNamed:[bottonImageArray objectAtIndex:i]];
+        UIImage * secondBottonImage = [UIImage imageNamed:[bSecondArray objectAtIndex:i]];
+
         UIButton*  promptingButton = [UIButton buttonWithType:UIButtonTypeCustom];
         promptingButton.tag = 200+i;
         promptingButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-        promptingButton.frame=CGRectMake(15.0+i*75.0,5.0, 60.0, 30.0);
-        [promptingButton setBackgroundImage:[UIImage imageNamed:@"u110_normal.png"] forState:UIControlStateNormal];
+        promptingButton.frame=CGRectMake(40.0+i*80.0,390.0,80.0, 40.0);
+       [promptingButton setImage:bottonImage forState:UIControlStateNormal];
+        [promptingButton setImage:secondBottonImage forState:UIControlStateHighlighted];
         [promptingButton setTitle:[promptingArray objectAtIndex:i]forState:UIControlStateNormal];
         [promptingButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [promptingButton addTarget:self action:@selector(promptingView:) forControlEvents:UIControlEventTouchUpInside];
-        [footImageView addSubview:promptingButton];
+        [self.view addSubview:promptingButton];
     }
-    [self.view addSubview:footImageView];
-    [footImageView release];
-        
 }
 
 -(void)selectSctl2:(id)sender
 {
 
 
-UISegmentedControl* sss = (UISegmentedControl*)sender;
-if(sss.selectedSegmentIndex==0){
+    UISegmentedControl* sss = (UISegmentedControl*)sender;
+    if(sss.selectedSegmentIndex==0){
     
     
 }else if(sss.selectedSegmentIndex==1){
@@ -155,14 +118,14 @@ if(sss.selectedSegmentIndex==0){
         [UIView beginAnimations:@"animation" context:nil];
         [UIView setAnimationDuration:1.0];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        priceImageView.frame = CGRectMake(37.0,0.0 , 246.0, 316.0);
+        priceImageView.frame = CGRectMake(0.0,0.0 ,320.0, 380.0);
         [UIView commitAnimations];
         price = NO;
     }else {
         [UIView beginAnimations:@"animation" context:nil];
         [UIView setAnimationDuration:1.0];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        priceImageView.frame = CGRectMake(37.0,-316.0 , 246.0, 316.0);
+        priceImageView.frame = CGRectMake(0.0,-380.0 , 320.0, 380.0);
         [UIView commitAnimations];
         price = YES;
         
@@ -303,9 +266,7 @@ if(sss.selectedSegmentIndex==0){
         if([ShareApp.logInState isEqualToString:@"s"]){
 
             DriverViewController * driver = [[DriverViewController alloc] init];
-        
             UINavigationController * driverNa = [[UINavigationController alloc] initWithRootViewController:driver];
-            
             [self presentModalViewController:driverNa animated:NO];
             [driverNa release];
             [driver release];
@@ -344,7 +305,6 @@ if(sss.selectedSegmentIndex==0){
     [self creatMainView];
     [self creatPriceView];
 
-    
 }
 
 - (void)viewDidUnload

@@ -8,6 +8,11 @@
 
 #import "OrdersPreviewViewController.h"
 #import "DIIdyModel.h"
+#import "CONST.h"
+#import "SBJson.h"
+#import "AppDelegate.h"
+#import "MainViewController.h"
+#import "AppDelegate.h"
 @interface OrdersPreviewViewController ()
 
 @end
@@ -30,6 +35,8 @@
 {
     [super viewDidLoad];
     self.navigationItem.hidesBackButton = YES;
+    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
     couponArray = [[NSMutableArray alloc] initWithCapacity:0];
     self.couponTableView.delegate = self;
     self.couponTableView.dataSource =self;
@@ -41,16 +48,16 @@
 //    }
 
     
-    UIButton *leftbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftbutton setBackgroundImage:[UIImage imageNamed:@"u108_normalp.png"] forState:UIControlStateNormal];
-    [leftbutton setTitle:@"返回" forState:UIControlStateNormal];
-    leftbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftbutton.frame=CGRectMake(0.0, 100.0, 43.0, 25.0);
-    [leftbutton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftbutton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
 
     self.departureLable.text =[self.orderArray objectAtIndex:0];//出发地
     self.departureTimeLable.text = [self.orderArray objectAtIndex:1];//出发时间
@@ -59,31 +66,22 @@
     self.contactLable.text = [self.orderArray objectAtIndex:4];//联系人
     self.mobilNumberLable.text = [self.orderArray objectAtIndex:5];//手机号码
    
-   
-    
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-  
-    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"u927_normal.png"] forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [rigthbutton setTitle:@"提交订单" forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rigthbutton.frame=CGRectMake(0.0, 100.0, 65.0, 34.0);
+    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button3.png"] forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
     [rigthbutton addTarget:self action:@selector(submitOrders:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
     
-    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthbutton];
-    self.navigationItem.rightBarButtonItem = nextItem;
-    [nextItem release];
-
-    
-    UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 120.0f, 30.0f)];
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
     centerLable.font = [UIFont systemFontOfSize:17];
-    centerLable.textColor = [UIColor blackColor];
+    centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
     centerLable.textAlignment = UITextAlignmentCenter;
-    centerLable.text = @"订 单 预 览";
-    self.navigationItem.titleView = centerLable;
-    [centerLable release]; 
+    centerLable.text =@"订 单 预 览";
+    [self.navigationController.navigationBar addSubview:centerLable];
+    [centerLable release];
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -94,7 +92,7 @@
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     
     
-    return [selectArray count];
+    return [useCouponArray count];
     
 }
 
@@ -106,10 +104,11 @@
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
     }
     
-    DIIdyModel * diidyMbdel = [useCouponArray objectAtIndex:0];
+    NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:indexPath.row];
+    DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section];
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.font = [UIFont fontWithName:@"Arial" size:14];
-    cell.textLabel.text = diidyMbdel.name;
+    cell.textLabel.text = diidyModel.name;
     
     return cell;
 }
@@ -121,10 +120,98 @@
 }
 -(void)submitOrders:(id)sender
 {
+    UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                   message:nil                                                 
+                                                  delegate:self 
+                                         cancelButtonTitle:@"取消" 
+                                         otherButtonTitles:@"确认",nil];
+    [alert show];
+    [alert release];
+
+}
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex==0) {
+       
+    }else {
         
+        
+        if ([self.departureLable.text isEqualToString:@""]) {
+            self.departureLable.text =@"无";
+        }
+        if ([self.numberOfPeopleLable.text isEqualToString:@""]) {
+            self.numberOfPeopleLable.text = @"无";
+        }
+        if ([self.contactLable.text isEqualToString:@""]) {
+            self.contactLable.text = @"无";
+        }
+        
+         NSMutableString * couString = [[NSMutableString alloc]initWithCapacity:0];
+        
+         for (int i =0; i<[self.useCouponArray count]; i++) {
+            
+            
+            NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:i];
+            DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section];
+        
+            couString = [couString stringByAppendingString:diidyModel.name];
+            couString = [NSMutableString stringWithFormat:@"%@,",couString];
+        }
+        
+        if ([self.useCouponArray count]==0) {
+            couString =[NSMutableString stringWithFormat:@"%@",@"无"];
+        }
+        NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,self.departureTimeLable.text,self.departureLable.text,self.numberOfPeopleLable.text,self.destinationLable.text,self.mobilNumberLable.text,self.contactLable.text,couString,ShareApp.mobilNumber];
+        NSLog(@"%@",baseUrl);
+        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSURL * url = [NSURL URLWithString:baseUrl];
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+         [request setTimeOutSeconds:15.0];
+        [request setDelegate:self];
+        [request setTag:505];
+        [request startAsynchronous];
+    }
 
 }
 
+
+-(void)parseStringJson:(NSString *)str
+{
+   NSDictionary * jsonParser =[str JSONValue];
+    NSString * returenNews =[jsonParser objectForKey:@"r"];
+    if ([returenNews isEqualToString:@"s"]) {
+        
+        MainViewController * main = [[MainViewController alloc] init];
+        ShareApp.window.rootViewController = main;
+        [main release];
+
+        
+        
+    }else {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                       message:@"提交失败请重试"                                                 
+                                                      delegate:self 
+                                             cancelButtonTitle:nil 
+                                             otherButtonTitles:@"确认",nil];
+        [alert show];
+        [alert release];
+    }
+       
+}
+
+
+-(void)requestFinished:(ASIHTTPRequest *)request
+{
+        [self parseStringJson:[request responseString]];
+}
+-(void)viewDidDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+    rigthbutton.hidden = YES;
+    centerLable.hidden = YES;
+
+}
 -(void)dealloc
 {
     [selectArray release];

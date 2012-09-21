@@ -29,51 +29,54 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-   
-    useSelectCouponArray = [[NSMutableArray alloc] initWithCapacity:0];
+   self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
     
-    UIButton *leftbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftbutton setBackgroundImage:[UIImage imageNamed:@"u108_normalp.png"] forState:UIControlStateNormal];
-    [leftbutton setTitle:@"返回" forState:UIControlStateNormal];
-    leftbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftbutton.frame=CGRectMake(0.0, 100.0, 43.0, 25.0);
-    [leftbutton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
+    useSelectCouponArray = [[NSMutableArray alloc] initWithCapacity:0];
     
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftbutton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
 
-    UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 120.0f, 30.0f)];
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
     centerLable.font = [UIFont systemFontOfSize:17];
-    centerLable.textColor = [UIColor blackColor];
+    centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
     centerLable.textAlignment = UITextAlignmentCenter;
     centerLable.text = @"选 择 优 惠 劵";
-    self.navigationItem.titleView = centerLable;
+    [self.navigationController.navigationBar addSubview:centerLable];
     [centerLable release]; 
     
     NSString * title;
+    UIImage*nextd;
     if(self.mark){
-        title = @"下一步";
+        title = @"";
+        nextd = [UIImage imageNamed:@"button4.png"];
     
     }else {
         title = @"完成";
+        nextd = [UIImage imageNamed:@"33.png"];
     }
     
     
-    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"u927_normal.png"] forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rigthbutton setBackgroundImage:nextd forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [rigthbutton setTitle:title forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rigthbutton.frame=CGRectMake(0.0f, 100.0f, 65.0f, 34.0f);
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
     [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
-     
-    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthbutton];
-    self.navigationItem.rightBarButtonItem = nextItem;
-    [nextItem release];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
+
+   
     
     UILabel *promptLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 303.0f, 50.0f)];
     promptLable.font = [UIFont systemFontOfSize:14];
@@ -90,7 +93,7 @@
     [promptImageView release];
     [promptLable release];
     
-    NSLog(@"%d",rowNumber);
+   
     CGRect  rect ;
     if((140.f+self.rowNumber*44.0f)>394){
         rect = CGRectMake(0.0f, 52.0f, 320.0f,394.0f);
@@ -104,7 +107,8 @@
     [orderTableView setEditing:YES animated:YES];
     orderTableView.separatorColor = [UIColor grayColor];
     orderTableView.autoresizingMask = UIViewAutoresizingFlexibleHeight |UIViewAutoresizingFlexibleWidth;
-    orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+    //orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    orderTableView.backgroundColor = [UIColor whiteColor];
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
     [orderTableView setSeparatorColor:[UIColor grayColor]];
@@ -140,7 +144,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
 
-    DIIdyModel * diidyModel = [selectCouponAray objectAtIndex:0];
+    DIIdyModel * diidyModel = [selectCouponAray objectAtIndex:section];
     return [diidyModel.number intValue];
     
 }
@@ -151,9 +155,10 @@
     if(cell ==nil)
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+        cell.backgroundColor =[UIColor whiteColor];
     }
     
-    DIIdyModel * diidyMbdel = [selectCouponAray objectAtIndex:0];
+    DIIdyModel * diidyMbdel = [selectCouponAray objectAtIndex:indexPath.section];
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.font = [UIFont fontWithName:@"Arial" size:14];
     cell.textLabel.text = diidyMbdel.name;
@@ -194,9 +199,6 @@
     order.orderArray =  self.orderPreArray;
     [self.navigationController pushViewController:order animated:YES];
     [order release];
-
-
-
 }
 -(void)nextStep:(id)sender
 {
@@ -206,14 +208,29 @@
     }else {
         OrdersPreviewViewController * order = [[OrdersPreviewViewController alloc] init];
         order.orderArray =  self.orderPreArray;
-        order.selectArray =useSelectCouponArray;
-        order.useCouponArray = selectCouponAray;
+        order.useCouponArray=useSelectCouponArray;
+        order.selectArray = selectCouponAray;
         [self.navigationController pushViewController:order animated:YES];
         [order release];
     }
     
 }
+-(void)viewDidDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+    rigthbutton.hidden = YES;
+    centerLable.hidden = YES;
+}
 
+-(void)viewWillAppear:(BOOL)animated
+{
+    topImageView.hidden = NO;
+    returnButton.hidden = NO;
+    rigthbutton.hidden = NO;
+    centerLable.hidden = NO;
+
+}
 -(void)dealloc
 {
     [orderPreArray release];

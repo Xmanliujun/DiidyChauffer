@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
+
 @interface LandingViewController : UIViewController
 <UITextFieldDelegate,UIAlertViewDelegate,ASIHTTPRequestDelegate>
 {
@@ -15,6 +16,8 @@
     UITextField* inputNumberText;
     UIButton* returnButton;
     NSMutableArray * dataArry;
+  //  UIImageView * LandImageView;
+    UIImageView * topImageView;
     
 }
 @property(nonatomic,retain)NSArray * couponArray;

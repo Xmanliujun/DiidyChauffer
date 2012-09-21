@@ -12,5 +12,11 @@
 <UIScrollViewDelegate>
 {
     UIPageControl*  couponPage;
+    
+    UIImageView* topImageView;
+    UIButton* returnButton;
+    UILabel* centerLable;
+    
 }
+@property(nonatomic,retain)NSString*noviceGuidan;
 @end

@@ -70,6 +70,7 @@
     [contentView.layer setCornerRadius:4.0f];      
     [contentView.layer setMasksToBounds:YES]; 
     contentView.textColor = [UIColor blackColor];
+    
     NSString * content = [NSString stringWithFormat:@"您的朋友%@送您1张%@，喝酒了疲劳了不想开车了，记着找嘀嘀！记住电话4006960666,客户端约代驾更方便，+wap嘀嘀代驾客户端下载地址。",ShareApp.mobilNumber,self.detailCoupon];
     contentView.text = content;
     contentView.delegate = self;
@@ -94,36 +95,30 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
+    
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
     
     detailCenterLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
     detailCenterLable.text = @"优 惠 劵 详 情 页";
-    detailCenterLable.textColor = [UIColor darkGrayColor];
+    detailCenterLable.textColor = [UIColor whiteColor];
     detailCenterLable.backgroundColor = [UIColor clearColor];
     detailCenterLable.textAlignment = UITextAlignmentCenter;
     detailCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:detailCenterLable];
-    
-    UILabel * leftLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 70.0, 35.0)];
-    leftLable.text = @"返回";
-    leftLable.backgroundColor = [UIColor clearColor];
-    leftLable.textAlignment = UITextAlignmentCenter;
-    leftLable.font = [UIFont fontWithName:@"Arial" size:12.0];
-    
-    leftDetailImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u13_normal.png"]];
-    leftDetailImage.frame = CGRectMake(10.0, 4.0, 70.0, 35.0);
-    leftDetailImage.userInteractionEnabled = YES;
-    [leftDetailImage addSubview:leftLable];
-    [leftLable release];
-    
-    UIButton * leftButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    leftButton.frame = CGRectMake(0.0, 0.0, 70.0, 35.0);
-    [leftButton addTarget:self action:@selector(returnDetailPageView:) forControlEvents:UIControlEventTouchUpInside];
-    [leftDetailImage addSubview:leftButton];
-    [self.navigationController.navigationBar addSubview:leftDetailImage];
 
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnDetailPageView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+
+    
+    
     UIImage * lineImage = [UIImage imageNamed:@"u84_line.png"];
     UIImageView * lineImageView =[[UIImageView alloc] initWithImage:lineImage];
     lineImageView.frame = CGRectMake(15.0, 100.0, lineImage.size.width, lineImage.size.height);
@@ -139,6 +134,7 @@
     
     UILabel * detailLable = [[UILabel alloc] initWithFrame:CGRectMake(100.0, 12.0, 140.0,75.0)];
     detailLable.backgroundColor = [UIColor clearColor];
+    detailLable.textColor = [UIColor orangeColor];
     detailLable.font = [UIFont fontWithName:@"Arial" size:14.0];
     detailLable.text = detailCoupon;
     [self.view addSubview:detailLable];
@@ -240,7 +236,7 @@
             NSLog(@"Message sent");
             else 
                 NSLog(@"Message failed") ; 
-                }
+            }
 -(void)determineSender:(id)sender
 {
     
@@ -301,7 +297,12 @@
     leftDetailImage.hidden = YES;
     detailCenterLable.hidden = YES;
 }
+-(void)viewDidDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
 
+}
 -(void)dealloc
 {
     [detailCoupon release];

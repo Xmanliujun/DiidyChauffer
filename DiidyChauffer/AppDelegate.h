@@ -12,7 +12,7 @@
 #define ShareApp ((AppDelegate*)[[UIApplication sharedApplication] delegate])
 @interface AppDelegate : UIResponder <UIApplicationDelegate>
 {
-     BMKMapManager* _mapManager;
+    BMKMapManager* _mapManager;
     
     NSString* reachable; //0 无连接  1 使用WiFi网络 2使用3G/GPRS网络2
     float phoneVerion; //操作系统

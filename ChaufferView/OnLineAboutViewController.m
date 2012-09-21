@@ -11,8 +11,9 @@
 #import "AppDelegate.h"
 #import "FillOrdersViewController.h"
 #import "MainViewController.h"
-#import "MapViewController.h"
+//#import "MapViewController.h"
 #import "LocationDemoViewController.h"
+#import "FromPossibleViewController.h"
 @interface OnLineAboutViewController ()
 
 @end
@@ -32,25 +33,43 @@
     
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+   // self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+
+          
+    
     self.navigationItem.hidesBackButton = YES;
-    self.navigationItem.title = @"在线约";
     self.hidesBottomBarWhenPushed = YES;
-       
     self.tabBarController.tabBar.hidden = YES;
     
-    UIImage * rigthImage =[UIImage imageNamed:@"u966_normal.png"];
-    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
-    rigthbutton.frame=CGRectMake(0.0, 100.0, rigthImage.size.width, rigthImage.size.height);
-    [rigthbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
     
-    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthbutton];
-    self.navigationItem.rightBarButtonItem = nextItem;
-    [nextItem release];
+    UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 160, 44)];
+    centerLable.font = [UIFont fontWithName:@"Arial" size:17];
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.text = @"在 线 约";
+    self.navigationItem.titleView = centerLable;
+    [centerLable release]; 
 
     
-    startAddrSearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 41)];  
+    UIImage * rigthImage =[UIImage imageNamed:@"33.png"];
+    UIButton *rigthBarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rigthBarbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
+    [rigthBarbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthBarbutton setTitle:@"主页" forState:UIControlStateNormal];
+    rigthBarbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    [rigthBarbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthBarbutton];
+    self.navigationItem.rightBarButtonItem = nextItem;
+    [nextItem release];
+    startAddrSearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 3, 320, 41)];  
     startAddrSearchBar.delegate = self;  
     startAddrSearchBar.barStyle = UIBarStyleDefault;  
     startAddrSearchBar.showsSearchResultsButton = YES;
@@ -58,24 +77,18 @@
     startAddrSearchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;  
     startAddrSearchBar.placeholder = @"您也可以在此搜索出发地....";  
     startAddrSearchBar.keyboardType =  UIKeyboardTypeDefault;  
+        
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg2.png"]];
+    [startAddrSearchBar insertSubview:imageView atIndex:1];
+    [imageView release];
     
-    UIView *segment = [startAddrSearchBar.subviews objectAtIndex:0];  
-    UIImageView *bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u0_normal.png"]];  
-    [segment addSubview: bgImage];  
-    [bgImage release];
     [self.view addSubview:startAddrSearchBar]; 
     
-//    MapViewController * map =[[MapViewController alloc] init];
-//    map.LocationDelegate = self;
-//    map.view.frame = CGRectMake(0.0f, 40.0f, 320.0f, 420.0f);
-//    [self.view addSubview:map.view];
     LocationDemoViewController* location = [[LocationDemoViewController alloc] init];
     location.LocationDelegate = self;
     location.view.frame =CGRectMake(0.0f, 40.0f, 320.0f, 420.0f);
     [self.view addSubview:location.view];
-     
-   
-  
+    
 }
 -(void)returnMainView:(id)sender
 {
@@ -85,21 +98,22 @@
 
 }
 
--(void)selectTheCurrentLocationOnLine:(NSString *)text
+-(void)selectTheCurrentLocationOnLine:(NSString *)text CLLocation:(CLLocationCoordinate2D)centers
 {
+    
+    NSLog(@"%@",ShareApp.logInState);
     if([ShareApp.logInState isEqualToString:@"s"]){
         
-        FillOrdersViewController * fillOrder = [[FillOrdersViewController alloc] initWithDeparture:text];
+        FillOrdersViewController * fillOrder = [[FillOrdersViewController alloc] initWithDeparture:text CLLocation:centers];
         UINavigationController * fillNa = [[UINavigationController alloc] initWithRootViewController:fillOrder];
         fillOrder.landed = YES;
         [self presentModalViewController:fillNa animated:NO];
         [fillNa release];
         [fillOrder release];
     }else {
-        FillOrdersViewController * fillOrder = [[FillOrdersViewController alloc] initWithDeparture:text];
+        FillOrdersViewController * fillOrder = [[FillOrdersViewController alloc] initWithDeparture:text CLLocation:centers];
         UINavigationController * fillNa = [[UINavigationController alloc] initWithRootViewController:fillOrder];
         fillOrder.landed = NO;
-       
         [self presentModalViewController:fillNa animated:NO];
         [fillNa release];
         [fillOrder release];
@@ -110,10 +124,9 @@
 -(void)returnLandingView:(id)sender
 {
 
-  }
+}
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
 {
-    
     SearchDepartureViewController * search =[[SearchDepartureViewController alloc] init];
     UINavigationController * seachNa = [[UINavigationController alloc] initWithRootViewController:search];
     
@@ -121,8 +134,6 @@
     [seachNa release];
     [search release];
     return NO;
-    
-    
 }
 -(void)dealloc
 {

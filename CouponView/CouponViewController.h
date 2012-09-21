@@ -11,11 +11,16 @@
 @interface CouponViewController : UIViewController
 <UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate>
 {
-    UIImageView* leftImage;
+   // UIImageView* leftImage;
     UIPageControl * couponPage;
     UILabel * centerLable;
     NSMutableArray * dataArry;
     UILabel * messgeLable;
+    UIButton*returnButton;
+    UIImageView*topImageView;
+    UIScrollView * couponScrollView;
+    int page;
+    NSTimer *couponTimer;
 }
 
 @end

@@ -44,20 +44,22 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+	
     self.navigationItem.hidesBackButton = YES;
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    
     currentTime = 60;
+   
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];    
     
-    UIButton *leftbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftbutton setBackgroundImage:[UIImage imageNamed:@"u108_normalp.png"] forState:UIControlStateNormal];
-    [leftbutton setTitle:@"返回" forState:UIControlStateNormal];
-    leftbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftbutton.frame=RECTMAKE(0.0, 100.0, 43.0, 25.0);    
-    [leftbutton addTarget:self action:@selector(returRegisteredView:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftbutton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returRegisteredView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
     
     UIImageView * lineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
     lineImageView.frame = CGRectMake(4.0, 40.0, 290.0, 3.0);
@@ -148,7 +150,6 @@
     [regainbutton addTarget:self action:@selector(getSMSCodeAgain:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:regainbutton];
     
-    
     UIButton*  completebutton = [UIButton buttonWithType:UIButtonTypeCustom];
     completebutton.userInteractionEnabled = YES;
     completebutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
@@ -158,50 +159,6 @@
     [completebutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [completebutton addTarget:self action:@selector(pushCompleteView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:completebutton];
-    
-    UIButton* okButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    okButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    okButton.frame=CGRectMake(82.0, 64.0, 106.0, 36.0);
-    [okButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [okButton setBackgroundImage:[UIImage imageNamed:@"u170_mouseOver.png"] forState:UIControlStateNormal];
-    [okButton setTitle:@"好的" forState:UIControlStateNormal];
-    [okButton addTarget:self action:@selector(thanksIKnow:) forControlEvents:UIControlEventTouchUpInside];
-    
-    promtLable = [[UILabel alloc] initWithFrame:CGRectMake(20, 20, 250, 30)];
-    promtLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:13];
-    promtLable.backgroundColor = [UIColor clearColor];
-    
-
-    UIImage *promptImage = [UIImage imageNamed:@"u167_normal.png"];
-    promptImageView = [[UIImageView alloc] initWithImage:promptImage];
-    promptImageView.userInteractionEnabled = YES;
-    promptImageView.hidden = YES;
-    promptImageView.frame = CGRectMake(20, 210, promptImage.size.width, promptImage.size.height);
-    [promptImageView addSubview:promtLable];
-    [promptImageView addSubview:okButton];
-    [self.view addSubview:promptImageView];
-    
-    UIButton* modifyButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    modifyButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    modifyButton.frame=CGRectMake(45.0, 44.0, 160.0, 25.0);
-    [modifyButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [modifyButton setBackgroundImage:[UIImage imageNamed:@"button_gray_down.png"] forState:UIControlStateNormal];
-    [modifyButton setTitle:@"好的" forState:UIControlStateNormal];
-    [modifyButton addTarget:self action:@selector(thanksIKnowModify:) forControlEvents:UIControlEventTouchUpInside];
-    
-    modifyLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 10, 250, 30)];
-    modifyLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:13];
-    modifyLable.backgroundColor = [UIColor clearColor];
-    modifyLable.textAlignment =UITextAlignmentCenter;
-    
-    UIImage *modifyImage = [UIImage imageNamed:@"u114_normal.png"];
-    modifyImageView = [[UIImageView alloc] initWithImage:modifyImage];
-    modifyImageView.userInteractionEnabled = YES;
-    modifyImageView.hidden = YES;
-    modifyImageView.frame = CGRectMake(35, 150, modifyImage.size.width, modifyImage.size.height);
-    [modifyImageView addSubview:modifyLable];
-    [modifyImageView addSubview:modifyButton];
-    [self.view addSubview:modifyImageView];
     
     [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(startASetNumber:) userInfo:nil repeats:YES];
     
@@ -223,28 +180,7 @@
     }
 }
 
--(void)thanksIKnowModify:(id)sender
-{
-    modifyImageView.hidden = YES;
-    
-    if([returenNews isEqualToString:@"s"]){
-        
-        if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
-            
-            CouponViewController * cou = [[CouponViewController alloc] init];
-            [self.navigationController pushViewController:cou animated:YES];
-            
-        }else {
-            
-            ManageMentViewController * manage = [[ManageMentViewController alloc] init];
-            [self.navigationController pushViewController:manage animated:YES];
-        }
-    }
-}
--(void)thanksIKnow:(id)sender
-{
-    promptImageView.hidden = YES;
-}
+
 -(void)pushCompleteView:(id)sender
 {
     if([_judge isEqualToString:@"TRUE"]){
@@ -263,14 +199,28 @@
                 
             }else {
                 
-                promptImageView.hidden = NO;
-                promtLable.text = @"您输入的两次密码不一致哦，再试试看";
+                UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                               message:@"您输入的两次密码不一致哦，再试试看"
+                                                              delegate:nil
+                                                     cancelButtonTitle:@"OK" 
+                                                     otherButtonTitles:nil];
+                [alert show];
+                [alert release];
+                
                 
             }
 
         }else {
-                promptImageView.hidden = NO;
-                promtLable.text = @"密码不能为空";
+            
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                           message:@"密码不能为空"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"OK" 
+                                                 otherButtonTitles:nil];
+
+    
+            [alert show];
+            [alert release];
         }
         
     }else{
@@ -289,13 +239,27 @@
                 [request startAsynchronous];
                 
             }else {
-                promptImageView.hidden = NO;
-                promtLable.text = @"您输入的两次密码不一致哦，再试试看";
+                UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                               message:@"您输入的两次密码不一致哦，再试试看"
+                                                              delegate:nil
+                                                     cancelButtonTitle:@"OK" 
+                                                     otherButtonTitles:nil];
+                [alert show];
+                [alert release];
+                
+
             }
             
         }else {
-                promptImageView.hidden = NO;
-                promtLable.text = @"密码不能为空";
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                           message:@"密码不能为空"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"OK" 
+                                                 otherButtonTitles:nil];
+            
+            
+            [alert show];
+            [alert release];
         }
         
     }
@@ -314,24 +278,65 @@
                 [self.navigationController pushViewController:manage animated:YES];
             }
         }else {
-                promptImageView.hidden = NO;
-                promtLable.text = @"输入错误,在试试看吧!";
+            
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                           message:@"输入错误,在试试看吧!"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"OK" 
+                                                 otherButtonTitles:nil];
+            
+            
+            [alert show];
+            [alert release];
         }
     }else {
         if([returenNews isEqualToString:@"s"]){
-           
-                modifyImageView.hidden = NO;
-                modifyLable.text = @"您已成功修改密码";
+            
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                           message:@"您已成功修改密码"
+                                                          delegate:self
+                                                 cancelButtonTitle:@"OK" 
+                                                 otherButtonTitles:nil];
+            
+            
+            [alert show];
+            [alert release];
+
        }else{
+           UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                          message: @"您修改密码失败,请重试"
+                                                         delegate:nil
+                                                cancelButtonTitle:@"OK" 
+                                                otherButtonTitles:nil];
            
-                modifyImageView.hidden = NO;
-                modifyLable.text = @"您修改密码失败,请重试";
+           
+           [alert show];
+           [alert release];
+
 
         }
     }
     
 }
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
 
+    if([returenNews isEqualToString:@"s"]){
+        
+        if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
+            
+            CouponViewController * cou = [[CouponViewController alloc] init];
+            [self.navigationController pushViewController:cou animated:YES];
+            
+        }else {
+            
+            ManageMentViewController * manage = [[ManageMentViewController alloc] init];
+            [self.navigationController pushViewController:manage animated:YES];
+        }
+    }
+
+
+}
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
     
@@ -367,15 +372,19 @@
     return YES;
 
 }
+-(void)viewDidDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
 
+}
 -(void)dealloc
 {
+    [topImageView release];
     [returenNews release];
     [optype release];
     [mobilNumber release];
     [_judge release];
-    [promptImageView release];
-    [promtLable release];
     [verificationText release];
     [confirmText release];
     [passWordText release];

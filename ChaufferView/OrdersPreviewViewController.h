@@ -8,10 +8,15 @@
 
 #import <UIKit/UIKit.h>
 #import "DIIdyModel.h"
+#import "ASIHTTPRequest.h"
 @interface OrdersPreviewViewController : UIViewController
-<UITableViewDataSource,UITableViewDelegate>
+<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,ASIHTTPRequestDelegate>
 {
     NSMutableArray * couponArray;
+    UIButton*returnButton;
+    UIButton*rigthbutton;
+    UIImageView*topImageView;
+    UILabel* centerLable;
 }
 @property(nonatomic,retain)NSArray * orderArray;
 @property(nonatomic,retain)NSArray * useCouponArray;

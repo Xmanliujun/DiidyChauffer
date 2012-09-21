@@ -13,6 +13,7 @@
 #import "DIIdyModel.h"
 #import "AppDelegate.h"
 #import "CouponTableCell.h"
+#import "ActivityViewController.h"
 @interface CouponViewController ()
 
 @end
@@ -41,27 +42,44 @@
     fourImageView .frame = CGRectMake(960, 0, 320, 90);
     
     
-    UIScrollView * scrollView = [[UIScrollView alloc] init];
-    scrollView.frame = CGRectMake(0.0, 0.0, 320.0, 90.0);
-    scrollView.contentSize = CGSizeMake(320.0*4,80.0);
-    scrollView.backgroundColor = [UIColor grayColor];
-    scrollView.showsVerticalScrollIndicator = NO;
-    scrollView.showsHorizontalScrollIndicator = NO;
-    scrollView.delegate = self;
-    scrollView.pagingEnabled = YES;
-    scrollView.scrollEnabled = YES;
-    [scrollView addSubview:firstImageView];
-    [scrollView addSubview:secondImageView];
-    [scrollView addSubview:threeImageView];
-    [scrollView addSubview:fourImageView];
-    [self.view addSubview:scrollView];
-    [scrollView release];
+    couponScrollView = [[UIScrollView alloc] init];
+    couponScrollView.frame = CGRectMake(0.0, 0.0, 320.0, 90.0);
+    couponScrollView.contentSize = CGSizeMake(320.0*4,80.0);
+    couponScrollView.backgroundColor = [UIColor grayColor];
+    couponScrollView.showsVerticalScrollIndicator = NO;
+    couponScrollView.showsHorizontalScrollIndicator = NO;
+    couponScrollView.delegate = self;
+    couponScrollView.userInteractionEnabled = YES;
+    couponScrollView.pagingEnabled = YES;
+    couponScrollView.scrollEnabled = YES;
+    [couponScrollView addSubview:firstImageView];
+    [couponScrollView addSubview:secondImageView];
+    [couponScrollView addSubview:threeImageView];
+    [couponScrollView addSubview:fourImageView];
     
+    for (int i=0; i<4; i++) {
+        UIButton * couButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        couButton.frame = CGRectMake(i*320, 0, 320, 90);
+        couButton.tag = i+1;
+        [couButton addTarget:self action:@selector(viewActivity:) forControlEvents:UIControlEventTouchUpInside];
+         [couponScrollView addSubview:couButton];
+    }
+    [self.view addSubview:couponScrollView];
+       
     couponPage= [[UIPageControl alloc] init];
     couponPage.frame = CGRectMake(150.0, 90.0, 30.0, 20.0);
     couponPage.numberOfPages = 4;
     couponPage.currentPage = 0;
     [self.view addSubview:couponPage];
+}
+
+-(void)viewActivity:(UIButton*)sender
+{
+    NSLog(@"%d",sender.tag);
+    ActivityViewController * active = [[ActivityViewController alloc] init];
+    [self.navigationController pushViewController:active animated:YES];
+    [active release];
+    
 }
 -(void)downLoadTheCouponData
 {
@@ -82,51 +100,60 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+   
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
     
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
     centerLable.text = @"优 惠 劵 列 表";
-    centerLable.textColor = [UIColor darkGrayColor];
+    centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
     centerLable.textAlignment = UITextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:centerLable];
-    
-    UILabel * leftLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 70.0, 35.0)];
-    leftLable.text = @"返回";
-    leftLable.backgroundColor = [UIColor clearColor];
-    leftLable.textAlignment = UITextAlignmentCenter;
-    leftLable.font = [UIFont fontWithName:@"Arial" size:12.0];
-    
-    leftImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u13_normal.png"]];
-    leftImage.frame = CGRectMake(10.0, 4.0, 70.0, 35.0);
-    leftImage.userInteractionEnabled = YES;
-    [leftImage addSubview:leftLable];
-    
-    UIButton * leftButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    leftButton.frame = CGRectMake(0.0, 0.0, 70.0, 35.0);
-    [leftButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
-    [leftImage addSubview:leftButton];
-    [self.navigationController.navigationBar addSubview:leftImage];
+   
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
     
     messgeLable = [[UILabel alloc] init];
     messgeLable.frame = CGRectMake(0, 110, 320, 40);
     messgeLable.numberOfLines = 0;
     messgeLable.backgroundColor = [UIColor clearColor];
     messgeLable.font = [UIFont fontWithName:@"Arial" size:14];
+    messgeLable.textColor = [UIColor orangeColor];
     [self.view addSubview:messgeLable];
     
     [self downLoadTheCouponData];
-    
     [self creatScrollView];
-    [centerLable release];
-    [leftLable release];
-    [leftImage release];
     
+    page = -1;
+    couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
+      
+}
+
+-(void)timerFired:(NSTimer *)timer{
+    
+    if (page>3) {
+        page=-1;
+    }
+    couponPage.currentPage = page;
+    page++;
+    NSLog(@"%d",page);
+    CGRect frame=couponScrollView.frame;
+    frame.origin.x=frame.size.width*page;
+    frame.origin.y=0;
+    
+    
+    [couponScrollView  scrollRectToVisible:frame animated:YES];
 }
 -(void)returnMainView:(id)sender
 {
@@ -137,7 +164,7 @@
 {
     
     CGFloat pageWidth = scrollView.frame.size.width;
-    int page = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
+     page = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
     couponPage.currentPage = page;
     
     
@@ -163,7 +190,7 @@
     if(cell==nil)
     {
         cell = [[[CouponTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID] autorelease];
-                
+        cell.backgroundColor = [UIColor whiteColor];      
     }
   
     DIIdyModel *diidy = [dataArry objectAtIndex:0];
@@ -183,8 +210,6 @@
     DetailPageViewController * detail = [[DetailPageViewController alloc] init];
     detail.couponID =diidyModel.ID;
     detail.detailCoupon = diidyModel.name;
-    leftImage.hidden = YES;
-    centerLable.hidden = YES;
     [self.navigationController pushViewController:detail animated:YES];
     
 }
@@ -207,12 +232,13 @@
     }
     if([jsonParser count]!=0){
         messgeLable.text = MESSAGE; 
-        CGRect rect = CGRectMake(0.0, 150.0, 320.0, 350.0);
+        CGRect rect = CGRectMake(0.0, 150.0, 320.0, 60*[jsonParser count]);
         UITableView * couponTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
         couponTableView.contentInset = UIEdgeInsetsMake(YINSET, 0, 0, 0);
-        couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+        //couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+        couponTableView.backgroundColor = [UIColor whiteColor];
         [couponTableView setSeparatorColor:[UIColor blackColor]];
-        //couponTableView.separatorStyle = UITableViewCellEditingStyleNone;
+        couponTableView.separatorStyle = UITableViewCellEditingStyleNone;
         couponTableView.delegate = self;
         couponTableView.dataSource = self;
         [self.view addSubview:couponTableView];
@@ -233,11 +259,23 @@
 -(void)viewWillAppear:(BOOL)animated
 {
     centerLable.hidden = NO;
-    leftImage.hidden = NO;
+    topImageView.hidden = NO;
+    returnButton.hidden = NO;
 }
+-(void)viewDidDisappear:(BOOL)animated
+{
+   
+    centerLable.hidden = YES;
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
 
+}
 -(void)dealloc
 {
+    
+    [couponScrollView release];
+    [topImageView release];
+    [centerLable release];
     [messgeLable release];
     [dataArry release];
     [super dealloc];

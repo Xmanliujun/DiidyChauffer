@@ -36,6 +36,7 @@
     
     UILabel * noOrderLable = [[UILabel alloc] initWithFrame:CGRectMake(35.0, 35.0, noOrderImage.size.width -30.0, noOrderImage.size.height -30.0)];
     noOrderLable.text =ORDERPROMPT;
+    noOrderLable.textColor = [UIColor orangeColor];
     noOrderLable.backgroundColor = [UIColor clearColor];
     noOrderLable.font = [UIFont fontWithName:@"Arial" size:16.0];
     noOrderLable.lineBreakMode = UILineBreakModeWordWrap;
@@ -52,7 +53,7 @@
 {
     
     UITableView * orderTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
-    orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+    orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
     [orderTableView setSeparatorColor:[UIColor blackColor]];
@@ -66,19 +67,18 @@
     
     NSString * baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
     NSLog(@"%@",baseUrl);
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+   baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL * url = [NSURL URLWithString:baseUrl];
     requestHTTP = [ASIHTTPRequest requestWithURL:url];
     [requestHTTP setDelegate:self];
-    [requestHTTP setTag:506];
+  
     [requestHTTP startAsynchronous];
-    
     
 }
 
 -(void)parseStringJson:(NSString *)str
 {
-    NSLog(@"%@",str);
+    
     DIIdyModel * diidy = [[DIIdyModel alloc] init];
     NSArray* jsonParser =[str JSONValue];
     
@@ -104,6 +104,7 @@
         }
         
         [listOrderArray addObject:diidy];
+        [diidy release];
     }
     if(([jsonParser count])==0)
     {
@@ -116,7 +117,8 @@
 
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
-    requestHTTP = nil;
+   
+    NSLog(@"%@",[request responseString]);
     [self parseStringJson:[request responseString]];
 }
 
@@ -124,28 +126,36 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.title = @"订单列表";
+    
     self.navigationController.navigationBar.tintColor = [UIColor grayColor];
     self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-    
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+
     listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [returnButton setBackgroundImage:[UIImage imageNamed:@"u13_normal.png"] forState:UIControlStateNormal];
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(10.0, 4.0, 70.0, 35.0);
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
+    centerLable.text = @"订 单 列 表";
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:centerLable];
     
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:returnButton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
     [self goToTheDownLoadPage];
     
 }
 -(void)returnMainView:(id)sender
 {
-    
+    NSLog(@"2");
     [self dismissModalViewControllerAnimated:YES];
     
 }
@@ -171,7 +181,7 @@
     if(cell ==nil)
     {
         cell = [[[ManageTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-        cell.backgroundColor = [UIColor clearColor];
+        cell.backgroundColor = [UIColor whiteColor];
         
     }
     DIIdyModel * diidy = [listOrderArray objectAtIndex:indexPath.row];
@@ -206,12 +216,20 @@
 }
 -(void)viewDidDisappear:(BOOL)animated
 {
-    if (requestHTTP) {
-       [requestHTTP cancel];
-        [requestHTTP release];
-        requestHTTP = nil;
-    }
-
+//    if (requestHTTP) {
+//       [requestHTTP cancel];
+//        [requestHTTP release];
+//        requestHTTP = nil;
+//    }
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+    centerLable.hidden = YES;
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    topImageView.hidden = NO;
+    returnButton.hidden = NO;
+    centerLable.hidden = NO;
 }
 -(void)dealloc
 {

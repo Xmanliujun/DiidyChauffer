@@ -17,9 +17,11 @@
 
 -(id)initWithTitle:(NSString *)t withSubtitle:(NSString *)s withLatitude:(double)lat withLongtitude:(double)lng
 {
+    
+    
     self = [super init];
     if(self){
-        
+        NSLog(@"ssdsd");
         CLLocationCoordinate2D theCoordinate;
         theCoordinate.latitude = lat;
         theCoordinate.longitude = lng;

@@ -27,25 +27,24 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    
+     
     _search = [[BMKSearch alloc]init];
     _search.delegate = self;
-    
-    
     cityArray = [[NSMutableArray alloc] initWithCapacity:0];
-    UIButton *returnButton  = [UIButton buttonWithType:UIButtonTypeCustom];
-    [returnButton  setBackgroundImage:[UIImage imageNamed:@"u108_normalp.png"] forState:UIControlStateNormal];
-    [returnButton  setTitle:@"返回" forState:UIControlStateNormal];
-    returnButton .titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton .frame=CGRectMake(0.0, 100.0, 43.0, 25.0);
-    [returnButton  addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:returnButton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
-
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
    
-    startAddrSearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 41)];  
+    startAddrSearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0,0, 320, 41)];  
     startAddrSearchBar.delegate = self;  
     startAddrSearchBar.barStyle = UIBarStyleDefault;  
     startAddrSearchBar.showsSearchResultsButton = YES;
@@ -53,44 +52,43 @@
     startAddrSearchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;  
     startAddrSearchBar.placeholder = @"您也可以在此搜索出发地....";  
     startAddrSearchBar.keyboardType =  UIKeyboardTypeDefault; 
-    startAddrSearchBar.showsCancelButton = YES;
+    //startAddrSearchBar.showsCancelButton = YES;
 
+   // [[startAddrSearchBar.subviews objectAtIndex:0]removeFromSuperview];只剩下 边框
+//    for(id cc in [startAddrSearchBar subviews])
+//    {
+//        if([cc isKindOfClass:[UIButton class]])右边的 取消按钮
+//        {
+//            UIButton *btn = (UIButton *)cc;
+//            [btn setTitle:@"取消"  forState:UIControlStateNormal];
+//            btn.enabled = YES;
+//        }
+//    } 
     
-    for(id cc in [startAddrSearchBar subviews])
-    {
-        if([cc isKindOfClass:[UIButton class]])
-        {
-            UIButton *btn = (UIButton *)cc;
-            [btn setTitle:@"取消"  forState:UIControlStateNormal];
-            btn.enabled = YES;
-        }
-    } 
-    
+    UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg2.png"]];
+    [startAddrSearchBar insertSubview:imageView atIndex:1];
+    [imageView release];
+
     UIView *segment = [startAddrSearchBar.subviews objectAtIndex:0];  
     UIImageView *bgImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u0_normal.png"]];  
     [segment addSubview: bgImage];  
     [bgImage release];
     [self.view addSubview:startAddrSearchBar];  
+//    
+//    UITableView * possibleTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 50, 320, 100) style:UITableViewStylePlain];
+//    possibleTableView.separatorColor = [UIColor grayColor];
+//    possibleTableView.backgroundColor = [UIColor whiteColor];
+//    possibleTableView.delegate = self;
+//    possibleTableView.dataSource = self;
+//    [self.view addSubview: possibleTableView];
+//    [possibleTableView  release];
     
-    orderTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 45, 320, self.view.bounds.size.height -45) style:UITableViewStylePlain];
-    orderTableView.separatorColor = [UIColor grayColor];
-    orderTableView.separatorStyle =UITableViewCellEditingStyleNone;
-    orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-    orderTableView.delegate = self;
-    orderTableView.dataSource = self;
-    [orderTableView setSeparatorColor:[UIColor blackColor]];
-    [self.view addSubview:orderTableView];
-    
-
-
-
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
     return [cityArray count];
+    //return 3;
 
 }
-
-
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
     NSString * cellID = @"cellID";
@@ -99,31 +97,37 @@
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
        
-        
-        UIImageView * lineImage =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
-        lineImage.frame = CGRectMake(0,44, 320, 3);
-        [cell.contentView addSubview:lineImage];
-                                  
     }
     BMKPoiInfo * bmn = [cityArray objectAtIndex:indexPath.row];
     NSString * cityName =bmn.name;
     cell.textLabel.text = cityName;
+    
     return cell;
 }
 
 
 - (void)onGetPoiResult:(NSArray*)poiResultList searchType:(int)type errorCode:(int)error
 {
-    NSLog(@"%d",[poiResultList count]);
+    
+    NSLog(@"ssss%d",[poiResultList count]);
+    [cityArray removeAllObjects];
     BMKPoiResult * na = [poiResultList objectAtIndex:0];
     int c = na.totalPoiNum;
     NSLog(@"%d",c);
     NSArray * name = na.poiInfoList;
+    NSArray *  city = na.cityList;
     for (int i = 0; i<[name count]; i++) {
         BMKPoiInfo * bmk = [name objectAtIndex:i];
         [cityArray addObject:bmk];
     }
-    [orderTableView reloadData];
+    
+    FromPossibleViewController * fromPossible = [[FromPossibleViewController alloc] init];
+    fromPossible.possibleCityArray = cityArray;
+    [self.navigationController pushViewController:fromPossible animated:YES];
+    
+    [fromPossible release];
+    
+    
 }
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
@@ -131,8 +135,8 @@
     CLLocationCoordinate2D  venter;
     venter.latitude = 39.915101;
     venter.longitude = 116.403981;
-
-     [_search poiSearchNearBy:@"华龙大厦" center:venter radius:30000 pageIndex:0];
+    [cityArray addObject:searchBar.text];
+     [_search poiSearchNearBy:searchBar.text center:venter radius:30000 pageIndex:0];
 
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
@@ -156,6 +160,18 @@
 {
 
     [self dismissModalViewControllerAnimated:NO];
+
+}
+
+-(void)viewDidDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    topImageView.hidden = NO;
+    returnButton.hidden = NO;
 
 }
 -(void)dealloc

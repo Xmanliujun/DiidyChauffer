@@ -15,5 +15,7 @@
     UISearchBar* startAddrSearchBar;
     NSMutableArray*cityArray;
     UITableView * orderTableView;
+    UIButton *returnButton;
+    UIImageView*topImageView;
 }
 @end

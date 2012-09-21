@@ -13,7 +13,9 @@
 {
     NSArray * moreNameArray;
     
-
+    UIImageView*topImageView;
+    UIButton*returnButton;
+    UILabel *centerLable;
 }
 @property(nonatomic,retain)NSArray *moreNameArray;
 @end

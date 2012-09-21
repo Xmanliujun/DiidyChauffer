@@ -28,29 +28,44 @@
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
-    self.navigationItem.title = @"电话约";
-   
-    UIImage * rigthImage =[UIImage imageNamed:@"u966_normal.png"];
-    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rigthbutton.frame=CGRectMake(0.0, 100.0, rigthImage.size.width, rigthImage.size.height);
-    [rigthbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     
-    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthbutton];
+    UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
+    
+    UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 160, 44)];
+    centerLable.font = [UIFont fontWithName:@"Arial" size:17];
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.text = @"电 话 约";
+    self.navigationItem.titleView = centerLable;
+    [centerLable release]; 
+
+   
+    UIImage * rigthImage =[UIImage imageNamed:@"33.png"];
+    UIButton *rigthBarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rigthBarbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
+    [rigthBarbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthBarbutton setTitle:@"主页" forState:UIControlStateNormal];
+    rigthBarbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    [rigthBarbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthBarbutton];
     self.navigationItem.rightBarButtonItem = nextItem;
     [nextItem release];
-
     
     
-    UIImage * telImage = [UIImage imageNamed:@"u75_normal.png"];
+    UIImage * telImage = [UIImage imageNamed:@"call_btn_d.png"];
     UIButton * telButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    telButton.frame=CGRectMake(20.0, 250.0, telImage.size.width, telImage.size.height);
+    telButton.frame=CGRectMake(100.0, 250.0, 120.0, 35.0);
     [telButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [telButton setBackgroundImage:telImage forState:UIControlStateNormal];
-    [telButton setTitle:@"4006-960-666" forState:UIControlStateNormal];
+    //[telButton setTitle:@"4006-960-666" forState:UIControlStateNormal];
     [telButton addTarget:self action:@selector(makeACall:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:telButton];
 

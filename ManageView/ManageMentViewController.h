@@ -15,7 +15,8 @@
    
     NSMutableArray * listOrderArray;
     ASIHTTPRequest *requestHTTP;
-
+    UIImageView*topImageView ;
+    UILabel*centerLable;
 }
 
 @end

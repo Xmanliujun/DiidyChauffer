@@ -7,13 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "MapLocationDelegate.h"
-
+#import "CouponDelegate.h"
 @interface OnLineAboutViewController : UIViewController
-<UISearchBarDelegate,MapLocationDelegate>
+<UISearchBarDelegate,CouponDelegate>
 {
     UISearchBar* startAddrSearchBar;
-   
+    UIImageView*topImageView;
     
 }
 

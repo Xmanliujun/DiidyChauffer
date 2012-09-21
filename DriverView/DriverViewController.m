@@ -10,7 +10,8 @@
 #import "CONST.h"
 #import "SBJson.h"
 #import "AppDelegate.h"
-#import "DriverPostion.h"
+
+#import "DriveLocationViewController.h"
 @interface DriverViewController ()
 
 @end
@@ -61,20 +62,19 @@
     
     NSString* mobile =[jsonParser objectForKey:@"mobile"];
     NSString*leader = [jsonParser objectForKey:@"leader"];
-    
     if(![status isEqualToString:@""])
     {
         driverStatus = YES;
         NSArray * geoArray= [geo componentsSeparatedByString:@","];
         double Latitude = [[geoArray objectAtIndex:1] doubleValue];
         double Longtitude = [[geoArray objectAtIndex:0] doubleValue];
-        if ([leader isEqualToString:@""]) {
+        if (![leader isEqualToString:@""]) {
             
          centerLable.text =@"您的司机正在赶路，一会儿见";
-        [map initWithTitle:driver withSubtitle:mobile withLatitude:Latitude  withLongtitude:Longtitude];
+        [driveMap initWithTitle:driver withSubtitle:mobile withLatitude:Latitude  withLongtitude:Longtitude];
             
         }else {
-         [map initWithTitle:@"带队司机" withSubtitle:mobile withLatitude:Latitude withLongtitude:Longtitude];
+         [driveMap  initWithTitle:@"带队司机" withSubtitle:mobile withLatitude:Latitude withLongtitude:Longtitude];
         }
     
     }else {
@@ -88,7 +88,7 @@
     
     NSString * status;
     NSArray* jsonParser =[str JSONValue];
-    
+    NSLog(@"%@",jsonParser);
     for(int i = 0;i<[jsonParser count];i++){
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
                 
@@ -104,7 +104,7 @@
     }
     if([status isEqualToString:@"已受理"]){
     
-      //  [self getDriverStatus];
+        [self getDriverStatus];
         
         
     }else {
@@ -135,28 +135,40 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.title = @"看司机";
+   
     self.navigationController.navigationBar.tintColor = [UIColor grayColor];
     self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-    
-    UIImage * rigthImage =[UIImage imageNamed:@"u966_normal.png"];
-    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
-    rigthbutton.frame=CGRectMake(0.0, 100.0, rigthImage.size.width, rigthImage.size.height);
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+
+    UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+
+    UIButton*rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    rigthbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    [rigthbutton setTitle:@"主页" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
     
-    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthbutton];
-    self.navigationItem.rightBarButtonItem = nextItem;
-    [nextItem release];
-    
-    map =[[MapViewController alloc] init];
-    map.view.frame = CGRectMake(0.0f, 40.0f, 320.0f, 380.0f);
-    [self.view addSubview:map.view];
+    UILabel *topCenterLable = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 0.0, 100.0, 44.0)];
+    topCenterLable.text = @"看司机";
+    topCenterLable.textColor = [UIColor orangeColor];
+    topCenterLable.backgroundColor = [UIColor clearColor];
+    topCenterLable.textAlignment = UITextAlignmentCenter;
+    topCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:topCenterLable];
+    [topCenterLable release];
+
+        
+    driveMap =[[DriveLocationViewController alloc] init];
+    driveMap.view.frame = CGRectMake(0.0f, 40.0f, 320.0f, 340.0f);
+    [self.view addSubview:driveMap.view];
 
     UIButton * seeDriversButton = [UIButton buttonWithType:UIButtonTypeCustom];
     seeDriversButton.titleLabel.font =[UIFont fontWithName:@"Arial" size:14.0f];
-    seeDriversButton.frame=CGRectMake(40.0f,380.f, 188.0f, 32.0f);
+    seeDriversButton.frame=CGRectMake(100.0f,380.f, 120.0f, 32.0f);
     [seeDriversButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [seeDriversButton  setBackgroundImage:[UIImage imageNamed:@"u56_normal.png.png"] forState:UIControlStateNormal];
     [seeDriversButton setTitle:@"看司机" forState:UIControlStateNormal];
@@ -164,11 +176,10 @@
     [self.view addSubview:seeDriversButton];
     
     UIButton *startButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    startButton.frame=CGRectMake(270.0f,380.f, 31.0f, 30.0f);
+    startButton.frame=CGRectMake(270.0f,383.f, 31.0f, 30.0f);
     [startButton  setBackgroundImage:[UIImage imageNamed:@"u62_normal.png"] forState:UIControlStateNormal];
     [startButton  addTarget:self action:@selector(returnStartView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:startButton];
-    
     
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 40.0)];
     centerLable.textColor = [UIColor blackColor];
@@ -187,11 +198,12 @@
 }
 -(void)returnStartView:(id)sender
 {
-    [map backToTheOriginalPosition];
+    [driveMap backToTheOriginalPosition];
 
 }
 -(void)seeDrivers:(id)sender
 {
+    [driveMap initWithTitle:nil withSubtitle:nil withLatitude:0 withLongtitude:0];
     if (driverStatus) {
         
         NSString * baseUrl = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
@@ -212,7 +224,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
-    NSLog(@"11111111");
+ 
     if (requestOrderStatus) {
         [requestOrderStatus cancel];
         [requestOrderStatus release];
@@ -230,7 +242,7 @@
 -(void)dealloc
 {
     [centerLable release];
-    [map release];
+   // [map release];
     [super dealloc];
     
 }

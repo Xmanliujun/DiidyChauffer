@@ -23,7 +23,7 @@
 @synthesize departureLable,numberPeopleLable,newsImangeView,backGroundView;
 @synthesize destinationField,nameField,telNumberField;
 @synthesize couponView,departureMinuteLable,couponLable,landed;
-@synthesize departuretimes,departureMinutes;
+@synthesize departuretimes,departureMinutes,couponaArray;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -32,12 +32,13 @@
     }
     return self;
 }
--(id)initWithDeparture:(NSString *)departureString
+-(id)initWithDeparture:(NSString *)departureString CLLocation:(CLLocationCoordinate2D)centers
 {
     self = [super init];
     if(self)
     {
         departure = [departureString retain];
+        location = centers;
     }
     
     return self;
@@ -89,57 +90,57 @@
     
     [self parseStringJson:[request responseString]];
 }
+-(void)setTheNavigationBar
+{
 
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    rigthbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button4.png"] forState:UIControlStateNormal];
+    [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
+    centerLable.text = @"填 写 订 单";
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:centerLable];
+    [centerLable release];
+
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.destinationField.delegate = self;
     self.nameField.delegate = self;
     self.telNumberField.delegate = self;
     self.couponView.hidden = YES;
-    [self downLoadTheCouponData];
+    self.departureLable.text = departure;
     
-    self.departureLable.text = departure;    
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
     timeArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ProvincesAndCities.plist" ofType:nil]];
     minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
-    peopleArray = [[NSMutableArray alloc] initWithObjects:@"1人",@"2人",@"3人",@"4人",@"5人", nil];
+    peopleArray = [[timeArray objectAtIndex:1]objectForKey:@"Cities"];
     
-    
-    UIButton *leftbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftbutton setBackgroundImage:[UIImage imageNamed:@"u108_normalp.png"] forState:UIControlStateNormal];
-    [leftbutton setTitle:@"返回" forState:UIControlStateNormal];
-    leftbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftbutton.frame=CGRectMake(0.0, 100.0, 43.0, 25.0);
-    [leftbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftbutton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
-
-    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"u927_normal.png"] forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [rigthbutton setTitle:@"下一步" forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rigthbutton.frame=CGRectMake(0.0, 100.0, 65.0, 34.0);
-    [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthbutton];
-    self.navigationItem.rightBarButtonItem = nextItem;
-    [nextItem release];
-    
-    UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120, 30)];
-    centerLable.font = [UIFont systemFontOfSize:17];
-    centerLable.textColor = [UIColor blackColor];
-    centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
-    centerLable.text = @"填 写 订 单";
-    self.navigationItem.titleView = centerLable;
-    [centerLable release]; 
-    
+    [self downLoadTheCouponData];
+    [self setTheNavigationBar];
+       
     timePickView = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];
     timePickView.delegate = self;  
     timePickView.dataSource = self;
@@ -147,7 +148,6 @@
     timePickView.tag = 50;
     timePickView.showsSelectionIndicator = YES; 
     [self.view addSubview:timePickView];
-    
     
     UIButton *rigthPickbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthPickbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
@@ -314,8 +314,6 @@
     pickImageView.alpha = 0;
     peoplePickView.alpha = 0;
     [UIView commitAnimations];
-
-
 }
 
 -(void)returnMainView:(id)sender
@@ -340,6 +338,8 @@
         NSString * timeString = [NSString stringWithFormat:@"%@:%@",self.departuretimes,self.departureMinutes];
         NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,timeString,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
         orderController.orderArray = ayy;
+        orderController.useCouponArray = self.couponaArray;
+        orderController.selectArray = dataArry;
         [self.navigationController pushViewController:orderController animated:YES];
         [orderController release];
     }
@@ -347,6 +347,9 @@
 }
 -(IBAction)selectDeparture:(id)sender{
     EditDepartureViewController * editDeparture = [[EditDepartureViewController alloc] init];
+    editDeparture.DepartureDelegate = self;
+    editDeparture.departureName = self.departureLable.text;
+    editDeparture.locationDe = location;
     [self.navigationController pushViewController:editDeparture animated:YES];
     [editDeparture release];
 
@@ -384,12 +387,47 @@
     [selectCoupon release];
 
 }
+-(void)selectThePlaceOfDeparture:(NSString*)placeDeparture
+{
+    NSLog(@"%@",placeDeparture);
+    self.departureLable.text = placeDeparture;
+}
+
 -(void)selectedCoupon:(NSArray*)couponArray{
     
+    self.couponaArray = couponArray;
+     NSMutableString * couString = [[NSMutableString alloc]initWithCapacity:0];
+    for (int i =0; i<[self.couponaArray count]; i++) {
+        
+        
+        NSIndexPath* diidyMbdelPath = [self.couponaArray objectAtIndex:i];
+        DIIdyModel *diidyModel = [dataArry objectAtIndex:diidyMbdelPath.section];
+        
+        couString = [couString stringByAppendingString:diidyModel.name];
+        couString = [NSMutableString stringWithFormat:@"%@,",couString];
+    }
+
+      self.couponLable.text = couString;
+  
+}
+-(void)viewWillAppear:(BOOL)animated
+{
+    topImageView.hidden = NO;
+    returnButton.hidden =NO;
+    rigthbutton.hidden = NO;
+    centerLable.hidden = NO;
+}
+-(void)viewDidDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+    rigthbutton.hidden = YES;
+    centerLable.hidden = YES;
 
 }
 -(void)dealloc
 {
+    [couponaArray release];
     [departure release];
     [dataArry release];
     [couponLable release];

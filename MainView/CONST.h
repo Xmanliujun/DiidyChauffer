@@ -25,7 +25,7 @@
 #define POSITIONDRIVER @"http://www.diidy.com/client/positionDriver/%@"
 #define CHANGEPASSWORD @"http://www.diidy.com/client/changepwd/%@/%@/%@"
 #define FEEDBACK @"http://www.diidy.com/client/feedback/%@/%@"
-
+#define SUBMITORDERS @"http://www.diidy.com/client/commitorder/%@/%@/%@/%@/%@/%@/%@/%@"
 
 #define REQUEST_COMPLETE  @"RequestComplete"
 #define MORE_QUEST  @"MoreRequestComplete"

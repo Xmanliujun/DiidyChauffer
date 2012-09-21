@@ -11,7 +11,10 @@
 @interface NotLoggedViewController : UIViewController
 <UITableViewDataSource,UITableViewDelegate>
 {
-
+    UIImageView*topImageView;
+    UIButton*returnButton;
+    UIButton*rigthbutton;
+    UILabel*centerLable;
 }
 @property(nonatomic,retain)NSArray * moreNameArray;
 @end

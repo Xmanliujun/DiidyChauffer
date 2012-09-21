@@ -9,7 +9,7 @@
 #import "BMapKit.h"
 #import "DrivePosition.h"
 #import "MapAnnotion.h"
-#import "MapLocationDelegate.h"
+#import "CouponDelegate.h"
 @interface LocationDemoViewController : UIViewController<BMKMapViewDelegate,BMKSearchDelegate> {
     BMKMapView* _mapView;
     
@@ -22,7 +22,8 @@
     UIImageView                     *_markerTip;
     UIImageView                     *_markerShadow;
     CLLocationCoordinate2D          location;
-    UILabel *textLabel;
+    CLLocationCoordinate2D         choseLocation;
+    UILabel                         *textLabel;
     UIView                          *_glassMenuView;
     
     
@@ -36,11 +37,11 @@
     
 }
 @property (nonatomic, readwrite) BOOL readonly;
-@property(nonatomic,assign)id<MapLocationDelegate>LocationDelegate;
+@property(nonatomic,assign)id<CouponDelegate>LocationDelegate;
 @property (nonatomic, retain) MapAnnotion       *mapAnnon;
 
-- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withLatitude:(double)lat withLongtitude:(double)lng;
--(void)backToTheOriginalPosition;
+//- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withLatitude:(double)lat withLongtitude:(double)lng;
+//-(void)backToTheOriginalPosition;
 
 @end
 

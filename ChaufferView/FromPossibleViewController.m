@@ -8,12 +8,13 @@
 
 #import "FromPossibleViewController.h"
 #import "OnLineAboutViewController.h"
+#import "BMapKit.h"
 @interface FromPossibleViewController ()
 
 @end
 
 @implementation FromPossibleViewController
-@synthesize possibleCity;
+@synthesize possibleCity,possibleCityArray;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -27,45 +28,72 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-    
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
     
-    UIButton *returnButton  = [UIButton buttonWithType:UIButtonTypeCustom];
-    [returnButton  setBackgroundImage:[UIImage imageNamed:@"u108_normalp.png"] forState:UIControlStateNormal];
-    [returnButton  setTitle:@"返回" forState:UIControlStateNormal];
-    returnButton .titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton .frame=CGRectMake(0.0, 100.0, 43.0, 25.0);
-    [returnButton  addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
     
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:returnButton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
-    
-    
-    UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 120, 30)];
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+   
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80, 0, 160, 44)];
     centerLable.font = [UIFont systemFontOfSize:15];
-    centerLable.textColor = [UIColor darkGrayColor];
+    centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
     centerLable.textAlignment = UITextAlignmentCenter;
     centerLable.text = @"选择可能的出发地";
-    self.navigationItem.titleView = centerLable;
+    [self.navigationController.navigationBar addSubview:centerLable];
     [centerLable release]; 
+
     
-    UITableView * possibleTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStylePlain];
-     possibleTableView.separatorColor = [UIColor grayColor];
-     possibleTableView.separatorStyle =UITableViewCellEditingStyleNone;
-     possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-     possibleTableView.delegate = self;
-     possibleTableView.dataSource = self;
-     [possibleTableView  setSeparatorColor:[UIColor blackColor]];
-     [self.view addSubview: possibleTableView ];
-     [possibleTableView  release];
+    CGRect rect;
+    if ([self.possibleCityArray count]*44<416) {
+       rect = CGRectMake(0, 0, 320, [self.possibleCityArray count]*44);
+    }else {
+       rect = CGRectMake(0, 0, 320, 460-44);
+    }
+
+    UITableView * possibleTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
+    possibleTableView.separatorColor = [UIColor grayColor];
+    possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    possibleTableView.delegate = self;
+    possibleTableView.dataSource = self;
+    [self.view addSubview: possibleTableView];
+    [possibleTableView  release];
     
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
+    NSString * cityName =bmn.name;
+    NSString* addressd = bmn.address;
+    
+    CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    CGSize size2 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    if (size.height>22&&size2.height>22) {
+        return size.height+size2.height;
+    }else if(size.height<22&&size2.height>22){
+        
+        return 22.0+size2.height;
+    }else if(size.height>22&&size2.height<22){
+        return size.height+22;
+    }else {
+        return 44;
+    }
+    
+
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 3;
+    return [self.possibleCityArray count];
 
 }
 
@@ -76,17 +104,73 @@
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
         
-        UIImageView * lineImage =[[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
-        lineImage.frame = CGRectMake(0,44, 320, 3);
-        [cell.contentView addSubview:lineImage];
-        [lineImage release];
+        UIImageView * startImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"start.png"]];
+        startImageView.tag = 80;
+        startImageView.frame = CGRectMake(10, 0, 30, 44);
+        [cell.contentView addSubview:startImageView];
+        [startImageView release];
+        
+        UILabel * nameLable = [[UILabel alloc] initWithFrame:CGRectMake(50, 0, 270,22 )];
+        nameLable.numberOfLines = 0;
+        nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+        nameLable.font = [UIFont fontWithName:@"Arial" size:14];
+        nameLable.textColor = [UIColor orangeColor];
+        nameLable.tag = 81;
+        [cell.contentView addSubview:nameLable];
+        [nameLable release];
+        
+        UILabel * addressLable = [[UILabel alloc] initWithFrame:CGRectMake(50,22, 270,22)];
+        addressLable.numberOfLines = 0;
+        addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+        addressLable.font = [UIFont fontWithName:@"Arial" size:12];
+        addressLable.textColor = [UIColor orangeColor];
+        addressLable.tag = 82;
+        [cell.contentView addSubview:addressLable];
+        [addressLable release];
+        
     }
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    
+    BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
+    NSString * cityName =bmn.name;
+    NSString* addressd = bmn.address;
+    
+     CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    CGSize size1 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    
+    UILabel * nameLable = (UILabel *)[cell.contentView viewWithTag:81];
+   
+    if (size1.height>22) {
+        nameLable.frame = CGRectMake(50,0, 270,size1.height);
+    }else {
+         nameLable.frame = CGRectMake(50,0, 270,22);
+    }
+     nameLable.text = cityName;
+    
+    
+    UILabel * addressLable = (UILabel*)[cell.contentView viewWithTag:82];
+    
+    if (size.height <22) {
+        addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 270,22);
+    }else {
+         addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 270,size.height);
+    }
+   
+    addressLable.text = addressd;
+  
     return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-
+    BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
+    NSString * cityName =bmn.name;
+    NSString*address = bmn.address;
+    CLLocationCoordinate2D ptCenter = bmn.pt;
+    NSString * lt = [NSString stringWithFormat:@"%f",ptCenter.latitude];
+    NSString * lo = [NSString stringWithFormat:@"%f",ptCenter.longitude];
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:cityName,@"City",address,@"Address",lt,@"lation",lo,@"longitue",nil];
+    
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"SELECTCITY" object:self userInfo:dict];
     [self dismissModalViewControllerAnimated:NO];
 
 }
@@ -96,9 +180,16 @@
     [self.navigationController popViewControllerAnimated:YES];
     
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+    centerLable.hidden = YES;
 
+}
 -(void)dealloc
 {
+    [possibleCityArray release];
     [possibleCity release];
     [super dealloc];
 

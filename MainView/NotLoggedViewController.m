@@ -10,6 +10,9 @@
 #import "FeedBackViewController.h"
 #import "AboutDiiDyViewController.h"
 #import "CONST.h"
+#import "NoviceGuidanceViewController.h"
+#import "LandingViewController.h"
+#import "AppDelegate.h"
 @interface NotLoggedViewController ()
 
 @end
@@ -29,42 +32,53 @@
 
 -(void)creatNavigationBar
 {
-    UIButton*rightButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [rightButton setBackgroundImage:[UIImage imageNamed:@"u24_normal.png"] forState:UIControlStateNormal];
-    [rightButton setTitle:@"登陆" forState:UIControlStateNormal];
-    rightButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rightButton.tag = 200;
-    rightButton.frame=CGRectMake(240.0, 4.0, 70.0, 35.0);
-    [rightButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem* logItem = [[UIBarButtonItem alloc] initWithCustomView:rightButton];
-    self.navigationItem.rightBarButtonItem = logItem;    
-    [logItem release];
     
-    UIButton * leftButton=[UIButton buttonWithType:UIButtonTypeCustom];
-    [leftButton setBackgroundImage:[UIImage imageNamed:@"u13_normal.png"] forState:UIControlStateNormal];
-    [leftButton setTitle:@"返回" forState:UIControlStateNormal];
-    leftButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftButton.frame=CGRectMake(0.0f, 100.0, 70.0, 35.0);
-    leftButton.tag = 201;
-    [leftButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftButton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
+    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    rigthbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    rigthbutton.tag = 200;
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthbutton setTitle:@"登陆" forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    [rigthbutton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
+
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
+    centerLable.text = @"更 多";
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:centerLable];
+    [centerLable release];
+
+       
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.tag = 201;
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
 
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.moreNameArray = [NSArray  arrayWithObjects:@"意见反馈",@"关于滴滴",@"新手引导", nil];
-    self.navigationItem.title = @"更多";
-    [self creatNavigationBar];
-    
+     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
      [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRequestCompelte:) name:REQUEST_COMPLETE object:nil];
+    self.moreNameArray = [NSArray  arrayWithObjects:@"意见反馈",@"关于滴滴",@"新手引导", nil];
     
-    UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
-    moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
+   
+    [self creatNavigationBar];    
+    
+   UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     [moreTableView setSeparatorColor:[UIColor blackColor]];
     moreTableView.delegate = self;
     moreTableView.dataSource = self;
@@ -85,11 +99,11 @@
     if(cell ==nil)
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-        cell.backgroundColor = [UIColor clearColor];
+        cell.backgroundColor = [UIColor whiteColor];
         
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-   
+    cell.textLabel.textColor = [UIColor orangeColor];
     cell.textLabel.text = [moreNameArray objectAtIndex:indexPath.row];
     return cell;
     
@@ -106,6 +120,11 @@
         AboutDiiDyViewController * aboutDiidy = [[AboutDiiDyViewController alloc] initWithNibName:@"AboutDiiDyViewController" bundle:nil];
         [self.navigationController pushViewController:aboutDiidy animated:YES];
         [aboutDiidy release];
+    }else {
+        NoviceGuidanceViewController * noviceGudice= [[NoviceGuidanceViewController alloc] init];
+        noviceGudice.noviceGuidan = @"novice";
+        [self.navigationController pushViewController:noviceGudice animated:YES];
+
     }
 }
 -(void)returnORLandingView:(UIButton*)sender
@@ -113,7 +132,13 @@
        if (sender.tag ==201) {
             [self dismissModalViewControllerAnimated:NO];
         }else {
-            
+            LandingViewController * land = [[LandingViewController alloc] init];
+            UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
+            ShareApp.pageManageMent = @"notLog";
+            [self presentModalViewController:landNa animated:NO];
+            [landNa release];
+            [land release];
+
         }
         
 }
@@ -139,6 +164,24 @@
         [alert show];
         [alert release];
     }
+
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    centerLable.hidden = YES;
+    returnButton.hidden = YES;
+    rigthbutton.hidden = YES;
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+    topImageView.hidden = NO;
+    centerLable.hidden = NO;
+    returnButton.hidden = NO;
+    rigthbutton.hidden = NO;
+    
 
 }
 - (void)viewDidUnload

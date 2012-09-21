@@ -9,19 +9,21 @@
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
 @interface SettingViewController : UIViewController
-<UITextFieldDelegate,ASIHTTPRequestDelegate>
+<UITextFieldDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate>
 {
     int currentTime;
     UITextField * verificationText;
     UITextField * passWordText;
     UITextField * confirmText;
     UIButton *regainbutton;
-    UIImageView* promptImageView;
-    UILabel * promtLable;
+    //UIImageView* promptImageView;
+  //  UILabel * promtLable;
     NSString*_judge;
-    UIImageView *modifyImageView;
-    UILabel* modifyLable;
+    //UIImageView *modifyImageView;
+    //UILabel* modifyLable;
     NSString * returenNews;
+    UIButton*returnButton;
+    UIImageView*topImageView;
 }
 
 @property(nonatomic,retain)NSString * mobilNumber;
