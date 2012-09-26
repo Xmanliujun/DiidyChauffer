@@ -12,24 +12,26 @@
 @interface FillOrdersViewController : UIViewController
 <UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,CouponDelegate>
 {
-    NSMutableArray * dataArry;
-    NSArray *timeArray;
-    NSArray *minuteArray;
-    UIImageView *pickImageView;
-    UIPickerView * timePickView;
+   
+    
+    CLLocationCoordinate2D   location;
     NSMutableArray *peopleArray;
-    UIPickerView *peoplePickView;
+    NSArray *minuteArray;
+    NSMutableArray * dataArry;//存放数据类
+    NSArray *timeArray;
     NSString * departure;
-    BOOL landed;
-    int total;
-    CLLocationCoordinate2D    location;
+    UIPickerView * timePickView;
+    UIPickerView *peoplePickView;
+    UIImageView *pickImageView;
     UIImageView*topImageView;
     UIButton* returnButton;
     UIButton*rigthbutton;
     UILabel*centerLable ;
+    BOOL landed;
+    int total;
 }
 
-@property(nonatomic,retain)NSArray*couponaArray;
+@property(nonatomic,retain)NSArray*couponaArray;//存放选择的优惠劵
 @property(nonatomic,retain) NSString *departuretimes;//出发时间
 @property(nonatomic,retain) NSString *departureMinutes;//出发时间
 @property(nonatomic,assign) BOOL landed;

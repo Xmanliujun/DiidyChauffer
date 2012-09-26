@@ -14,10 +14,10 @@
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
-        // Initialization code
-         NSArray* orderArray = [NSArray arrayWithObjects:@"订单编号 :",@"出发时间 :",@"出发地 :", nil];
-         [self setSelectionStyle:UITableViewCellEditingStyleNone];
+        [self setSelectionStyle:UITableViewCellEditingStyleNone];
         
+         NSArray* orderArray = [NSArray arrayWithObjects:@"订单编号 :",@"出发时间 :",@"出发地 :", nil];
+         
         for(int i = 0; i<3;i++){
             UILabel * firstOrderLable = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 5.0+30.0*i, 60.0, 30)];
             firstOrderLable.backgroundColor = [UIColor clearColor];
@@ -25,7 +25,6 @@
             firstOrderLable.font = [UIFont fontWithName:@"Arial" size:13.0];
             [self.contentView addSubview:firstOrderLable];
             [firstOrderLable release];
-            
         }
         orderNumberLable = [[UILabel alloc] init];
         orderNumberLable.frame = CGRectMake(75, 5, 140, 30);
@@ -40,8 +39,9 @@
         [self.contentView addSubview: startTimeLable];
         
         departureLable = [[UILabel alloc] init];
-        departureLable.frame = CGRectMake(75, 65, 140, 30);
+        departureLable.frame = CGRectMake(75, 65, 180, 30);
         departureLable.backgroundColor = [UIColor clearColor];
+        departureLable.numberOfLines = 0;
         departureLable.font = [UIFont fontWithName:@"Arial" size:13.0];
         [self.contentView addSubview: departureLable];
         
@@ -51,7 +51,6 @@
         statusLable.font = [UIFont fontWithName:@"Arial" size:14.0];
         statusLable.tag = 200;
         [self.contentView addSubview:statusLable];
-        [statusLable release];
 
     }
     return self;

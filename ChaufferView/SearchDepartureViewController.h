@@ -17,5 +17,6 @@
     UITableView * orderTableView;
     UIButton *returnButton;
     UIImageView*topImageView;
+    UILabel*centerLable;
 }
 @end

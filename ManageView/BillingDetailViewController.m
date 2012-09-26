@@ -24,6 +24,8 @@
     }
     return self;
 }
+
+#pragma HTTPdownLoad
 -(void)downLoadTheOrderDetail
 {
     NSString * baseUrl = [NSString stringWithFormat:BILLINGDETAIL,orderID];
@@ -34,15 +36,12 @@
     [request setDelegate:self];
     [request setTag:102];
     [request startAsynchronous];
-    
-
 }
 
 -(void)parseStringJson:(NSString *)str
 {
     
     NSDictionary * jsonParser =[str JSONValue];
-    NSLog(@"%@",jsonParser);
     self.couponLable.text = [jsonParser objectForKey:@"account_coupon"];
     self.enioyCardLable.text =  [jsonParser objectForKey:@"account_discount"];
     self.giftCardLable.text= [jsonParser objectForKey:@"account_giftcard"];
@@ -59,36 +58,54 @@
     
     [self parseStringJson:[request responseString]];
 }
+-(void)setTheNavigationBar
+{
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnOrderDetailView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
+    centerLable.text = @"结 算 明 细";
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:centerLable];
+}
+-(void)returnOrderDetailView:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
+    
+}
+
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     self.navigationItem.hidesBackButton = YES;
-      self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-    self.title = @"结算明细";
-    UIButton *leftbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [leftbutton setBackgroundImage:[UIImage imageNamed:@"u13_normal.png"] forState:UIControlStateNormal];
-    [leftbutton setTitle:@"返回" forState:UIControlStateNormal];
-    leftbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    leftbutton.frame=CGRectMake(10.0, 4.0, 70.0, 35.0);
-    [leftbutton addTarget:self action:@selector(returnOrderDetailView:) forControlEvents:UIControlEventTouchUpInside];
-    UIBarButtonItem* returnItem = [[UIBarButtonItem alloc] initWithCustomView:leftbutton];
-    self.navigationItem.leftBarButtonItem = returnItem;    
-    [returnItem release];
-    
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    [self setTheNavigationBar]; 
     [self downLoadTheOrderDetail];
 }
--(void)returnOrderDetailView:(id)sender
-{
 
-    [self.navigationController popViewControllerAnimated:YES];
-    
-    
+-(void)viewDidDisappear:(BOOL)animated
+{
+    topImageView.hidden = YES;
+    returnButton.hidden = YES;
+    centerLable.hidden = YES;
 }
 
 -(void)dealloc
 {
+    [centerLable release];
+    [topImageView release];
     [orderID release];
     [enioyCardLable release];
     [giftCardLable release];

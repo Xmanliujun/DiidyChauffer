@@ -25,125 +25,67 @@
     }
     return self;
 }
-
-- (void)viewDidLoad
+#pragma mark-pickerView
+- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
-    [super viewDidLoad];
-    judge = 0;
-    endAddional = 0;
-    additional = 0;
     
-    price1 = 60,addPrice1 = 30;
-    price2 = 60,addPrice2 = 30;
-    price3 = 70,addPrice3 = 40;
-    price4 = 100,addPrice4 = 50;
-    departure = NO;
-    endParture = NO;
-    startLable.hidden = YES;
-    endLable.hidden = YES;
-    CGRect costRect = totalCostLable.frame;
-    totalCostLable.frame = CGRectMake(costRect.origin.x, 291, costRect.size.width, costRect.size.height);
-   
-    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    timeArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ProvincesAndCities.plist" ofType:nil]];
-    minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
+    return 2;
     
-    UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
-    [self.navigationController.navigationBar addSubview:topImageView];
-    [topImageView release];
-    
-    UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 160, 44)];
-    centerLable.font = [UIFont fontWithName:@"Arial" size:17];
-    centerLable.textColor = [UIColor whiteColor];
-    centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
-    centerLable.text = @"算 算 看";
-    self.navigationItem.titleView = centerLable;
-    [centerLable release]; 
-        
-
-    UIImage * rigthImage =[UIImage imageNamed:@"33.png"];
-    UIButton *rigthBarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthBarbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
-    [rigthBarbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    [rigthBarbutton setTitle:@"主页" forState:UIControlStateNormal];
-    rigthBarbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
-    [rigthBarbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
-    
-    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthBarbutton];
-    self.navigationItem.rightBarButtonItem = nextItem;
-    [nextItem release];
-
-    UIImage * detailExpenseImage = [UIImage imageNamed:@"u283_normal.png"];
-    UIImageView *detailExpenseImageView = [[UIImageView alloc] initWithImage:detailExpenseImage];
-    detailExpenseImageView.frame = CGRectMake(5.0, 230.0, detailExpenseImage.size.width, 120.0);
-    [self.view addSubview:detailExpenseImageView];
-    [detailExpenseImageView release];
-    
-    travelTime = [[UILabel alloc] initWithFrame:CGRectMake(95.0, 33.0, 61.0, 34.0)];
-    travelTime.backgroundColor = [UIColor clearColor];
-    travelTime.textAlignment = UITextAlignmentRight;
-    travelTime.font = [UIFont fontWithName:@"Arial" size:14];
-    [self.view addSubview:travelTime];
-    
-    travelMinute = [[UILabel alloc] initWithFrame:CGRectMake(156.0, 33.0, 61.0, 34.0)];
-    travelMinute.backgroundColor = [UIColor clearColor];
-    travelMinute.textAlignment = UITextAlignmentLeft;
-    travelMinute.font = [UIFont fontWithName:@"Arial" size:14];
-    [self.view addSubview:travelMinute];
-    
-    
-    NSDate * senddate=[NSDate date];
-    NSDateFormatter *dateformatter=[[NSDateFormatter alloc] init];
-    [dateformatter setDateFormat:@"HH:mm"];
-    NSString * locationString=[dateformatter stringFromDate:senddate];
-    NSArray*timesArray = [locationString componentsSeparatedByString:@":"];
-    
-    travelTime.text = [NSString stringWithFormat:@"%@:",[timesArray objectAtIndex:0]];
-    travelMinute.text = [NSString stringWithFormat:@"%@",[timesArray objectAtIndex:1]];
-    
-     self.time.text = [NSString stringWithFormat:@"出发时间:  %@点%@分",[timesArray objectAtIndex:0],[timesArray objectAtIndex:1]];
-    
-    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
-     rigthbutton.frame=CGRectMake(280.0,0.0, 42.0, 42.0);
-    [rigthbutton addTarget:self action:@selector(selectOK:) forControlEvents:UIControlEventTouchUpInside];
-
-    UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];
-    travelTimeLableq.text = @"选择出发时间";
-    travelTimeLableq.font = [UIFont fontWithName:@"Arial" size:14];
-    travelTimeLableq.textAlignment = UITextAlignmentCenter;
-    travelTimeLableq.backgroundColor = [UIColor clearColor];
-    travelTimeLableq.textColor = [UIColor whiteColor];
-    
-    pickImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_023@2x.png"]];
-    pickImageView.frame = CGRectMake(0.0f, 156.0f, 320.0f, 44.0f);
-    pickImageView.hidden = YES;
-    pickImageView.userInteractionEnabled = YES;
-    [pickImageView addSubview:travelTimeLableq];
-    [pickImageView addSubview:rigthbutton];
-    [self.view addSubview:pickImageView];
-    [travelTimeLableq release];
-    
-    timePickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];
-    timePickerView.delegate = self;  
-     timePickerView.dataSource = self;
-    timePickerView.alpha = 0;
-     timePickerView.showsSelectionIndicator = YES; 
-    [self.view addSubview:timePickerView];
-    
-    [_fiveRing setImage:[UIImage imageNamed:@"btmbtn22.png"] forState:UIControlStateSelected];
-    [_fiveOutSide setImage:[UIImage imageNamed:@"btmbtn23.png"] forState:UIControlStateSelected];
-    [_sixOutSide setImage:[UIImage imageNamed:@"btmbtn24.png"] forState:UIControlStateSelected];
-    [_deFiveRing setImage:[UIImage imageNamed:@"btmbtn22.png"] forState:UIControlStateSelected];
-    [_deFiveOutSide setImage:[UIImage imageNamed:@"btmbtn23.png"] forState:UIControlStateSelected];
-    [_deSixOutSide setImage:[UIImage imageNamed:@"btmbtn24.png"] forState:UIControlStateSelected];
-
-   
     
 }
+
+- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+    
+    switch (component) {
+        case 0:
+            return [timeArray count];
+            break;
+        case 1:
+            return [minuteArray count];;
+            break;
+        default:
+            return 0;
+            break;
+    }
+    
+}
+
+
+- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+    
+    switch (component) {
+        case 0:
+            return [[timeArray objectAtIndex:row] objectForKey:@"State"];
+            break;
+        case 1:
+            return  [minuteArray objectAtIndex:row];
+        default:
+            return nil;
+            break;
+    }
+    
+}
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
+    
+    
+    switch (component) {
+        case 0:
+            travelTime.text = [NSString stringWithFormat:@"%d:",row];
+            break;
+        case 1:
+            if(row<10){
+                travelMinute.text = [NSString stringWithFormat:@"0%d",row];
+            }else {
+                travelMinute.text = [NSString stringWithFormat:@"%d",row];
+            }
+            break;
+        default:
+            break;
+    }
+}
+#pragma mark-Button
 -(IBAction)updateValue:(id)sender
 {
     
@@ -473,11 +415,13 @@
      self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",price+additional+endAddional];
 }
 
+
+
 -(IBAction)selectDepartureTime:(id)sender
 {
-   timePickerView.alpha = 1;
+    timePickerView.alpha = 1;
     pickImageView.hidden = NO;
-  
+    
 }
 
 -(void)returnMainView:(id)sender
@@ -486,7 +430,7 @@
     MainViewController * main = [[MainViewController alloc] init];
     [ShareApp.window setRootViewController:main];
     [main release];
-
+    
 }
 -(void)selectOK:(id)sender
 { 
@@ -494,73 +438,14 @@
     NSArray* travelTimeArray = [travelTime.text componentsSeparatedByString:@":"];
     int departureTimeINT = [[travelTimeArray objectAtIndex:0] intValue];
     int departureMinuteINT = [travelMinute.text intValue];
-
+    
     self.time.text = [NSString stringWithFormat:@"出发时间:  %d点%d分",departureTimeINT,departureMinuteINT];
     
     pickImageView.hidden = YES;
     timePickerView.alpha = 0;
-
-}
-
-- (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
-{
-    
-        return 2;
-    
-
-}
-
-- (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
-{
-    
-        switch (component) {
-            case 0:
-                return [timeArray count];
-                break;
-            case 1:
-                return [minuteArray count];;
-                break;
-            default:
-                return 0;
-                break;
-        }
-
-}
-
-
-- (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
-{
-    
-        switch (component) {
-            case 0:
-                return [[timeArray objectAtIndex:row] objectForKey:@"State"];
-                break;
-            case 1:
-                return  [minuteArray objectAtIndex:row];
-            default:
-                return nil;
-                break;
-        }
     
 }
-- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    
-    
-        switch (component) {
-            case 0:
-                travelTime.text = [NSString stringWithFormat:@"%d:",row];
-                break;
-            case 1:
-                if(row<10){
-                    travelMinute.text = [NSString stringWithFormat:@"0%d",row];
-                }else {
-                    travelMinute.text = [NSString stringWithFormat:@"%d",row];
-                }
-                break;
-            default:
-                break;
-        }
-}
+
 -(IBAction)selectDeparture:(UIButton *)sender
 {
    
@@ -771,17 +656,135 @@
 
 
 }
+#pragma mark - System Approach
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    judge = 0;
+    endAddional = 0;
+    additional = 0;
+    
+    price1 = 60,addPrice1 = 30;
+    price2 = 60,addPrice2 = 30;
+    price3 = 70,addPrice3 = 40;
+    price4 = 100,addPrice4 = 50;
+    departure = NO;
+    endParture = NO;
+    startLable.hidden = YES;
+    endLable.hidden = YES;
+    CGRect costRect = totalCostLable.frame;
+    totalCostLable.frame = CGRectMake(costRect.origin.x, 291, costRect.size.width, costRect.size.height);
+    
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    timeArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ProvincesAndCities.plist" ofType:nil]];
+    minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
+    
+    UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
+    
+    UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 160, 44)];
+    centerLable.font = [UIFont fontWithName:@"Arial" size:17];
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.text = @"算 算 看";
+    self.navigationItem.titleView = centerLable;
+    [centerLable release]; 
+    
+    UIImage * rigthImage =[UIImage imageNamed:@"33.png"];
+    UIButton *rigthBarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rigthBarbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
+    [rigthBarbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthBarbutton setTitle:@"主页" forState:UIControlStateNormal];
+    rigthBarbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    [rigthBarbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthBarbutton];
+    self.navigationItem.rightBarButtonItem = nextItem;
+    [nextItem release];
+    
+    UIImage * detailExpenseImage = [UIImage imageNamed:@"u283_normal.png"];
+    UIImageView *detailExpenseImageView = [[UIImageView alloc] initWithImage:detailExpenseImage];
+    detailExpenseImageView.frame = CGRectMake(5.0, 230.0, detailExpenseImage.size.width, 120.0);
+    [self.view addSubview:detailExpenseImageView];
+    [detailExpenseImageView release];
+    
+    travelTime = [[UILabel alloc] initWithFrame:CGRectMake(95.0, 33.0, 61.0, 34.0)];
+    travelTime.backgroundColor = [UIColor clearColor];
+    travelTime.textAlignment = UITextAlignmentRight;
+    travelTime.font = [UIFont fontWithName:@"Arial" size:14];
+    [self.view addSubview:travelTime];
+    
+    travelMinute = [[UILabel alloc] initWithFrame:CGRectMake(156.0, 33.0, 61.0, 34.0)];
+    travelMinute.backgroundColor = [UIColor clearColor];
+    travelMinute.textAlignment = UITextAlignmentLeft;
+    travelMinute.font = [UIFont fontWithName:@"Arial" size:14];
+    [self.view addSubview:travelMinute];
+    
+    NSDate * senddate=[NSDate date];
+    dateformatter=[[NSDateFormatter alloc] init];
+    [dateformatter setDateFormat:@"HH:mm"];
+    NSString * locationString=[dateformatter stringFromDate:senddate];
+    NSArray*timesArray = [locationString componentsSeparatedByString:@":"];
+    
+    travelTime.text = [NSString stringWithFormat:@"%@:",[timesArray objectAtIndex:0]];
+    travelMinute.text = [NSString stringWithFormat:@"%@",[timesArray objectAtIndex:1]];
+    
+    self.time.text = [NSString stringWithFormat:@"出发时间:  %@点%@分",[timesArray objectAtIndex:0],[timesArray objectAtIndex:1]];
+    
+    UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
+    rigthbutton.frame=CGRectMake(280.0,0.0, 42.0, 42.0);
+    [rigthbutton addTarget:self action:@selector(selectOK:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];
+    travelTimeLableq.text = @"选择出发时间";
+    travelTimeLableq.font = [UIFont fontWithName:@"Arial" size:14];
+    travelTimeLableq.textAlignment = UITextAlignmentCenter;
+    travelTimeLableq.backgroundColor = [UIColor clearColor];
+    travelTimeLableq.textColor = [UIColor whiteColor];
+    
+    pickImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_023@2x.png"]];
+    pickImageView.frame = CGRectMake(0.0f, 156.0f, 320.0f, 44.0f);
+    pickImageView.hidden = YES;
+    pickImageView.userInteractionEnabled = YES;
+    [pickImageView addSubview:travelTimeLableq];
+    [pickImageView addSubview:rigthbutton];
+    [self.view addSubview:pickImageView];
+    [travelTimeLableq release];
+    
+    timePickerView = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];
+    timePickerView.delegate = self;  
+    timePickerView.dataSource = self;
+    timePickerView.alpha = 0;
+    timePickerView.showsSelectionIndicator = YES; 
+    [self.view addSubview:timePickerView];
+    
+    [_fiveRing setImage:[UIImage imageNamed:@"btmbtn22.png"] forState:UIControlStateSelected];
+    _fiveRing.selected = YES;
+    [_fiveOutSide setImage:[UIImage imageNamed:@"btmbtn23.png"] forState:UIControlStateSelected];
+    [_sixOutSide setImage:[UIImage imageNamed:@"btmbtn24.png"] forState:UIControlStateSelected];
+    [_deFiveRing setImage:[UIImage imageNamed:@"btmbtn22.png"] forState:UIControlStateSelected];
+    _deFiveRing.selected = YES;
+    [_deFiveOutSide setImage:[UIImage imageNamed:@"btmbtn23.png"] forState:UIControlStateSelected];
+    [_deSixOutSide setImage:[UIImage imageNamed:@"btmbtn24.png"] forState:UIControlStateSelected];
+}
 
 -(void)dealloc
 {
     [cost release];
-    [time release];
-    [timeArray release];
+    [endLable release];
+    [dateformatter release];
     [minuteArray release];
+    [pickImageView release];
+    [time release];
+   // [timeArray release];
+    [totalCostLable release];
     [travelMinute release];
     [timePickerView release];
-    [pickImageView release];
-    [totalCostLable release];
     [travelTimeSlider release];
     [travelTimeLable release];
     [travelTime release];

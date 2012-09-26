@@ -22,10 +22,10 @@
     UIImageView*topImageView;
 }
 @property(nonatomic,assign)id<CouponDelegate>delegate;
-@property(nonatomic,retain)NSArray * selectCouponAray;
+@property(nonatomic,retain)NSArray * selectCouponAray;//存放数据类
 @property(nonatomic,assign)int  rowNumber;
 @property(nonatomic,assign)BOOL mark;
-@property(nonatomic,retain)NSArray * orderPreArray;
+@property(nonatomic,retain)NSArray * orderPreArray;//填写内容
 
 
 @end

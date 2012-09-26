@@ -18,4 +18,5 @@
     UILabel *centerLable;
 }
 @property(nonatomic,retain)NSArray *moreNameArray;
+@property(nonatomic,retain)NSString*whereLand;
 @end

@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "BMapKit.h"
-
+@class QFDatabase;
 #define ShareApp ((AppDelegate*)[[UIApplication sharedApplication] delegate])
-@interface AppDelegate : UIResponder <UIApplicationDelegate>
+@interface AppDelegate : UIResponder <UIApplicationDelegate,BMKGeneralDelegate>
 {
     BMKMapManager* _mapManager;
     
@@ -19,6 +19,7 @@
     NSString *deviceName;//终端型号
     NSString*uniqueString;
     NSString *logInState;
+    QFDatabase * mDatabase;
 
 }
 @property(nonatomic,retain)NSString*pageManageMent;
@@ -29,5 +30,5 @@
 @property(nonatomic,retain)NSString*uniqueString;
 @property(nonatomic,retain)NSString*logInState;
 @property(nonatomic,retain)NSString * mobilNumber;
-
+@property(nonatomic,retain)QFDatabase * mDatabase;
 @end

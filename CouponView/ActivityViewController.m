@@ -8,12 +8,13 @@
 
 #import "ActivityViewController.h"
 #import "VerticallyAlignedLabel.h"
+#import "CONST.h"
 @interface ActivityViewController ()
 
 @end
 
 @implementation ActivityViewController
-
+@synthesize diidyTitle,diidyContent,eventName;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -22,13 +23,8 @@
     }
     return self;
 }
-
-- (void)viewDidLoad
+-(void)setTheNavigationBar
 {
-    [super viewDidLoad];
-    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    self.navigationItem.hidesBackButton = YES;
-    
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
     topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
     [self.navigationController.navigationBar addSubview:topImageView];
@@ -49,14 +45,27 @@
     [self.navigationController.navigationBar addSubview:returnButton];
     
     
+    self.eventName.text = self.diidyTitle;
     VerticallyAlignedLabel * activeLable = [[VerticallyAlignedLabel alloc] init];
-    activeLable.frame = CGRectMake(0, 90, 320, 60);
-    
+    activeLable.frame = CGRectMake(0, 90, 320,460);
     activeLable.numberOfLines = 0;
+    activeLable.text=self.diidyContent;
     activeLable.font = [UIFont fontWithName:@"Arial" size:14];
+    activeLable.textColor = [UIColor whiteColor];
     activeLable.verticalAlignment = VerticalAlignmentTop;
-    activeLable.backgroundColor = [UIColor redColor];
+    activeLable.backgroundColor = [UIColor clearColor];
     [self.view addSubview:activeLable];
+    [activeLable release];
+}
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.navigationItem.hidesBackButton = YES;
+
+    [self setTheNavigationBar];
+       
+   
 }
 -(void)returnCouponView:(id)sender
 {
@@ -65,20 +74,18 @@
 }
 -(void)viewDidDisappear:(BOOL)animated
 {
-    
     centerLable.hidden = YES;
     topImageView.hidden = YES;
     returnButton.hidden = YES;
-    
 }
 -(void)dealloc
 {
-    
-    
-    [topImageView release];
     [centerLable release];
+    [diidyTitle release];
+    [diidyContent release];
+    [eventName release];
+    [topImageView release];
     [super dealloc];
-    
 }
 
 - (void)viewDidUnload

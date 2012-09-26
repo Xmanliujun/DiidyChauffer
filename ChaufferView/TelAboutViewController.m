@@ -24,10 +24,49 @@
     return self;
 }
 
+-(void)makeACall:(id)sender
+{
+    UIActionSheet *menu = [[[UIActionSheet alloc]
+                           initWithTitle:nil
+                           delegate:self
+                           cancelButtonTitle:@"取消"
+                           destructiveButtonTitle:@"400 696 0666"
+                           otherButtonTitles:nil] autorelease];
+    [menu showInView:self.view];
+
+
+
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if(buttonIndex==0){
+        UIWebView*callWebview =[[UIWebView alloc] init];
+        NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
+        [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
+        //记得添加到view上
+        [self.view addSubview:callWebview]; 
+        [callWebview release];
+       // [actionSheet release];
+    }else {
+       // [actionSheet release];
+    }
+    
+}
+
+-(void)returnMainView:(id)sender
+{
+    
+    MainViewController * main = [[MainViewController alloc] init];
+    [ShareApp.window setRootViewController:main];
+    [main release];
+
+
+}
+#pragma mark - System Approach
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
@@ -43,8 +82,7 @@
     centerLable.text = @"电 话 约";
     self.navigationItem.titleView = centerLable;
     [centerLable release]; 
-
-   
+    
     UIImage * rigthImage =[UIImage imageNamed:@"33.png"];
     UIButton *rigthBarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthBarbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
@@ -68,45 +106,9 @@
     //[telButton setTitle:@"4006-960-666" forState:UIControlStateNormal];
     [telButton addTarget:self action:@selector(makeACall:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:telButton];
-
-}
--(void)makeACall:(id)sender
-{
-    UIActionSheet *menu = [[UIActionSheet alloc]
-                           initWithTitle:nil
-                           delegate:self
-                           cancelButtonTitle:@"取消"
-                           destructiveButtonTitle:@"400 696 0666"
-                           otherButtonTitles:nil];
-    [menu showInView:self.view];
-
-
-}
-
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if(buttonIndex==0){
-        UIWebView*callWebview =[[UIWebView alloc] init];
-        NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
-        [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
-        //记得添加到view上
-        [self.view addSubview:callWebview]; 
-        [actionSheet release];
-    }else {
-        [actionSheet release];
-    }
     
 }
 
--(void)returnMainView:(id)sender
-{
-    
-    MainViewController * main = [[MainViewController alloc] init];
-    [ShareApp.window setRootViewController:main];
-    [main release];
-
-
-}
 - (void)viewDidUnload
 {
     [super viewDidUnload];

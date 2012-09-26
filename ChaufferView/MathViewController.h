@@ -17,6 +17,7 @@
     UILabel * travelMinute;
     UIPickerView*timePickerView;
     UIImageView * pickImageView;
+    NSDateFormatter *dateformatter;
     IBOutlet UIButton  *_fiveRing;
     IBOutlet UIButton  *_fiveOutSide;
     IBOutlet UIButton  *_sixOutSide;

@@ -9,7 +9,8 @@
 #import "CouponTableCell.h"
 
 @implementation CouponTableCell
-@synthesize nameLable,closeDataLable,presentationLable,numberLable;
+@synthesize nameLable,closeDataLable,numberLable;
+//@synthesize presentationLable;
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
@@ -25,7 +26,7 @@
         presentationLable.textColor = [UIColor orangeColor];
         [self.contentView addSubview:presentationLable];
         
-        nameLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 100, 30)];
+        nameLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 160, 30)];
         nameLable.backgroundColor = [UIColor clearColor];
         nameLable.textColor = [UIColor orangeColor];
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
@@ -40,6 +41,7 @@
         UIImageView * lineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u49_line.png"]];
         lineImageView.frame = CGRectMake(0, 57, 320, 3);
         [self.contentView addSubview:lineImageView];
+        [lineImageView release];
 
     }
     return self;
@@ -56,7 +58,7 @@
     [numberLable release];
     [nameLable release];
     [closeDataLable release];
-    [presentationLable release];
+    //[presentationLable release];
     [super dealloc];
 
 }

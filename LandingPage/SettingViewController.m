@@ -41,128 +41,6 @@
 
 
 }
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	
-    self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    
-    currentTime = 60;
-   
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
-    [self.navigationController.navigationBar addSubview:topImageView];    
-    
-    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
-    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
-    [returnButton addTarget:self action:@selector(returRegisteredView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationController.navigationBar addSubview:returnButton];
-    
-    UIImageView * lineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
-    lineImageView.frame = CGRectMake(4.0, 40.0, 290.0, 3.0);
-    
-    UIImageView * secondLineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
-    secondLineImageView.frame = CGRectMake(4.0, 80.0, 290.0, 3.0);
-    
-    UIImageView * threeLineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u125_line.png"]];
-    threeLineImageView.frame = CGRectMake(80.0, 4.0, 3.0, 115.0);
-       
-    verificationText = [[UITextField alloc] initWithFrame:CGRectMake(85.0, 5.0, 160,35.0)];
-    verificationText.backgroundColor = [UIColor clearColor];
-    verificationText.keyboardType = UIKeyboardTypeDefault;
-    verificationText.font = [UIFont fontWithName:@"Arial" size:15.0];
-    verificationText.borderStyle = UITextBorderStyleNone;
-    verificationText.autocorrectionType = UITextAutocorrectionTypeYes;
-    verificationText.placeholder = @"请输入验证码";
-    verificationText.returnKeyType = UIReturnKeyDone;
-    verificationText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    verificationText.delegate = self;
-    
-    passWordText = [[UITextField alloc] initWithFrame:CGRectMake(85.0, 45.0, 160.0,35.0)];
-    passWordText.backgroundColor = [UIColor clearColor];
-    passWordText.keyboardType = UIKeyboardTypeDefault;
-    passWordText.font = [UIFont fontWithName:@"Arial" size:15.0];
-    passWordText.borderStyle = UITextBorderStyleNone;
-    passWordText.autocorrectionType = UITextAutocorrectionTypeYes;
-    passWordText.placeholder = @"请输入密码";
-    passWordText.returnKeyType = UIReturnKeyDone;
-    passWordText.secureTextEntry = YES;
-    passWordText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    passWordText.delegate = self;
-
-    confirmText = [[UITextField alloc] initWithFrame:CGRectMake(85.0, 85.0, 160.0,35.0)];
-    confirmText.backgroundColor = [UIColor clearColor];
-    confirmText.keyboardType = UIKeyboardTypeDefault;
-    confirmText.font = [UIFont fontWithName:@"Arial" size:15.0];
-    confirmText.borderStyle = UITextBorderStyleNone;
-    confirmText.autocorrectionType = UITextAutocorrectionTypeYes;
-    confirmText.placeholder = @"请输入确认密码";
-    confirmText.returnKeyType = UIReturnKeyDone;
-    confirmText.secureTextEntry = YES;
-    confirmText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    confirmText.delegate = self;
-
-    UIImage * informationImage = [UIImage imageNamed:@"u90_normal.png"];
-    UIImageView * informationImageView = [[UIImageView alloc] initWithImage:informationImage];
-    informationImageView.frame = CGRectMake(10.0, 20.0, informationImage.size.width, informationImage.size.height);
-    informationImageView.userInteractionEnabled = YES;
-    
-    NSArray * lableAArray =[NSArray arrayWithObjects:@"验证码",@"密码",@"确认密码",nil];
-    NSArray * lableBArray = [NSArray arrayWithObjects:@"验证码",@"新密码",@"确认密码", nil];
-    
-    for(int i = 0;i<3;i++){
-        UILabel * firstLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 40*i, 80.0, 40.0)];
-        
-        if([_judge isEqualToString:@"TRUE"]){
-            
-            firstLable.text = [lableAArray objectAtIndex:i];
-            
-        }else {
-            
-            firstLable.text = [lableBArray objectAtIndex:i];
-        }
-        
-            firstLable.backgroundColor = [UIColor clearColor];
-            firstLable.textAlignment = UITextAlignmentCenter;
-            firstLable.font = [UIFont fontWithName:@"Arial" size:14.0];
-            [informationImageView addSubview:firstLable];
-            [firstLable release];
-    }
-    [informationImageView addSubview:confirmText];
-    [informationImageView addSubview:passWordText];
-    [informationImageView addSubview:verificationText];    
-    [informationImageView addSubview:threeLineImageView];
-    [informationImageView addSubview:secondLineImageView];
-    [informationImageView addSubview:lineImageView];
-    [self.view addSubview:informationImageView];
-    [informationImageView release];
-    
-    regainbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    regainbutton.userInteractionEnabled = NO;
-    regainbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    regainbutton.frame=CGRectMake(20.0, 160.0, 128.0, 38.0);
-    [regainbutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [regainbutton setBackgroundImage:[UIImage imageNamed:@"u190_normal.png"] forState:UIControlStateNormal];
-    [regainbutton setTitle:@"重新获取验证码(60s)" forState:UIControlStateNormal];
-    [regainbutton addTarget:self action:@selector(getSMSCodeAgain:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:regainbutton];
-    
-    UIButton*  completebutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    completebutton.userInteractionEnabled = YES;
-    completebutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
-    completebutton.frame=CGRectMake(168.0, 160.0, 128.0, 38.0);
-    [completebutton setBackgroundImage:[UIImage imageNamed:@"u175_normal.png"] forState:UIControlStateNormal];
-    [completebutton setTitle:@"完成" forState:UIControlStateNormal];
-    [completebutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [completebutton addTarget:self action:@selector(pushCompleteView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:completebutton];
-    
-    [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(startASetNumber:) userInfo:nil repeats:YES];
-    
-}
 -(void)startASetNumber:(NSTimer*)time
 {
     
@@ -178,6 +56,8 @@
         [regainbutton setBackgroundImage:[UIImage imageNamed:@"u175_normal.png"] forState:UIControlStateNormal];
         [regainbutton setTitle:@"重新获取验证码" forState:UIControlStateNormal];
     }
+    
+  
 }
 
 
@@ -271,10 +151,10 @@
     if([_judge isEqualToString:@"TRUE"]){
        if([returenNews isEqualToString:@"s"]){
             if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
-                CouponViewController * cou = [[CouponViewController alloc] init];
+                CouponViewController * cou = [[[CouponViewController alloc] init] autorelease];
                 [self.navigationController pushViewController:cou animated:YES];
             }else {
-                ManageMentViewController * manage = [[ManageMentViewController alloc] init];
+                ManageMentViewController * manage = [[[ManageMentViewController alloc] init] autorelease];
                 [self.navigationController pushViewController:manage animated:YES];
             }
         }else {
@@ -325,13 +205,15 @@
         
         if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
             
-            CouponViewController * cou = [[CouponViewController alloc] init];
+            CouponViewController * cou = [[[CouponViewController alloc] init] autorelease];
             [self.navigationController pushViewController:cou animated:YES];
+            
             
         }else {
             
-            ManageMentViewController * manage = [[ManageMentViewController alloc] init];
+            ManageMentViewController * manage = [[[ManageMentViewController alloc] init] autorelease];
             [self.navigationController pushViewController:manage animated:YES];
+            
         }
     }
 
@@ -372,6 +254,132 @@
     return YES;
 
 }
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+	
+    self.navigationItem.hidesBackButton = YES;
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    
+    currentTime = 60;
+    
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    [self.navigationController.navigationBar addSubview:topImageView];    
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returRegisteredView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    UIImageView * lineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
+    lineImageView.frame = CGRectMake(4.0f, 40.0f, 290.0f, 3.0f);
+    
+    UIImageView * secondLineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
+    secondLineImageView.frame = CGRectMake(4.0f, 80.0f, 290.0f, 3.0f);
+    
+    UIImageView * threeLineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u125_line.png"]];
+    threeLineImageView.frame = CGRectMake(80.0f, 4.0f, 3.0f, 115.0f);
+    
+    verificationText = [[UITextField alloc] initWithFrame:CGRectMake(85.0f, 5.0f, 160.0f,35.0f)];
+    verificationText.backgroundColor = [UIColor clearColor];
+    verificationText.keyboardType = UIKeyboardTypeDefault;
+    verificationText.font = [UIFont fontWithName:@"Arial" size:15.0f];
+    verificationText.borderStyle = UITextBorderStyleNone;
+    verificationText.autocorrectionType = UITextAutocorrectionTypeYes;
+    verificationText.placeholder = @"请输入验证码";
+    verificationText.returnKeyType = UIReturnKeyDone;
+    verificationText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    verificationText.delegate = self;
+    
+    passWordText = [[UITextField alloc] initWithFrame:CGRectMake(85.0f, 45.0f, 160.0f,35.0f)];
+    passWordText.backgroundColor = [UIColor clearColor];
+    passWordText.keyboardType = UIKeyboardTypeDefault;
+    passWordText.font = [UIFont fontWithName:@"Arial" size:15.0f];
+    passWordText.borderStyle = UITextBorderStyleNone;
+    passWordText.autocorrectionType = UITextAutocorrectionTypeYes;
+    passWordText.placeholder = @"请输入密码";
+    passWordText.returnKeyType = UIReturnKeyDone;
+    passWordText.secureTextEntry = YES;
+    passWordText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    passWordText.delegate = self;
+    
+    confirmText = [[UITextField alloc] initWithFrame:CGRectMake(85.0f, 85.0f, 160.0f,35.0f)];
+    confirmText.backgroundColor = [UIColor clearColor];
+    confirmText.keyboardType = UIKeyboardTypeDefault;
+    confirmText.font = [UIFont fontWithName:@"Arial" size:15.0f];
+    confirmText.borderStyle = UITextBorderStyleNone;
+    confirmText.autocorrectionType = UITextAutocorrectionTypeYes;
+    confirmText.placeholder = @"请输入确认密码";
+    confirmText.returnKeyType = UIReturnKeyDone;
+    confirmText.secureTextEntry = YES;
+    confirmText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    confirmText.delegate = self;
+    
+    UIImage * informationImage = [UIImage imageNamed:@"u90_normal.png"];
+    UIImageView * informationImageView = [[UIImageView alloc] initWithImage:informationImage];
+    informationImageView.frame = CGRectMake(10.0f, 20.0f, informationImage.size.width, informationImage.size.height);
+    informationImageView.userInteractionEnabled = YES;
+    
+    NSArray * lableAArray =[NSArray arrayWithObjects:@"验证码",@"密码",@"确认密码",nil];
+    NSArray * lableBArray = [NSArray arrayWithObjects:@"验证码",@"新密码",@"确认密码", nil];
+    
+    for(int i = 0;i<3;i++){
+        UILabel * firstLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 40.0f*i, 80.0f, 40.0f)];
+        
+        if([_judge isEqualToString:@"TRUE"]){
+            
+            firstLable.text = [lableAArray objectAtIndex:i];
+            
+        }else {
+            
+            firstLable.text = [lableBArray objectAtIndex:i];
+        }
+        
+        firstLable.backgroundColor = [UIColor clearColor];
+        firstLable.textAlignment = UITextAlignmentCenter;
+        firstLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
+        [informationImageView addSubview:firstLable];
+        [firstLable release];
+    }
+    [informationImageView addSubview:confirmText];
+    [informationImageView addSubview:passWordText];
+    [informationImageView addSubview:verificationText];    
+    [informationImageView addSubview:threeLineImageView];
+    [informationImageView addSubview:secondLineImageView];
+    [informationImageView addSubview:lineImageView];
+    [self.view addSubview:informationImageView];
+    [informationImageView release];
+    [secondLineImageView release];
+    [lineImageView release];
+    [threeLineImageView release];
+    
+    regainbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    regainbutton.userInteractionEnabled = NO;
+    regainbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    regainbutton.frame=CGRectMake(20.0f, 160.0f, 128.0f, 38.0f);
+    [regainbutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [regainbutton setBackgroundImage:[UIImage imageNamed:@"u190_normal.png"] forState:UIControlStateNormal];
+    [regainbutton setTitle:@"重新获取验证码(60s)" forState:UIControlStateNormal];
+    [regainbutton addTarget:self action:@selector(getSMSCodeAgain:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:regainbutton];
+    
+    UIButton*  completebutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    completebutton.userInteractionEnabled = YES;
+    completebutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    completebutton.frame=CGRectMake(168.0f, 160.0f, 128.0f, 38.0f);
+    [completebutton setBackgroundImage:[UIImage imageNamed:@"u175_normal.png"] forState:UIControlStateNormal];
+    [completebutton setTitle:@"完成" forState:UIControlStateNormal];
+    [completebutton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [completebutton addTarget:self action:@selector(pushCompleteView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:completebutton];
+    
+    [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(startASetNumber:) userInfo:nil repeats:YES];
+}
+
+
 -(void)viewDidDisappear:(BOOL)animated
 {
     topImageView.hidden = YES;

@@ -53,42 +53,53 @@
 
 
 -(void)parseStatusStringJson:(NSString*)str
-{
-
-    NSDictionary * jsonParser = [str JSONValue];
-    NSString* status = [jsonParser objectForKey:@"status"];
-    NSString* driver = [jsonParser objectForKey:@"driver"];
-    NSString* geo = [jsonParser objectForKey:@"geo"];
+{ 
     
-    NSString* mobile =[jsonParser objectForKey:@"mobile"];
-    NSString*leader = [jsonParser objectForKey:@"leader"];
-    if(![status isEqualToString:@""])
-    {
-        driverStatus = YES;
-        NSArray * geoArray= [geo componentsSeparatedByString:@","];
-        double Latitude = [[geoArray objectAtIndex:1] doubleValue];
-        double Longtitude = [[geoArray objectAtIndex:0] doubleValue];
-        if (![leader isEqualToString:@""]) {
-            
-         centerLable.text =@"您的司机正在赶路，一会儿见";
-        [driveMap initWithTitle:driver withSubtitle:mobile withLatitude:Latitude  withLongtitude:Longtitude];
+    NSArray* jsonParser =[str JSONValue];
+    
+    if ([jsonParser count]==5) {
+        centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
+
+    }else {
+        NSDictionary * jsonParserDict = [jsonParser objectAtIndex:0];
+        
+        NSString* status = [jsonParserDict objectForKey:@"status"];
+        NSString* driver = [jsonParserDict objectForKey:@"driver"];
+        NSString* geo = [jsonParserDict objectForKey:@"geo"];
+        
+        NSString* mobile =[jsonParserDict objectForKey:@"mobile"];
+        NSString*leader = [jsonParserDict objectForKey:@"leader"];
+        if(![status isEqualToString:@""])
+        {
+            driverStatus = YES;
+            NSArray * geoArray= [geo componentsSeparatedByString:@","];
+            double Latitude = [[geoArray objectAtIndex:1] doubleValue];
+            double Longtitude = [[geoArray objectAtIndex:0] doubleValue];
+            if (![leader isEqualToString:@""]) {
+                
+                centerLable.text =@"您的司机正在赶路，一会儿见";
+                [driveMap initWithTitle:driver withSubtitle:mobile withLatitude:Latitude  withLongtitude:Longtitude];
+                
+            }else {
+                [driveMap  initWithTitle:@"带队司机" withSubtitle:mobile withLatitude:Latitude withLongtitude:Longtitude];
+            }
             
         }else {
-         [driveMap  initWithTitle:@"带队司机" withSubtitle:mobile withLatitude:Latitude withLongtitude:Longtitude];
+            driverStatus = NO;
+            centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
         }
-    
-    }else {
-        driverStatus = NO;
-        centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
-    }
 
+    }
+    
+   
+   
 }
 -(void)parseStringJson:(NSString *)str
 {
     
     NSString * status;
     NSArray* jsonParser =[str JSONValue];
-    NSLog(@"%@",jsonParser);
+    NSLog(@"收拾收拾%@",jsonParser);
     for(int i = 0;i<[jsonParser count];i++){
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
                 
@@ -115,11 +126,13 @@
 
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
+    NSLog(@"%@",[request responseString]);
+    
     if(request.tag ==100){
-        requestOrderStatus = nil;
+       
         [self parseStringJson:[request responseString]];
     }else if(request.tag ==101) {
-        requestDriveStatus = nil;
+
         [self parseStatusStringJson:[request responseString]];
     }else {
         [self parseStatusStringJson:[request responseString]];
@@ -132,70 +145,7 @@
     NSLog(@"7654321");
 
 }
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-   
-    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
-    self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-
-    UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
-    [self.navigationController.navigationBar addSubview:topImageView];
-
-    UIButton*rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    rigthbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
-    [rigthbutton setTitle:@"主页" forState:UIControlStateNormal];
-    [rigthbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationController.navigationBar addSubview:rigthbutton];
-    
-    UILabel *topCenterLable = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 0.0, 100.0, 44.0)];
-    topCenterLable.text = @"看司机";
-    topCenterLable.textColor = [UIColor orangeColor];
-    topCenterLable.backgroundColor = [UIColor clearColor];
-    topCenterLable.textAlignment = UITextAlignmentCenter;
-    topCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
-    [self.navigationController.navigationBar addSubview:topCenterLable];
-    [topCenterLable release];
-
-        
-    driveMap =[[DriveLocationViewController alloc] init];
-    driveMap.view.frame = CGRectMake(0.0f, 40.0f, 320.0f, 340.0f);
-    [self.view addSubview:driveMap.view];
-
-    UIButton * seeDriversButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    seeDriversButton.titleLabel.font =[UIFont fontWithName:@"Arial" size:14.0f];
-    seeDriversButton.frame=CGRectMake(100.0f,380.f, 120.0f, 32.0f);
-    [seeDriversButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [seeDriversButton  setBackgroundImage:[UIImage imageNamed:@"u56_normal.png.png"] forState:UIControlStateNormal];
-    [seeDriversButton setTitle:@"看司机" forState:UIControlStateNormal];
-    [seeDriversButton  addTarget:self action:@selector(seeDrivers:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:seeDriversButton];
-    
-    UIButton *startButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    startButton.frame=CGRectMake(270.0f,383.f, 31.0f, 30.0f);
-    [startButton  setBackgroundImage:[UIImage imageNamed:@"u62_normal.png"] forState:UIControlStateNormal];
-    [startButton  addTarget:self action:@selector(returnStartView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:startButton];
-    
-    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 40.0)];
-    centerLable.textColor = [UIColor blackColor];
-    centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
-    centerLable.font = [UIFont fontWithName:@"Arial" size:14.0];
-    
-    UIImageView * promptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u16_dnormal.png"]];
-    promptImageView.frame = CGRectMake(0, 0, 320, 40);
-    [promptImageView addSubview:centerLable];
-    [self.view addSubview:promptImageView];
-    
-    [self getExecutionOrderStatus];
-    
-        
-}
+#pragma Button Call
 -(void)returnStartView:(id)sender
 {
     [driveMap backToTheOriginalPosition];
@@ -203,9 +153,8 @@
 }
 -(void)seeDrivers:(id)sender
 {
-    [driveMap initWithTitle:nil withSubtitle:nil withLatitude:0 withLongtitude:0];
+   // [driveMap initWithTitle:nil withSubtitle:nil withLatitude:0 withLongtitude:0];
     if (driverStatus) {
-        
         NSString * baseUrl = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
         baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSURL * url = [NSURL URLWithString:baseUrl];
@@ -222,27 +171,77 @@
 
 }
 
--(void)viewWillDisappear:(BOOL)animated
+#pragma mark - System Approach
+- (void)viewDidLoad
 {
- 
-    if (requestOrderStatus) {
-        [requestOrderStatus cancel];
-        [requestOrderStatus release];
-        requestOrderStatus = nil;
-    }
+    [super viewDidLoad];
     
-    if (requestDriveStatus) {
-        [requestDriveStatus cancel];
-        [requestDriveStatus release];
-        requestDriveStatus = nil;
-    }
+    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+    self.navigationItem.hidesBackButton = YES;
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     
-
+    UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
+    
+    UIButton*rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    rigthbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    [rigthbutton setTitle:@"主页" forState:UIControlStateNormal];
+    [rigthbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
+    
+    UILabel *topCenterLable = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 0.0, 100.0, 44.0)];
+    topCenterLable.text = @"看司机";
+    topCenterLable.textColor = [UIColor orangeColor];
+    topCenterLable.backgroundColor = [UIColor clearColor];
+    topCenterLable.textAlignment = UITextAlignmentCenter;
+    topCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:topCenterLable];
+    [topCenterLable release];
+    
+    
+    driveMap =[[DriveLocationViewController alloc] init];
+    driveMap.view.frame = CGRectMake(0.0f, 40.0f, 320.0f, 340.0f);
+    [self.view addSubview:driveMap.view];
+    
+    UIButton * seeDriversButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    seeDriversButton.titleLabel.font =[UIFont fontWithName:@"Arial" size:14.0f];
+    seeDriversButton.frame=CGRectMake(100.0f,380.f, 120.0f, 32.0f);
+    [seeDriversButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [seeDriversButton  setBackgroundImage:[UIImage imageNamed:@"u56_normal.png.png"] forState:UIControlStateNormal];
+    [seeDriversButton setTitle:@"看司机" forState:UIControlStateNormal];
+    [seeDriversButton  addTarget:self action:@selector(seeDrivers:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:seeDriversButton];
+    
+    UIButton *startButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    startButton.frame=CGRectMake(270.0f,383.f, 31.0f, 30.0f);
+    [startButton  setBackgroundImage:[UIImage imageNamed:@"u62_normal.png"] forState:UIControlStateNormal];
+    [startButton  addTarget:self action:@selector(returnStartView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:startButton];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 40.0)];
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:14.0];
+    [self.view addSubview:centerLable];
+//    UIImageView * promptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u16_dnormal.png"]];
+//    promptImageView.frame = CGRectMake(0, 0, 320, 40);
+//    [promptImageView addSubview:centerLable];
+//    [self.view addSubview:promptImageView];
+//    [promptImageView release];
+    
+    [self getExecutionOrderStatus];
 }
+
+
 -(void)dealloc
 {
+    [driveMap release];
     [centerLable release];
-   // [map release];
     [super dealloc];
     
 }

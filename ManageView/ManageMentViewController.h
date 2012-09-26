@@ -7,16 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ASIHTTPRequest.h"
 @interface ManageMentViewController : UIViewController
-<UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate>
+<UITableViewDataSource,UITableViewDelegate>
 {
     UIButton* returnButton;
    
     NSMutableArray * listOrderArray;
-    ASIHTTPRequest *requestHTTP;
     UIImageView*topImageView ;
     UILabel*centerLable;
+    
+    NSMutableData * receivedData;
+    NSURLConnection * urlConnecction;
 }
 
 @end

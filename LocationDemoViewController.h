@@ -14,10 +14,16 @@
     BMKMapView* _mapView;
     
     BMKSearch* _search;
+    MapAnnotion * mapAnnon;
+    DrivePosition * drivePositin;
     
     BOOL locationPeson;
     BOOL readonly;
     BOOL firstLoaded;
+    BOOL UpdateUserLocation;
+    BOOL firstCreat;
+    BOOL firstMenue;
+   
     UIView                          *_markerView;
     UIImageView                     *_markerTip;
     UIImageView                     *_markerShadow;
@@ -25,22 +31,14 @@
     CLLocationCoordinate2D         choseLocation;
     UILabel                         *textLabel;
     UIView                          *_glassMenuView;
-    
-    
-    MapAnnotion * mapAnnon;
-    DrivePosition * drivePositin;
-    
-    NSString * driveName;
-    NSString * driverMobile;
-    double _long;
-    double _lat;
-    
+
 }
+@property(nonatomic,retain)NSString*path;
 @property (nonatomic, readwrite) BOOL readonly;
 @property(nonatomic,assign)id<CouponDelegate>LocationDelegate;
 @property (nonatomic, retain) MapAnnotion       *mapAnnon;
-
-//- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withLatitude:(double)lat withLongtitude:(double)lng;
+@property(nonatomic,assign)CLLocationCoordinate2D possibleLoca;
+@property(nonatomic,assign)BOOL possible;
 //-(void)backToTheOriginalPosition;
 
 @end

@@ -13,12 +13,12 @@
 @interface DetailPageViewController : UIViewController
 <UITextViewDelegate,ASIHTTPRequestDelegate,MFMessageComposeViewControllerDelegate>
 {
-    UIImageView *leftDetailImage;
-    UIImageView * giftFrientImage;
+   // UIImageView *leftDetailImage;
+    
     UITextView *giftNumberText;
     UITextView* contentView;
     UILabel *detailCenterLable;
-    
+    UIImageView * giftFrientImage;
     UIImageView*topImageView;
     UIButton* returnButton;
 }

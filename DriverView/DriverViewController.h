@@ -9,12 +9,10 @@
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
 #import "DriveLocationViewController.h"
-//#import "MapViewController.h"
 @interface DriverViewController : UIViewController
 <ASIHTTPRequestDelegate>
 {
     UILabel* centerLable;
-   // MapViewController * map;
     BOOL driverStatus;
     ASIHTTPRequest *requestDriveStatus;
     ASIHTTPRequest *requestOrderStatus;

@@ -9,6 +9,10 @@
 #import "FromPossibleViewController.h"
 #import "OnLineAboutViewController.h"
 #import "BMapKit.h"
+#import "MathViewController.h"
+#import "TelAboutViewController.h"
+#import "custom_tabbar.h"
+#import "AppDelegate.h"
 @interface FromPossibleViewController ()
 
 @end
@@ -24,51 +28,6 @@
     return self;
 }
 
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    self.navigationItem.hidesBackButton = YES;
-    
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
-    [self.navigationController.navigationBar addSubview:topImageView];
-    [topImageView release];
-    
-    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
-    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
-    [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationController.navigationBar addSubview:returnButton];
-   
-    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80, 0, 160, 44)];
-    centerLable.font = [UIFont systemFontOfSize:15];
-    centerLable.textColor = [UIColor whiteColor];
-    centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
-    centerLable.text = @"选择可能的出发地";
-    [self.navigationController.navigationBar addSubview:centerLable];
-    [centerLable release]; 
-
-    
-    CGRect rect;
-    if ([self.possibleCityArray count]*44<416) {
-       rect = CGRectMake(0, 0, 320, [self.possibleCityArray count]*44);
-    }else {
-       rect = CGRectMake(0, 0, 320, 460-44);
-    }
-
-    UITableView * possibleTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
-    possibleTableView.separatorColor = [UIColor grayColor];
-    possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    possibleTableView.delegate = self;
-    possibleTableView.dataSource = self;
-    [self.view addSubview: possibleTableView];
-    [possibleTableView  release];
-    
-}
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -170,9 +129,37 @@
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:cityName,@"City",address,@"Address",lt,@"lation",lo,@"longitue",nil];
     
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"SELECTCITY" object:self userInfo:dict];
-    [self dismissModalViewControllerAnimated:NO];
-
+   // [[NSNotificationCenter defaultCenter] postNotificationName:@"SELECTCITY" object:self userInfo:dict];
+   // [self dismissModalViewControllerAnimated:NO];
+    TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
+    ShareApp.pageManageMent = @"chauffer";
+    
+    UINavigationController * na = [[[UINavigationController alloc] initWithRootViewController:chau] autorelease];
+    // UITabBarItem * tabBar = [[UITabBarItem alloc]init];
+    //  UITabBarItem * tabBar = [[UITabBarItem alloc]initWithTitle:@"首页" image:[UIImage imageNamed:@"navigationbar_home.png"] tag:1];
+    
+    //tabBar.title = @"retur";
+    // tabBar.badgeValue = @"News";
+    // na.tabBarItem = tabBar;
+    
+    OnLineAboutViewController * online = [[[OnLineAboutViewController alloc] init] autorelease];
+    // online.title = @"在线约";
+    online.possible = YES;
+    online.possibleLocation = ptCenter;
+    UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
+    
+    MathViewController *math = [[[MathViewController alloc] init] autorelease];
+    // math.title = @"算算看";
+    UINavigationController * mathNa = [[[UINavigationController alloc] initWithRootViewController:math] autorelease];
+    // mathNa.tabBarController.tabBar.tintColor = [UIColor redColor];
+    
+    
+    NSArray *viewControllerArray = [[[NSArray alloc] initWithObjects:na,onlineNa, mathNa, nil] autorelease];
+    
+    custom_tabbar * tabController  = [[custom_tabbar alloc] init];
+    tabController.viewControllers = viewControllerArray;
+    tabController.selectedIndex = 1;
+    [ShareApp.window setRootViewController:tabController];
 }
 
 -(void)returnMainView:(id)sender
@@ -180,6 +167,50 @@
     [self.navigationController popViewControllerAnimated:YES];
     
 }
+#pragma mark - System Approach
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+	// Do any additional setup after loading the view.
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.navigationItem.hidesBackButton = YES;
+    
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80, 0, 160, 44)];
+    centerLable.font = [UIFont systemFontOfSize:15];
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.text = @"选择可能的出发地";
+    [self.navigationController.navigationBar addSubview:centerLable];
+    
+    CGRect rect;
+    if ([self.possibleCityArray count]*44<416) {
+        rect = CGRectMake(0, 0, 320, [self.possibleCityArray count]*44);
+    }else {
+        rect = CGRectMake(0, 0, 320, 460-44);
+    }
+    
+    UITableView * possibleTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
+    possibleTableView.separatorColor = [UIColor grayColor];
+    possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    possibleTableView.delegate = self;
+    possibleTableView.dataSource = self;
+    [self.view addSubview: possibleTableView];
+    [possibleTableView  release];
+    
+}
+
 -(void)viewWillDisappear:(BOOL)animated
 {
     topImageView.hidden = YES;
@@ -189,6 +220,8 @@
 }
 -(void)dealloc
 {
+    [centerLable release]; 
+    [topImageView release];
     [possibleCityArray release];
     [possibleCity release];
     [super dealloc];

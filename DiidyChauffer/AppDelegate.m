@@ -8,16 +8,22 @@
 
 #import "AppDelegate.h"
 #import "LocationDemoViewController.h"
-
+#import "MobClick.h"
+#import "CONST.h"
 #import "MainViewController.h"
 #import "NoviceGuidanceViewController.h"
 #import "Reachability.h"
+
+
+#import "QFDatabase.h"
+#import "FMDatabase.h"
+#import "FMDatabasePool.h"
 @implementation AppDelegate
 
 @synthesize reachable;
 @synthesize window = _window,phoneVerion,deviceName,uniqueString,logInState;
 @synthesize pageManageMent,mobilNumber;
-
+@synthesize mDatabase;
 - (void)dealloc
 {
     self.logInState =nil;
@@ -29,6 +35,35 @@
     [_window release];
     [super dealloc];
 }
+
+-(void)creatDatabase
+{
+
+    mDatabase = [[QFDatabase alloc] init];
+    [mDatabase openDatabase:DATABASE_TYPE_FMDB];
+
+}
+- (void)umengTrack {
+    //    [MobClick setCrashReportEnabled:NO]; // 如果不需要捕捉异常，注释掉此行
+    [MobClick setLogEnabled:YES];  // 打开友盟sdk调试，注意Release发布时需要注释掉此行,减少io消耗
+    //    [MobClick setAppVersion:@"2.0"]; //参数为NSString * 类型,自定义app版本信息，如果不设置，默认从CFBundleVersion里取
+    //
+    [MobClick startWithAppkey:UMENG_APPKEY reportPolicy:(ReportPolicy) REALTIME channelId:nil];
+    //   reportPolicy为枚举类型,可以为 REALTIME, BATCH,SENDDAILY,SENDWIFIONLY几种
+    //   channelId 为NSString * 类型，channelId 为nil或@""时,默认会被被当作@"App Store"渠道
+    
+    //      [MobClick checkUpdate];   //自动更新检查, 如果需要自定义更新请使用下面的方法,需要接收一个(NSDictionary *)appInfo的参数
+    //    [MobClick checkUpdateWithDelegate:self selector:@selector(updateMethod:)];
+    
+   // [MobClick updateOnlineConfig];  //在线参数配置
+    
+    //    1.6.8之前的初始化方法
+    //    [MobClick setDelegate:self reportPolicy:REALTIME];  //建议使用新方法
+//    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onlineConfigCallBack:) name:UMOnlineConfigDidFinishedNotification object:nil];
+    
+}
+
+
 
 -(void)getDeviceInformation{
     
@@ -71,25 +106,21 @@
         [guide release];
         
     }
-    
-    
-    
 }
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
     // Override point for customization after application launch.
-    
+    [self umengTrack];
+    [self creatDatabase];
     _mapManager = [[BMKMapManager alloc]init];
     // 如果要关注网络及授权验证事件，请设定generalDelegate参数
-	BOOL ret = [_mapManager start:@"96F593C80D691D61026489D7624FA74B5D18C089" generalDelegate:nil];
+	BOOL ret = [_mapManager start:@"96F593C80D691D61026489D7624FA74B5D18C089" generalDelegate:self];
     
 	if (!ret) {
 		NSLog(@"manager start failed!");
 	}
-    
-       
     
     [self getDeviceInformation];
     

@@ -30,60 +30,7 @@
     }
     return self;
 }
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.navigationItem.hidesBackButton = YES;
-    
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-    couponArray = [[NSMutableArray alloc] initWithCapacity:0];
-    self.couponTableView.delegate = self;
-    self.couponTableView.dataSource =self;
-    self.couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-//    for (NSIndexPath *ip in selectArray) {
-//        DIIdyModel * diidy = [useCouponArray objectAtIndex:ip.section];
-//        diidy.numberID++;
-//        NSLog(@"%d",diidy.numberID);
-//    }
-
-    
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
-    [self.navigationController.navigationBar addSubview:topImageView];
-
-    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
-    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
-    [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationController.navigationBar addSubview:returnButton];
-
-    self.departureLable.text =[self.orderArray objectAtIndex:0];//出发地
-    self.departureTimeLable.text = [self.orderArray objectAtIndex:1];//出发时间
-    self.numberOfPeopleLable.text =[self.orderArray objectAtIndex:2];//人数
-    self.destinationLable.text = [self.orderArray objectAtIndex:3];//目的地
-    self.contactLable.text = [self.orderArray objectAtIndex:4];//联系人
-    self.mobilNumberLable.text = [self.orderArray objectAtIndex:5];//手机号码
-   
-    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button3.png"] forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
-    [rigthbutton addTarget:self action:@selector(submitOrders:) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationController.navigationBar addSubview:rigthbutton];
-    
-    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
-    centerLable.font = [UIFont systemFontOfSize:17];
-    centerLable.textColor = [UIColor whiteColor];
-    centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
-    centerLable.text =@"订 单 预 览";
-    [self.navigationController.navigationBar addSubview:centerLable];
-    [centerLable release];
-}
-
+#pragma mark-TableView
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     return 30;
@@ -102,6 +49,7 @@
     if(cell ==nil)
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+        cell.backgroundColor = [UIColor whiteColor];
     }
     
     NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:indexPath.row];
@@ -112,7 +60,7 @@
     
     return cell;
 }
-
+#pragma mark-Button
 -(void)returnFillOrderView:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
@@ -129,6 +77,8 @@
     [alert release];
 
 }
+
+#pragma mark-http
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex==0) {
@@ -146,7 +96,7 @@
             self.contactLable.text = @"无";
         }
         
-         NSMutableString * couString = [[NSMutableString alloc]initWithCapacity:0];
+         NSMutableString * couString = [[[NSMutableString alloc]initWithCapacity:0] autorelease];
         
          for (int i =0; i<[self.useCouponArray count]; i++) {
             
@@ -166,7 +116,7 @@
         baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSURL * url = [NSURL URLWithString:baseUrl];
         ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-         [request setTimeOutSeconds:15.0];
+        [request setTimeOutSeconds:15.0];
         [request setDelegate:self];
         [request setTag:505];
         [request startAsynchronous];
@@ -204,27 +154,85 @@
 {
         [self parseStringJson:[request responseString]];
 }
+
+#pragma mark - System Approach
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.navigationItem.hidesBackButton = YES;
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    
+    couponArray = [[NSMutableArray alloc] initWithCapacity:0];
+    self.couponTableView.delegate = self;
+    self.couponTableView.dataSource =self;
+   // self.couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+    //    for (NSIndexPath *ip in selectArray) {
+    //        DIIdyModel * diidy = [useCouponArray objectAtIndex:ip.section];
+    //        diidy.numberID++;
+    //        NSLog(@"%d",diidy.numberID);
+    //    }
+    
+    
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    self.departureLable.text =[self.orderArray objectAtIndex:0];//出发地
+    self.departureTimeLable.text = [self.orderArray objectAtIndex:1];//出发时间
+    self.numberOfPeopleLable.text =[self.orderArray objectAtIndex:2];//人数
+    self.destinationLable.text = [self.orderArray objectAtIndex:3];//目的地
+    self.contactLable.text = [self.orderArray objectAtIndex:4];//联系人
+    self.mobilNumberLable.text = [self.orderArray objectAtIndex:5];//手机号码
+    
+    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button3.png"] forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
+    [rigthbutton addTarget:self action:@selector(submitOrders:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
+    centerLable.font = [UIFont systemFontOfSize:17];
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.text =@"订 单 预 览";
+    [self.navigationController.navigationBar addSubview:centerLable];
+    
+}
+
 -(void)viewDidDisappear:(BOOL)animated
 {
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     rigthbutton.hidden = YES;
     centerLable.hidden = YES;
-
+    
 }
 -(void)dealloc
 {
-    [selectArray release];
+    [centerLable release];
+    [couponArray release];
+    [contactLable release];
     [couponTableView release];
-    [useCouponArray release];
-    [orderArray release];
     [departureLable release];
     [departureTimeLable release];
-    [numberOfPeopleLable  release];
     [destinationLable release];
-    [contactLable release];
     [mobilNumberLable release];
+    [numberOfPeopleLable  release];
     [remarkLable  release];
+    [orderArray release];
+    [useCouponArray release];
+    [topImageView release];
+    [selectArray release];
     [super dealloc];
 
 }

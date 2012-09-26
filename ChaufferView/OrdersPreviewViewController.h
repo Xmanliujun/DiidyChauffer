@@ -18,9 +18,9 @@
     UIImageView*topImageView;
     UILabel* centerLable;
 }
-@property(nonatomic,retain)NSArray * orderArray;
-@property(nonatomic,retain)NSArray * useCouponArray;
-@property(nonatomic,retain)NSArray * selectArray;
+@property(nonatomic,retain)NSArray * orderArray;//存放填写的内容
+@property(nonatomic,retain)NSArray * useCouponArray;//存放选择的优惠劵
+@property(nonatomic,retain)NSArray * selectArray;//存放数据类
 @property(nonatomic,retain)IBOutlet UILabel *departureLable;//出发地
 @property(nonatomic,retain)IBOutlet UILabel *departureTimeLable;//出发时间
 @property(nonatomic,retain)IBOutlet UILabel *numberOfPeopleLable;//人数

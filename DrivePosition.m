@@ -33,6 +33,7 @@
 }
 
 -(NSString *)title{
+    NSLog(@"ddd");
     return self.newtitle;
 }
 

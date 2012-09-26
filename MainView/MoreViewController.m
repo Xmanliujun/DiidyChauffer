@@ -13,12 +13,14 @@
 #import "AboutDiiDyViewController.h"
 #import "NoviceGuidanceViewController.h"
 #import "CONST.h"
+#import "MainViewController.h"
+#import "AppDelegate.h"
 @interface MoreViewController ()
 
 @end
 
 @implementation MoreViewController
-@synthesize moreNameArray;
+@synthesize moreNameArray,whereLand;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -30,53 +32,16 @@
 
 -(void)returnORLandingView:(UIButton*)sender
 {
-    if (sender.tag==201) {
-        [self dismissModalViewControllerAnimated:NO];
+    if ([self.whereLand isEqualToString:@"Land"]) {
+        MainViewController * main = [[MainViewController alloc] init];
+        [ShareApp.window setRootViewController:main];
+        [main release];
     }else {
-        
+        [self dismissModalViewControllerAnimated:NO];
     }
-
+  
 }
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-     self.navigationItem.hidesBackButton = YES;   
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRequestCompelte:) name:MORE_QUEST object:nil];
-    
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
-    [self.navigationController.navigationBar addSubview:topImageView];
-    
-    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
-    returnButton.tag = 201;
-    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
-    [returnButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationController.navigationBar addSubview:returnButton];
-    
-    
-    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
-    centerLable.text = @"更 多";
-    centerLable.textColor = [UIColor whiteColor];
-    centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
-    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
-    [self.navigationController.navigationBar addSubview:centerLable];
-    [centerLable release];
-
-    self.moreNameArray = [NSArray  arrayWithObjects:@"密码修改",@"意见反馈",@"关于滴滴",@"新手引导",@"注销", nil];
-    
-    UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
-    moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    [moreTableView setSeparatorColor:[UIColor blackColor]];
-    moreTableView.delegate = self;
-    moreTableView.dataSource = self;
-    [self.view addSubview:moreTableView];
-    [moreTableView release];
-    
-    }
+#pragma mark-TableView
 -(NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
     return 2;
@@ -88,8 +53,6 @@
     }else {
         return 4;
     }
-
-
 }
 
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -122,13 +85,16 @@
         FeedBackViewController * feedBack = [[FeedBackViewController alloc] init];
         feedBack.judge = @"more";
         [self.navigationController pushViewController:feedBack animated:YES];
+        [feedBack release];
     }else if (indexPath.section==1&&indexPath.row ==1) {
         AboutDiiDyViewController*aboutDiidy = [[AboutDiiDyViewController alloc] initWithNibName:@"AboutDiiDyViewController" bundle:nil];
         [self.navigationController pushViewController:aboutDiidy animated:YES];
+        [aboutDiidy release];
     }else if (indexPath.section==1&&indexPath.row==2) {
         NoviceGuidanceViewController * noviceGudice= [[NoviceGuidanceViewController alloc] init];
         noviceGudice.noviceGuidan = @"more";
         [self.navigationController pushViewController:noviceGudice animated:YES];
+        [noviceGudice release];
     }
 
 }
@@ -156,6 +122,43 @@
     }
     
 }
+#pragma mark - System Approach
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+     self.navigationItem.hidesBackButton = YES;   
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRequestCompelte:) name:MORE_QUEST object:nil];
+    
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0f,5.0f,55.0f,35.0f);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f,0.0f,160.0f,44.0f)];
+    centerLable.text = @"更 多";
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0f];
+    [self.navigationController.navigationBar addSubview:centerLable];
+   
+    self.moreNameArray = [NSArray  arrayWithObjects:@"密码修改",@"意见反馈",@"关于嘀嘀",@"新手引导",@"注销", nil];
+    
+    UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    [moreTableView setSeparatorColor:[UIColor blackColor]];
+    moreTableView.delegate = self;
+    moreTableView.dataSource = self;
+    [self.view addSubview:moreTableView];
+    [moreTableView release];
+    
+}
 
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -173,7 +176,10 @@
 }
 -(void)dealloc
 {
-   
+    [centerLable release];
+    [moreNameArray release];
+    [whereLand release];
+    [topImageView release];
     [super dealloc];
 }
 - (void)viewDidUnload

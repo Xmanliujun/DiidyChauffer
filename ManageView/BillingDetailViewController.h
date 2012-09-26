@@ -10,6 +10,14 @@
 #import "ASIHTTPRequest.h"
 @interface BillingDetailViewController : UIViewController
 <ASIHTTPRequestDelegate>
+{
+    
+    UIButton* returnButton;
+    UIImageView*topImageView ;
+    UILabel*centerLable;
+
+
+}
 @property(nonatomic,retain)IBOutlet UILabel *feesReceivableLable;//应收费用
 @property(nonatomic,retain)IBOutlet UILabel *couponLable;//优惠劵
 @property(nonatomic,retain)IBOutlet UILabel *enioyCardLable;//畅享卡

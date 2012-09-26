@@ -9,10 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface MainViewController : UIViewController
+<UIActionSheetDelegate>
 {   
     BOOL price;
     BOOL server;
     UIImageView *priceImageView;
+   
 }
 
 @end

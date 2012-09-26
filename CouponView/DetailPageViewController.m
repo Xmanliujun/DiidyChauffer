@@ -9,6 +9,7 @@
 #import "DetailPageViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "CONST.h"
+#import "SBJson.h"
 #import "AppDelegate.h"
 
 @interface DetailPageViewController ()
@@ -25,9 +26,9 @@
     }
     return self;
 }
+#pragma Self Call
 -(void)creatGiftToFriendView
 {
-    
     UILabel * giftNumberLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0, 10.0, 90.0, 40.0)];
     giftNumberLable.text = @"赠送给(手机号) :";
     giftNumberLable.backgroundColor = [UIColor clearColor];
@@ -53,7 +54,6 @@
     [determineButton setBackgroundImage:determineImage forState:UIControlStateNormal];
     [determineButton setTitle:@"确定" forState:UIControlStateNormal];
     [determineButton addTarget:self action:@selector(determineSender:) forControlEvents:UIControlEventTouchUpInside];
-    
     
     UIImage *cancelImage = [UIImage imageNamed:@"u104_normal.png"];
     UIButton* cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -91,13 +91,10 @@
     [giftFrientImage addSubview:giftNumberLable];
     [self.view addSubview:giftFrientImage];
     [giftNumberLable release];
+    [giftLineImage release];
 }
-- (void)viewDidLoad
+-(void)setTheNavigationBar
 {
-    [super viewDidLoad];
-     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    self.navigationItem.hidesBackButton = YES;
-    
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
     topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
     [self.navigationController.navigationBar addSubview:topImageView];
@@ -109,22 +106,154 @@
     detailCenterLable.textAlignment = UITextAlignmentCenter;
     detailCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:detailCenterLable];
-
+    
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
     returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnDetailPageView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
+}
 
+
+-(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
+{
+    if([text isEqualToString:@"\n"])
+    {
+        [contentView resignFirstResponder];
     
+    }
+    return YES;
+
+}
+#pragma Button Call
+-(void)returnDetailPageView:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
+
+}
+
+-(void)freeConsultationCalls:(id)sender
+{
+    UIWebView*callWebview =[[UIWebView alloc] init];
+    NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
+    [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
+    //记得添加到view上
+    [self.view addSubview:callWebview]; 
+    [callWebview release];
+
+}
+-(void)pushGiftToFriendView:(id)sender
+{
+    giftFrientImage.hidden = NO;
+    [giftNumberText becomeFirstResponder];
+
+}
+-(void)cancelSender:(id)sender
+{
+    giftNumberText.text = @"";
+    giftFrientImage.hidden = YES;
+    [giftNumberText resignFirstResponder];
+    [contentView resignFirstResponder];
+
+}
+
+#pragma Message Sender
+- (void)displaySMSComposerSheet {
+    MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
+    picker.messageComposeDelegate = self;
+    
+    if (giftNumberText.text != nil) {
+       NSString * content = [NSString stringWithFormat:@"您的朋友%@送您1张%@，喝酒了疲劳了不想开车了，记着找嘀嘀！记住电话4006960666,客户端约代驾更方便，+wap嘀嘀代驾客户端下载地址。",ShareApp.mobilNumber,self.detailCoupon];
+        picker.body = [[[NSString alloc] initWithString:content] autorelease];
+        }
+    else {
+       
+        }
+    NSArray *array = [NSArray arrayWithObjects:giftNumberText.text,nil];
+    picker.recipients = array;
+    [self presentModalViewController:picker animated:YES];
+    [picker release];
+   
+}
+
+- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
+{
+    [self dismissModalViewControllerAnimated:YES];
+    
+    if (result == MessageComposeResultCancelled)
+        NSLog(@"Message cancelled");
+        else if (result == MessageComposeResultSent)
+            NSLog(@"Message sent");
+            else 
+            NSLog(@"Message failed") ; 
+}
+#pragma DownLoad Parson
+-(void)determineSender:(id)sender
+{
+    NSString * baseUrl = [NSString stringWithFormat:GIFTCOUPONS,ShareApp.mobilNumber,giftNumberText.text,couponID];
+    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL * url = [NSURL URLWithString:baseUrl];
+    
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+    [request setDelegate:self];
+    [request setTag:100];
+    [request startAsynchronous];
+}
+-(void)parseStringJson:(NSString *)str
+{
+    
+    NSDictionary * jsonParser =[str JSONValue];
+    NSString * returenNews =[jsonParser objectForKey:@"r"];
+    
+    if([returenNews isEqualToString:@"s"]){
+   
+    Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
+    if (messageClass != nil) {
+        if ([messageClass canSendText]) {
+            [self displaySMSComposerSheet];
+            }
+        else {
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"设备没有短信功能" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+            }
+        }
+    else {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"iOS版本过低,iOS4.0以上才支持程序内发送短信" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        }
+
+    }else {
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送失败，请重试" delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }
+    
+    //[self.navigationController popViewControllerAnimated:YES];
+}
+
+-(void)requestFinished:(ASIHTTPRequest *)request
+{
+    
+    [self parseStringJson:[request responseString]];
+}
+#pragma mark - System Approach
+
+
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.navigationItem.hidesBackButton = YES;
+    [self setTheNavigationBar];
     
     UIImage * lineImage = [UIImage imageNamed:@"u84_line.png"];
     UIImageView * lineImageView =[[UIImageView alloc] initWithImage:lineImage];
     lineImageView.frame = CGRectMake(15.0, 100.0, lineImage.size.width, lineImage.size.height);
     [self.view addSubview:lineImageView];
     [lineImageView release];
-    
     
     UIImage * nameImage = [UIImage imageNamed:@"u80_normal.png"];
     UIImageView * detailNameImage = [[UIImageView alloc] initWithImage:nameImage];
@@ -148,7 +277,7 @@
     [presentionButton setTitle:@"赠送" forState:UIControlStateNormal];
     [presentionButton addTarget:self action:@selector(pushGiftToFriendView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:presentionButton];
-
+    
     UIButton* telFreeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telFreeButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
     telFreeButton.frame=CGRectMake(180.0, 120.0, 124.0, 38.0);
@@ -157,159 +286,32 @@
     [telFreeButton setTitle:@"400免费咨询电话" forState:UIControlStateNormal];
     [telFreeButton addTarget:self action:@selector(freeConsultationCalls:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:telFreeButton];
-
+    
     UIImage * detailImage =[UIImage imageNamed:@"u88_normal.png"];
     UIImageView* detailImageView = [[UIImageView alloc] initWithImage:detailImage];
     detailImageView.frame = CGRectMake(10.0, 170.0, detailImage.size.width, detailImage.size.height);
     [self.view addSubview:detailImageView];
+    [detailImageView release];
     
-
     [self creatGiftToFriendView];
 }
 
--(BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
-{
-    if([text isEqualToString:@"\n"])
-    {
-        [contentView resignFirstResponder];
-    
-    }
-    return YES;
-
-}
--(void)returnDetailPageView:(id)sender
-{
-    [self.navigationController popViewControllerAnimated:YES];
-
-}
-
--(void)freeConsultationCalls:(id)sender
-{
-    UIWebView*callWebview =[[UIWebView alloc] init];
-    NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
-    [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
-    //记得添加到view上
-    [self.view addSubview:callWebview]; 
-
-}
--(void)pushGiftToFriendView:(id)sender
-{
-    giftFrientImage.hidden = NO;
-    [giftNumberText becomeFirstResponder];
-
-}
--(void)cancelSender:(id)sender
-{
-    giftNumberText.text = @"";
-    giftFrientImage.hidden = YES;
-    [giftNumberText resignFirstResponder];
-    [contentView resignFirstResponder];
-
-}
-
-
-- (void)displaySMSComposerSheet {
-    MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
-    picker.messageComposeDelegate = self;
-    
-    if (giftNumberText.text != nil) {
-       NSString * content = [NSString stringWithFormat:@"您的朋友%@送您1张%@，喝酒了疲劳了不想开车了，记着找嘀嘀！记住电话4006960666,客户端约代驾更方便，+wap嘀嘀代驾客户端下载地址。",ShareApp.mobilNumber,self.detailCoupon];
-        picker.body = [[NSString alloc] initWithString:content];
-        }
-    else {
-       
-        }
-    NSArray *array = [NSArray arrayWithObjects:giftNumberText.text,nil];
-    picker.recipients = array;
-   [self presentModalViewController:picker animated:YES];
-    [picker release];
-   
-}
-
-- (void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
-{
-    [self dismissModalViewControllerAnimated:YES];
-    
-    if (result == MessageComposeResultCancelled)
-        NSLog(@"Message cancelled");
-        else if (result == MessageComposeResultSent)
-            NSLog(@"Message sent");
-            else 
-                NSLog(@"Message failed") ; 
-            }
--(void)determineSender:(id)sender
-{
-    
-    NSString * baseUrl = [NSString stringWithFormat:GIFTCOUPONS,ShareApp.mobilNumber,giftNumberText.text,couponID];
-    NSLog(@"%@",baseUrl);
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setDelegate:self];
-    [request setTag:100];
-    [request startAsynchronous];
-   
-}
-
--(void)parseStringJson:(NSString *)str
-{
-    
-    if([str isEqualToString:@"s"]){
-   
-    Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
-    if (messageClass != nil) {
-        if ([messageClass canSendText]) {
-            [self displaySMSComposerSheet];
-            }
-        else {
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"设备没有短信功能" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-            }
-        }
-    else {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"iOS版本过低,iOS4.0以上才支持程序内发送短信" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-        }
-
-    }else {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送失败，请重试" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    }
-    
-    
-    NSLog(@"%@",str);
-    //[self.navigationController popViewControllerAnimated:YES];
-}
-
--(void)requestFinished:(ASIHTTPRequest *)request
-{
-    
-    [self parseStringJson:[request responseString]];
-}
-
-
--(void)viewWillDisappear:(BOOL)animated
-{
-    leftDetailImage.hidden = YES;
-    detailCenterLable.hidden = YES;
-}
 -(void)viewDidDisappear:(BOOL)animated
 {
+    detailCenterLable.hidden = YES;
     topImageView.hidden = YES;
     returnButton.hidden = YES;
 
 }
 -(void)dealloc
 {
-    [detailCoupon release];
+    [detailCenterLable release];
+    [topImageView release];
     [couponID release];
+    [contentView release];
+    [detailCoupon release];
     [giftNumberText release];
     [giftFrientImage release];
-    [leftDetailImage release];
     [super dealloc];
 
 }

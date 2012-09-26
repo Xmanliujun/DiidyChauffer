@@ -48,6 +48,7 @@
 	UIImageView *tabbar_bg = [[UIImageView alloc] initWithFrame:CGRectMake(0, 430, 320, 50)];
 	[tabbar_bg setImage:tab_bar_bg.image];
 	[self.view addSubview:tabbar_bg];
+    [tabbar_bg release];
 	
 	tab_btn = [[NSMutableArray alloc] initWithCapacity:0];
 	for (int i = 0; i < tab_num; i++)
@@ -95,11 +96,11 @@
 			[[tab_btn objectAtIndex:1] setSelected:false];
 			[[tab_btn objectAtIndex:2] setSelected:true];
 			break;
-		case 3:
-			[[tab_btn objectAtIndex:0] setSelected:false];
-			[[tab_btn objectAtIndex:1] setSelected:false];
-			[[tab_btn objectAtIndex:2] setSelected:false];
-			break;
+//		case 3:
+//			[[tab_btn objectAtIndex:0] setSelected:false];
+//			[[tab_btn objectAtIndex:1] setSelected:false];
+//			[[tab_btn objectAtIndex:2] setSelected:false];
+//			break;
 	}	
 	
 	self.selectedIndex = tabID;

@@ -13,6 +13,7 @@
 #import "AppDelegate.h"
 #import "DIIdyModel.h"
 #import "ManageTableViewCell.h"
+#import "QFDatabase.h"
 @interface ManageMentViewController ()
 
 @end
@@ -27,6 +28,29 @@
     }
     return self;
 }
+#pragma mark - Self Call
+-(void)setTheNavigationBar
+{
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    [self.navigationController.navigationBar addSubview:topImageView];
+    
+       returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
+    [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:returnButton];
+    
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
+    centerLable.text = @"订 单 列 表";
+    centerLable.textColor = [UIColor whiteColor];
+    centerLable.backgroundColor = [UIColor clearColor];
+    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
+    [self.navigationController.navigationBar addSubview:centerLable];
+}
+
 -(void)creatNOOrdersView
 {
     
@@ -41,17 +65,18 @@
     noOrderLable.font = [UIFont fontWithName:@"Arial" size:16.0];
     noOrderLable.lineBreakMode = UILineBreakModeWordWrap;
     noOrderLable.numberOfLines = 0;
+    
     [self.view addSubview:noOrderLable];
-    [noOrderLable release];
     [self.view addSubview:noOrderImageView];
+    
     [noOrderImageView release];
+    [noOrderLable release];
     
 }
 
 
 -(void)creatHaveOrderView
 {
-    
     UITableView * orderTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     orderTableView.delegate = self;
@@ -69,20 +94,56 @@
     NSLog(@"%@",baseUrl);
    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL * url = [NSURL URLWithString:baseUrl];
-    requestHTTP = [ASIHTTPRequest requestWithURL:url];
-    [requestHTTP setDelegate:self];
-  
-    [requestHTTP startAsynchronous];
+
+    NSURLRequest * urlRequest = [NSURLRequest requestWithURL:url];  
     
+     urlConnecction = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];  
+    //为了安全，捕捉不存在的连接  
+    if(urlConnecction != nil)  {
+        receivedData =[[NSMutableData data] retain];
+        return;
+    }
+          
 }
+#pragma mark-HTTPDown
+-(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response{  
+    
+    [receivedData setLength:0];
+    
+}  
+
+-(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data{  
+    
+    [receivedData appendData:data];
+    
+    
+}  
+-(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{  
+    
+    [urlConnecction release]; 
+    [receivedData release];
+    NSLog(@"Connection failed! Error - %@ %@", 
+          [error localizedDescription], 
+          [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]); 
+    
+}  
+-(void)connectionDidFinishLoading:(NSURLConnection *)connection{  
+    
+   NSString *result = [[[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding] autorelease];
+    [self parseStringJson:result];
+    [urlConnecction release]; 
+    [receivedData release];
+
+}  
+
 
 -(void)parseStringJson:(NSString *)str
 {
-    
-    DIIdyModel * diidy = [[DIIdyModel alloc] init];
     NSArray* jsonParser =[str JSONValue];
     
     for(int i = 0;i<[jsonParser count];i++){
+        DIIdyModel * diidy = [[DIIdyModel alloc] init];
+        
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
         diidy.orderID = [diidyDict objectForKey:@"orderid"];
         diidy.startTime = [diidyDict objectForKey:@"starttime"];
@@ -115,47 +176,8 @@
     }
 }
 
--(void)requestFinished:(ASIHTTPRequest *)request
-{
-   
-    NSLog(@"%@",[request responseString]);
-    [self parseStringJson:[request responseString]];
-}
-
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    
-    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
-    self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
-    [self.navigationController.navigationBar addSubview:topImageView];
-
-    listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
-    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
-    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
-    [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationController.navigationBar addSubview:returnButton];
-
-    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
-    centerLable.text = @"订 单 列 表";
-    centerLable.textColor = [UIColor whiteColor];
-    centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
-    centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
-    [self.navigationController.navigationBar addSubview:centerLable];
-    
-    [self goToTheDownLoadPage];
-    
-}
 -(void)returnMainView:(id)sender
 {
-    NSLog(@"2");
     [self dismissModalViewControllerAnimated:YES];
     
 }
@@ -189,12 +211,10 @@
     if ([diidy.status isEqualToString:@"已受理"]) {
         cell.statusLable.textColor = [UIColor redColor];
     }else if([diidy.status isEqualToString:@"完成"]){
-        cell.statusLable.textColor = [UIColor blackColor];
+        cell.statusLable.textColor = [UIColor greenColor];
     }else {
         cell.statusLable.textColor = [UIColor grayColor];
     }
-    
-    
     cell.statusLable.text = diidy.status;
     cell.orderNumberLable.text = diidy.orderID;
     cell.startTimeLable.text = diidy.startTime;
@@ -207,20 +227,29 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    
-    
     OrderDetailsViewController * orderDetail = [[OrderDetailsViewController alloc] init];
     orderDetail.diidyModel = [listOrderArray objectAtIndex:indexPath.row];
     [self.navigationController pushViewController:orderDetail animated:YES];
     [orderDetail release];
 }
+
+#pragma mark - System Approach
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+    self.navigationItem.hidesBackButton = YES;
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+   
+    listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
+    [self setTheNavigationBar];
+    [self goToTheDownLoadPage];
+    
+}
+
+
 -(void)viewDidDisappear:(BOOL)animated
 {
-//    if (requestHTTP) {
-//       [requestHTTP cancel];
-//        [requestHTTP release];
-//        requestHTTP = nil;
-//    }
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     centerLable.hidden = YES;
@@ -234,7 +263,8 @@
 -(void)dealloc
 {
     [listOrderArray release];
-    
+    [topImageView release];
+    [centerLable release];
     [super dealloc];
     
 }
