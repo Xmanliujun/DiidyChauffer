@@ -357,10 +357,10 @@
     locationPeson = YES;
     
     NSDictionary *dict = notify.userInfo;
-    
-    NSString *cityName = [dict objectForKey:@"City"];
-    
-    NSString * address = [dict objectForKey:@"Address"];
+//    
+//    NSString *cityName = [dict objectForKey:@"City"];
+//    
+//    NSString * address = [dict objectForKey:@"Address"];
     NSString* lation =[dict objectForKey:@"lation"];
     NSString * locations = [dict objectForKey:@"longitue"];
     

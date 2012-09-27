@@ -120,17 +120,19 @@
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+   
     BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
-    NSString * cityName =bmn.name;
-    NSString*address = bmn.address;
     CLLocationCoordinate2D ptCenter = bmn.pt;
-    NSString * lt = [NSString stringWithFormat:@"%f",ptCenter.latitude];
-    NSString * lo = [NSString stringWithFormat:@"%f",ptCenter.longitude];
-    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:cityName,@"City",address,@"Address",lt,@"lation",lo,@"longitue",nil];
-    
-    
-   // [[NSNotificationCenter defaultCenter] postNotificationName:@"SELECTCITY" object:self userInfo:dict];
-   // [self dismissModalViewControllerAnimated:NO];
+//    NSString * cityName =bmn.name;
+//    NSString*address = bmn.address;
+//    NSString * lt = [NSString stringWithFormat:@"%f",ptCenter.latitude];
+//    NSString * lo = [NSString stringWithFormat:@"%f",ptCenter.longitude];
+//    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:cityName,@"City",address,@"Address",lt,@"lation",lo,@"longitue",nil];
+//    
+//    
+//    [[NSNotificationCenter defaultCenter] postNotificationName:@"SELECTCITY" object:self userInfo:dict];
+//    [self dismissModalViewControllerAnimated:NO];
     TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
     ShareApp.pageManageMent = @"chauffer";
     

@@ -91,13 +91,10 @@
 {
     
     NSString * baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
-    NSLog(@"%@",baseUrl);
-   baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL * url = [NSURL URLWithString:baseUrl];
-
     NSURLRequest * urlRequest = [NSURLRequest requestWithURL:url];  
-    
-     urlConnecction = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];  
+    urlConnecction = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];  
     //为了安全，捕捉不存在的连接  
     if(urlConnecction != nil)  {
         receivedData =[[NSMutableData data] retain];
@@ -136,7 +133,6 @@
 
 }  
 
-
 -(void)parseStringJson:(NSString *)str
 {
     NSArray* jsonParser =[str JSONValue];
@@ -166,14 +162,18 @@
         
         [listOrderArray addObject:diidy];
         [diidy release];
-    }
-    if(([jsonParser count])==0)
-    {
-        [self creatNOOrdersView];
-    }else {
-        [self creatHaveOrderView];
+        [ShareApp.mDatabase insertToDatabase:listOrderArray];
+        NSArray * assss = [ShareApp.mDatabase readDataWithFMDB];
+        NSLog(@"ssss%@",assss);
         
     }
+//    if(([jsonParser count])==0)
+//    {
+//        [self creatNOOrdersView];
+//    }else {
+//        [self creatHaveOrderView];
+//        
+//    }
 }
 
 -(void)returnMainView:(id)sender
@@ -262,9 +262,10 @@
 }
 -(void)dealloc
 {
+    [centerLable release];
     [listOrderArray release];
     [topImageView release];
-    [centerLable release];
+    
     [super dealloc];
     
 }
