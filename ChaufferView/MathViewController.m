@@ -73,6 +73,27 @@
     switch (component) {
         case 0:
             travelTime.text = [NSString stringWithFormat:@"%d:",row];
+            if (row>=21||row<6) {
+                if (_sixOutSide.selected) {
+                     startLable.text = @"出发地在六环外加收:50元.";
+                }
+                
+                if (_deSixOutSide.selected) {
+                     endLable.text = @"目的地在五环外加收:50元";
+                }
+            
+            }else {
+                if (_sixOutSide.selected) {
+                    startLable.text = @"出发地在六环外加收:20元.";
+                }
+                
+                if (_deSixOutSide.selected) {
+                    endLable.text = @"目的地在五环外加收:20元";
+                }
+
+            }
+            
+            
             break;
         case 1:
             if(row<10){

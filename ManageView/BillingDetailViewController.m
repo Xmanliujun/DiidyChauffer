@@ -32,10 +32,10 @@
     NSLog(@"%@",baseUrl);
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL * url = [NSURL URLWithString:baseUrl];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setDelegate:self];
-    [request setTag:102];
-    [request startAsynchronous];
+    billRequest = [ASIHTTPRequest requestWithURL:url];
+    [billRequest setDelegate:self];
+    [billRequest setTag:102];
+    [billRequest startAsynchronous];
 }
 
 -(void)parseStringJson:(NSString *)str
@@ -55,7 +55,7 @@
 
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
-    
+    billRequest = nil;
     [self parseStringJson:[request responseString]];
 }
 -(void)setTheNavigationBar
@@ -94,7 +94,15 @@
     [self setTheNavigationBar]; 
     [self downLoadTheOrderDetail];
 }
+-(void)viewWillDisappear:(BOOL)animated
+{
+    if (billRequest) {
+        [billRequest clearDelegatesAndCancel];
+        [billRequest release];
+    }
+    
 
+}
 -(void)viewDidDisappear:(BOOL)animated
 {
     topImageView.hidden = YES;

@@ -89,8 +89,39 @@
 
 -(void)goToTheDownLoadPage
 {
-    
-    NSString * baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
+    NSArray * sqlitArray = [ShareApp.mDatabase readDataWithFMDB];
+    NSString * baseUrl;
+    if (sqlitArray.count!=0) {
+        sqlitBool = YES;
+        DIIdyModel*diiModel = [sqlitArray objectAtIndex:0];
+        if (![diiModel.startTime isEqualToString:@""]) {
+            baseUrl = [NSString stringWithFormat:ORDERNUMBERSTARTTIME,ShareApp.mobilNumber,diiModel.startTime];
+        }else {
+             baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
+        }
+        
+        if (![diiModel.orderID isEqualToString:@""]) {
+            baseUrl = [baseUrl stringByAppendingFormat:@"/%@",diiModel.orderID];
+        }
+        for (int i = 0; i<sqlitArray.count; i++) {
+            DIIdyModel * item = [sqlitArray objectAtIndex:i];
+            item.orderID=item.orderID?item.orderID:@"";
+            item.startTime=item.startTime?item.startTime:@"";
+            item.startAddr=item.startAddr?item.startAddr:@"";
+            item.endAddr=item.endAddr?item.endAddr:@"";
+            item.ordersNumber=item.ordersNumber?item.ordersNumber:@"";
+            item.contactName=item.contactName?item.contactName:@"";
+            item.contactMobile=item.contactMobile?item.contactMobile:@"";
+            item.createTime=item.createTime?item.createTime:@"";
+            item.coupon = item.coupon?item.coupon:@"";
+            item.status= item.status?item.status:@"";
+            [listOrderArray addObject:item];
+        }
+        
+    }else {
+        sqlitBool = NO;
+        baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
+    }
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL * url = [NSURL URLWithString:baseUrl];
     NSURLRequest * urlRequest = [NSURLRequest requestWithURL:url];  
@@ -136,8 +167,15 @@
 -(void)parseStringJson:(NSString *)str
 {
     NSArray* jsonParser =[str JSONValue];
+    int i;
+    if (sqlitBool) {
+        i=1;
+    }else {
+        i=0;
+    }
     
-    for(int i = 0;i<[jsonParser count];i++){
+    for(;i<[jsonParser count];i++){
+      
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
@@ -150,7 +188,6 @@
         diidy.contactMobile = [diidyDict objectForKey:@"contactmobile"];
         diidy.createTime = [diidyDict objectForKey:@"createtime"];
         diidy.coupon = [diidyDict objectForKey:@"coupon"];
-        
         NSString* currentStatus = [diidyDict objectForKey:@"status"];
         if([currentStatus floatValue]>=1.0&&[currentStatus floatValue]<=4.0){
             diidy.status = @"已受理";
@@ -159,21 +196,19 @@
         }else {
             diidy.status = @"已取消";
         }
-        
+        [ShareApp.mDatabase insertItemWithFMDB:diidy];
+
         [listOrderArray addObject:diidy];
         [diidy release];
-        [ShareApp.mDatabase insertToDatabase:listOrderArray];
-        NSArray * assss = [ShareApp.mDatabase readDataWithFMDB];
-        NSLog(@"ssss%@",assss);
         
     }
-//    if(([jsonParser count])==0)
-//    {
-//        [self creatNOOrdersView];
-//    }else {
-//        [self creatHaveOrderView];
-//        
-//    }
+       if(([jsonParser count])==0)
+    {
+        [self creatNOOrdersView];
+    }else {
+        [self creatHaveOrderView];
+        
+    }
 }
 
 -(void)returnMainView:(id)sender
@@ -241,6 +276,7 @@
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
    
+    sqlitBool = YES;
     listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
     [self setTheNavigationBar];
     [self goToTheDownLoadPage];

@@ -20,6 +20,7 @@
 #define COUPON @"http://www.diidy.com/client/getCoupon/%@"
 #define GIFTCOUPONS @"http://www.diidy.com/client/giveCoupon/%@/%@/%@"
 #define ORDERNUMBER @"http://www.diidy.com/client/orderlist/%@"
+#define ORDERNUMBERSTARTTIME @"http://www.diidy.com/client/orderlist/%@/%@"
 #define BILLINGDETAIL @"http://www.diidy.com/client/orderdetail/%@"
 #define EXECORDERS @"http://www.diidy.com/client/ordering/%@"
 #define POSITIONDRIVER @"http://www.diidy.com/client/positionDriver/%@"

@@ -18,6 +18,7 @@
     
     NSMutableData * receivedData;
     NSURLConnection * urlConnecction;
+    BOOL sqlitBool;
 }
 
 @end

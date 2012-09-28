@@ -15,7 +15,7 @@
     UIButton* returnButton;
     UIImageView*topImageView ;
     UILabel*centerLable;
-
+    ASIHTTPRequest *billRequest;
 
 }
 @property(nonatomic,retain)IBOutlet UILabel *feesReceivableLable;//应收费用

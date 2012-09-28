@@ -266,6 +266,7 @@
 
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
+    
     if(request.tag ==500){
         [self parseStringJson:[request responseString]];
     }else {
