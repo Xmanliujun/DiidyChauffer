@@ -41,7 +41,6 @@
 
     mDatabase = [[QFDatabase alloc] init];
     [mDatabase openDatabase:DATABASE_TYPE_FMDB];
-
 }
 - (void)umengTrack {
     //    [MobClick setCrashReportEnabled:NO]; // 如果不需要捕捉异常，注释掉此行
@@ -92,7 +91,7 @@
 }
 -(void)ShowHelpNavigation
 {
-    
+   
     
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *firstUseApp = [userDefaults objectForKey:@"FirstUseApp"] ;
@@ -107,7 +106,24 @@
         
     }
 }
+-(void)showLogInState
+{
+    NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);  
+    //获取完整路径
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"test.plist"];
+    NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
+    //定义第一个插件的属性
+    NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
+    [plugin1 setObject:@"r"forKey:@"status"];
+    [plugin1 setObject:@"" forKey:@"telephone"];
+    //设置属性值
+    [dictplist setObject:plugin1 forKey:@"statusDict"];
+    
+    //写入文件
+    [dictplist writeToFile:plistPath atomically:YES];
 
+}
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
     self.window = [[[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]] autorelease];
@@ -130,6 +146,7 @@
     {
         //第一次进入， 显示新手导航
         [self ShowHelpNavigation];
+        [self showLogInState];
         
     }
     else
@@ -139,10 +156,13 @@
         [main release];
         
     }
-
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;
+}
+- (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
+{
+    return UIInterfaceOrientationMaskPortrait;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

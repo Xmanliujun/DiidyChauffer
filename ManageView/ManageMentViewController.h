@@ -7,8 +7,9 @@
 //
 
 #import <UIKit/UIKit.h>
+#import "MBProgressHUD.h"
 @interface ManageMentViewController : UIViewController
-<UITableViewDataSource,UITableViewDelegate>
+<UITableViewDataSource,UITableViewDelegate,MBProgressHUDDelegate>
 {
     UIButton* returnButton;
    
@@ -19,6 +20,10 @@
     NSMutableData * receivedData;
     NSURLConnection * urlConnecction;
     BOOL sqlitBool;
+    
+    MBProgressHUD *HUD;
+    NSString * baseUrl;
+
 }
 
 @end

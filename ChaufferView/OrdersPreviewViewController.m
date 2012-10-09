@@ -20,7 +20,7 @@
 @implementation OrdersPreviewViewController
 
 
-@synthesize departureLable,departureTimeLable,numberOfPeopleLable,destinationLable,contactLable,mobilNumberLable,remarkLable,couponTableView;
+@synthesize departureLable,departureTimeLable,numberOfPeopleLable,destinationLable,contactLable,mobilNumberLable,remarkLable,couponLable;
 @synthesize orderArray,useCouponArray,selectArray;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -30,36 +30,7 @@
     }
     return self;
 }
-#pragma mark-TableView
--(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 30;
 
-}
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
-    
-    
-    return [useCouponArray count];
-    
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
-    NSString * cellID = @"cellID";
-    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-    if(cell ==nil)
-    {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-        cell.backgroundColor = [UIColor whiteColor];
-    }
-    
-    NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:indexPath.row];
-    DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section];
-    cell.textLabel.backgroundColor = [UIColor clearColor];
-    cell.textLabel.font = [UIFont fontWithName:@"Arial" size:14];
-    cell.textLabel.text = diidyModel.name;
-    
-    return cell;
-}
 #pragma mark-Button
 -(void)returnFillOrderView:(id)sender
 {
@@ -86,11 +57,24 @@
     }else {
         
         
+        if ([self.departureTimeLable.text isEqualToString:@""]) {
+            self.departureTimeLable.text = @"无";
+        }
+
         if ([self.departureLable.text isEqualToString:@""]) {
             self.departureLable.text =@"无";
         }
         if ([self.numberOfPeopleLable.text isEqualToString:@""]) {
             self.numberOfPeopleLable.text = @"无";
+        }
+        if ([self.contactLable.text isEqualToString:@""]) {
+            self.contactLable.text = @"无";
+        }
+        if ([self.destinationLable.text isEqualToString:@""]) {
+            self.destinationLable.text = @"无";
+        }
+        if ([self.mobilNumberLable.text isEqualToString:@""]) {
+            self.mobilNumberLable.text = @"无";
         }
         if ([self.contactLable.text isEqualToString:@""]) {
             self.contactLable.text = @"无";
@@ -113,13 +97,13 @@
         }
         NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,self.departureTimeLable.text,self.departureLable.text,self.numberOfPeopleLable.text,self.destinationLable.text,self.mobilNumberLable.text,self.contactLable.text,couString,ShareApp.mobilNumber];
         NSLog(@"%@",baseUrl);
-        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL * url = [NSURL URLWithString:baseUrl];
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        [request setTimeOutSeconds:15.0];
-        [request setDelegate:self];
-        [request setTag:505];
-        [request startAsynchronous];
+//        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//        NSURL * url = [NSURL URLWithString:baseUrl];
+//        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+//        [request setTimeOutSeconds:15.0];
+//        [request setDelegate:self];
+//        [request setTag:505];
+//        [request startAsynchronous];
     }
 
 }
@@ -127,6 +111,7 @@
 
 -(void)parseStringJson:(NSString *)str
 {
+    NSLog(@"%@",str);
    NSDictionary * jsonParser =[str JSONValue];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     if ([returenNews isEqualToString:@"s"]) {
@@ -163,16 +148,26 @@
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     
     couponArray = [[NSMutableArray alloc] initWithCapacity:0];
-    self.couponTableView.delegate = self;
-    self.couponTableView.dataSource =self;
-   // self.couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-    //    for (NSIndexPath *ip in selectArray) {
-    //        DIIdyModel * diidy = [useCouponArray objectAtIndex:ip.section];
-    //        diidy.numberID++;
-    //        NSLog(@"%d",diidy.numberID);
-    //    }
     
-    
+    NSMutableString *couString = [[NSMutableString alloc] initWithCapacity:0];
+    couString = [couString stringByAppendingString:@"选择了："];
+    if ([useCouponArray count]>=2) {
+        for (int i=0; i<[useCouponArray count]-1; i++) {
+            NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:i];
+            DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section];
+            couString = [couString stringByAppendingFormat:@"%@,",diidyModel.name];
+        }
+
+    }
+    if ([useCouponArray count]>=1) {
+        NSIndexPath* lastdiidyPath = [useCouponArray objectAtIndex:[useCouponArray count]-1];
+        DIIdyModel * lastDiidy = [selectArray objectAtIndex:lastdiidyPath.section];
+        couString = [couString stringByAppendingFormat:@"%@",lastDiidy.name];
+       
+        self.couponLable.text = couString;
+        
+    }
+   
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
     topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
     [self.navigationController.navigationBar addSubview:topImageView];
@@ -203,7 +198,7 @@
     centerLable.font = [UIFont systemFontOfSize:17];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text =@"订 单 预 览";
     [self.navigationController.navigationBar addSubview:centerLable];
     
@@ -222,7 +217,8 @@
     [centerLable release];
     [couponArray release];
     [contactLable release];
-    [couponTableView release];
+    
+    [couponLable release];
     [departureLable release];
     [departureTimeLable release];
     [destinationLable release];

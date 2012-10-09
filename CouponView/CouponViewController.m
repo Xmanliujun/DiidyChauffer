@@ -128,6 +128,12 @@
 {
     
     NSArray* jsonParser =[str JSONValue];
+    if (dataArry) {
+        [dataArry removeAllObjects];
+    }else{
+        dataArry = [[NSMutableArray alloc] initWithCapacity:0];;
+    }
+    
     for (int i = 0; i<[jsonParser count]; i++) {
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
@@ -264,7 +270,37 @@
     couponPage.currentPage = 0;
     [self.view addSubview:couponPage];
 }
+-(void)startASync:(id)urlString1{
+    NSURL *url=[NSURL URLWithString:urlString1];
+    NSLog(@"url========%@",url);
+    NSError *error=nil;
+    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    
+    NSLog(@"response data is %@", responseString);
+    
+    [self parseStringJson:responseString];
+}
 
+-(void)myTask{
+    //形成异步加载
+     NSString * baseUrl = [NSString stringWithFormat:COUPON,ShareApp.mobilNumber];
+     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self startASync:baseUrl];
+   
+    
+}
+
+-(void)showWithDetails{
+    
+    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:HUD];
+    HUD.delegate=self;
+    HUD.labelText=@"Loading";
+    HUD.detailsLabelText=@"正在加载...";
+    HUD.square=YES;
+    //此处进入多线程处理
+    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+}
 
 
 #pragma mark - System Approach
@@ -285,8 +321,8 @@
     messgeLable.font = [UIFont fontWithName:@"Arial" size:14];
     messgeLable.textColor = [UIColor orangeColor];
     [self.view addSubview:messgeLable];
-    
-    [self downLoadTheCouponData];
+   
+   // [self downLoadTheCouponData];
     [self creatScrollView];
     
     couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
@@ -294,6 +330,7 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [self showWithDetails];
     centerLable.hidden = NO;
     topImageView.hidden = NO;
     returnButton.hidden = NO;

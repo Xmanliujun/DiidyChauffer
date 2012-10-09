@@ -71,7 +71,8 @@
         
         UILabel * nameLable = [[UILabel alloc] initWithFrame:CGRectMake(50, 0, 270,22 )];
         nameLable.numberOfLines = 0;
-        nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+       // nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+        nameLable.backgroundColor =[UIColor clearColor];
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
         nameLable.textColor = [UIColor orangeColor];
         nameLable.tag = 81;
@@ -80,7 +81,8 @@
         
         UILabel * addressLable = [[UILabel alloc] initWithFrame:CGRectMake(50,22, 270,22)];
         addressLable.numberOfLines = 0;
-        addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+       // addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+        addressLable.backgroundColor = [UIColor clearColor];
         addressLable.font = [UIFont fontWithName:@"Arial" size:12];
         addressLable.textColor = [UIColor orangeColor];
         addressLable.tag = 82;
@@ -188,24 +190,25 @@
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
-    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80, 0, 160, 44)];
-    centerLable.font = [UIFont systemFontOfSize:15];
+    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
+    centerLable.font = [UIFont systemFontOfSize:15.0f];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text = @"选择可能的出发地";
     [self.navigationController.navigationBar addSubview:centerLable];
     
     CGRect rect;
-    if ([self.possibleCityArray count]*44<416) {
-        rect = CGRectMake(0, 0, 320, [self.possibleCityArray count]*44);
+    if ([self.possibleCityArray count]*44.0<416.0) {
+        rect = CGRectMake(0.0, 0.0, 320.0, [self.possibleCityArray count]*44.0);
     }else {
-        rect = CGRectMake(0, 0, 320, 460-44);
+        rect = CGRectMake(0.0, 0.0, 320.0, 460.0-44.0);
     }
     
     UITableView * possibleTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
     possibleTableView.separatorColor = [UIColor grayColor];
-    possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+   // possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    possibleTableView.backgroundColor = [UIColor clearColor];
     possibleTableView.delegate = self;
     possibleTableView.dataSource = self;
     [self.view addSubview: possibleTableView];

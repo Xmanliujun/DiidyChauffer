@@ -35,7 +35,6 @@
 {
     return [selectCouponAray count];
     
-
 }
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
 
@@ -51,13 +50,35 @@
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
         cell.backgroundColor =[UIColor whiteColor];
+        
+        UILabel * nameLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 270,22 )];
+        nameLable.numberOfLines = 0;
+        // nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+        
+        nameLable.font = [UIFont fontWithName:@"Arial" size:14];
+        nameLable.textColor = [UIColor blackColor];
+        nameLable.tag = 81;
+        [cell.contentView addSubview:nameLable];
+        [nameLable release];
+        
+        UILabel * timeLable = [[UILabel alloc] initWithFrame:CGRectMake(10,22, 270,22)];
+        timeLable.numberOfLines = 0;
+        //addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+        timeLable.font = [UIFont fontWithName:@"Arial" size:12];
+        timeLable.textColor = [UIColor grayColor];
+        timeLable.tag = 82;
+        [cell.contentView addSubview:timeLable];
+        [timeLable release];
+
     }
     
     DIIdyModel * diidyMbdel = [selectCouponAray objectAtIndex:indexPath.section];
-    cell.textLabel.backgroundColor = [UIColor clearColor];
-    cell.textLabel.font = [UIFont fontWithName:@"Arial" size:14];
-    cell.textLabel.text = diidyMbdel.name;
+    NSLog(@"dii %@",diidyMbdel.name);
+    UILabel *nameLable = (UILabel*)[cell.contentView viewWithTag:81];
+    nameLable.text = diidyMbdel.name;
     
+    UILabel*timeLable = (UILabel*)[cell.contentView viewWithTag:82];
+    timeLable.text = diidyMbdel.close_date;
     return cell;
 }
 
@@ -68,9 +89,20 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-    NSIndexPath *willDeleteIndexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section];
-    [useSelectCouponArray addObject:willDeleteIndexPath];
+    if ([useSelectCouponArray count]>=number) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                       message:@"您选择的优惠劵数量超出了司机数量"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"取消" 
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+    }else {
+        NSIndexPath *willDeleteIndexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section];
+        [useSelectCouponArray addObject:willDeleteIndexPath];
 
+    }
+   
 }
 
 
@@ -135,7 +167,7 @@
     centerLable.font = [UIFont systemFontOfSize:17];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text = @"选 择 优 惠 劵";
     [self.navigationController.navigationBar addSubview:centerLable];
      
@@ -163,7 +195,7 @@
     promptLable.font = [UIFont systemFontOfSize:14];
     promptLable.textColor = [UIColor blackColor];
     promptLable.backgroundColor = [UIColor clearColor];
-    promptLable.textAlignment = UITextAlignmentCenter;
+    promptLable.textAlignment = NSTextAlignmentCenter;
     promptLable.text = @"选 择 优 惠 劵";
     
     UIImage * promptImage = [UIImage imageNamed:@"u689_normal.png"];
@@ -179,7 +211,7 @@
         rect = CGRectMake(0.0f, 52.0f, 320.0f,370.0f);
         
     }else {
-        rect = CGRectMake(0.0f, 52.0f, 320.0f, 140.0f+(rowNumber-2)*44.0f);
+        rect = CGRectMake(0.0f, 52.0f, 320.0f, 134.0f+(rowNumber-2)*44.0f);
     }
     
     
@@ -197,14 +229,18 @@
     
     UIImage * skipImage = [UIImage imageNamed:@"u663_normal.png"];
     UIButton *skipButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    skipButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    skipButton.frame=CGRectMake(5.0, 376.0, skipImage.size.width, skipImage.size.height);
     [skipButton setBackgroundImage:skipImage forState:UIControlStateNormal];
     [skipButton setTitle:@"跳过,本次订单不适用优惠劵" forState:UIControlStateNormal];
     [skipButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    skipButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
-    skipButton.frame=CGRectMake(5.0, 376.0, skipImage.size.width, skipImage.size.height);
     [skipButton addTarget:self action:@selector(skipCouponView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:skipButton];
     
+    NSString * peopleNumber = [self.orderPreArray  objectAtIndex:2];
+    NSArray *peopleArr = [peopleNumber componentsSeparatedByString:@"人"];
+    NSString * peNumber = [peopleArr objectAtIndex:0];
+    number = [peNumber intValue];
 }
 -(void)viewDidDisappear:(BOOL)animated
 {

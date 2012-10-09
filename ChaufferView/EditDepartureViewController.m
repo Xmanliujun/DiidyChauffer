@@ -26,6 +26,9 @@
 #pragma mark-getAddResut
 - (void)onGetAddrResult:(BMKAddrInfo*)result errorCode:(int)error
 {
+    NSLog(@"diaoyong  ");
+    NSLog(@"%d",error);
+    
     if ([addressinformationArray count]!=0) {
         [addressinformationArray removeAllObjects];
     }
@@ -33,6 +36,7 @@
    	if (error == 0) {
         
         NSArray* name = result.poiList;
+        NSLog(@"%d",[name count]);
         for (int i = 0; i<[name count]; i++) {
             BMKPoiInfo* moreNes =[name objectAtIndex:i];
             NSLog(@"%@",moreNes.name);
@@ -58,8 +62,7 @@
    // locationDe
     NSLog(@"%f %f ",self.locationDe.latitude,self.locationDe.longitude);
     BOOL flag = [_search reverseGeocode:self.locationDe];
-    NSLog(@"%c",flag);
-	if (!flag) {
+    if (!flag) {
 		NSLog(@"search failed!");
 	}
 }
@@ -167,12 +170,13 @@
     
     if([text isEqualToString:@"\n"])
     {
+        departure = [departureView.text retain];
         [departureView resignFirstResponder];
-        
-        BOOL flag = [_search geocode:departureView.text withCity:@"北京"];
-        if (!flag) {
-            NSLog(@"search failed!");
-        }
+//        NSLog(@"%@",departureView.text);
+//        BOOL flag = [_search geocode:departureView.text withCity:@"北京"];
+//        if (!flag) {
+//            NSLog(@"search failed!");
+//        }
 
         
     }
@@ -189,6 +193,7 @@
 
 -(void)nextStep:(id)sender
 {
+  
     [DepartureDelegate selectThePlaceOfDeparture:departure];
     [self.navigationController popViewControllerAnimated:YES];
 

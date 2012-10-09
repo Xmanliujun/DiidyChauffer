@@ -51,6 +51,11 @@
         
     }else {
         
+        
+        if ([self.departureTimeLable.text isEqualToString:@""]) {
+            self.departureTimeLable.text = @"无";
+        }
+        
         if ([self.departureLable.text isEqualToString:@""]) {
             self.departureLable.text =@"无";
         }
@@ -60,7 +65,17 @@
         if ([self.contactLable.text isEqualToString:@""]) {
             self.contactLable.text = @"无";
         }
+        if ([self.destinationLable.text isEqualToString:@""]) {
+            self.destinationLable.text = @"无";
+        }
+        if ([self.mobilNumberLable.text isEqualToString:@""]) {
+            self.mobilNumberLable.text = @"无";
+        }
+        if ([self.contactLable.text isEqualToString:@""]) {
+            self.contactLable.text = @"无";
+        }
         
+
         NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,self.departureTimeLable.text,self.departureLable.text,self.numberOfPeopleLable.text,self.destinationLable.text,self.mobilNumberLable.text,self.contactLable.text,@"无",ShareApp.mobilNumber];
         NSLog(@"%@",baseUrl);
         baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -141,7 +156,7 @@
     centerLable.font = [UIFont systemFontOfSize:17];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text =@"订 单 预 览";
     [self.navigationController.navigationBar addSubview:centerLable];
     

@@ -121,7 +121,7 @@
     centerLable.text = @"搜 索 出 发 地";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:15.0];
     [self.navigationController.navigationBar addSubview:centerLable];
     

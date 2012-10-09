@@ -26,28 +26,89 @@
     }
     return self;
 }
+-(void)startASync:(id)urlString1{
+    NSURL *url=[NSURL URLWithString:urlString1];
+    NSLog(@"url========%@",url);
+    NSError *error=nil;
+    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    
+    NSLog(@"response data is %@", responseString);
+    
+    [self parseStringJson:responseString];
+}
 
--(void)getExecutionOrderStatus
-{
+-(void)myTask{
+    //形成异步加载
     NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    requestOrderStatus = [ASIHTTPRequest requestWithURL:url];
-    [requestOrderStatus setTag:100];
-    [requestOrderStatus setDelegate:self];
-    [requestOrderStatus startAsynchronous];
+    [self startASync:baseUrl];
+    
+    
+}
 
+-(void)getExecutionOrderStatus{
+    
+    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:HUD];
+   
+    HUD.delegate=self;
+    HUD.labelText=@"正在定位我的司机...";
+   // HUD.detailsLabelText=@"正在加载...";
+    HUD.square=YES;
+    //此处进入多线程处理
+    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+}
+
+//-(void)getExecutionOrderStatus
+//{
+//    NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
+//    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    NSURL * url = [NSURL URLWithString:baseUrl];
+//    requestOrderStatus = [ASIHTTPRequest requestWithURL:url];
+//    [requestOrderStatus setTag:100];
+//    [requestOrderStatus setDelegate:self];
+//    [requestOrderStatus startAsynchronous];
+//
+//
+//}
+-(void)startASyncB:(id)urlString1{
+    NSURL *url=[NSURL URLWithString:urlString1];
+    NSLog(@"url========%@",url);
+    NSError *error=nil;
+    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    
+    NSLog(@"response data is %@", responseString);
+    [self parseStatusStringJson:responseString];
+   // [self parseStringJson:responseString];
+}
+
+-(void)myTaskStatus
+{
+    NSString * baseUrl = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
+    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    [self startASyncB:baseUrl];
 
 }
 -(void)getDriverStatus
 {
-    NSString * baseUrl = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    requestDriveStatus = [ASIHTTPRequest requestWithURL:url];
-    [requestDriveStatus setTag:101];
-    [requestDriveStatus setDelegate:self];
-    [requestDriveStatus startAsynchronous];
+    
+    
+    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+   
+    [self.navigationController.view addSubview:HUD];
+    HUD.delegate=self;
+    HUD.labelText=@"正在定位我的司机...";
+    // HUD.detailsLabelText=@"正在加载...";
+    HUD.square=YES;
+    //此处进入多线程处理
+    [HUD showWhileExecuting:@selector(myTaskStatus) onTarget:self withObject:nil animated:YES];
+//    NSString * baseUrl = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
+//    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    NSURL * url = [NSURL URLWithString:baseUrl];
+//    requestDriveStatus = [ASIHTTPRequest requestWithURL:url];
+//    [requestDriveStatus setTag:101];
+//    [requestDriveStatus setDelegate:self];
+//    [requestDriveStatus startAsynchronous];
 
 }
 

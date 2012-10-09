@@ -48,7 +48,7 @@
     centerLable.text = @"意见反馈";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0f];
     [self.navigationController.navigationBar addSubview:centerLable];
     

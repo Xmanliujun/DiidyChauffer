@@ -9,7 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface MoreViewController : UIViewController
-<UITableViewDataSource,UITableViewDelegate>
+<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate>
 {
     NSArray * moreNameArray;
     

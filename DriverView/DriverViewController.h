@@ -9,13 +9,15 @@
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
 #import "DriveLocationViewController.h"
+#import "MBProgressHUD.h"
 @interface DriverViewController : UIViewController
-<ASIHTTPRequestDelegate>
+<ASIHTTPRequestDelegate,MBProgressHUDDelegate>
 {
     UILabel* centerLable;
     BOOL driverStatus;
     ASIHTTPRequest *requestDriveStatus;
     ASIHTTPRequest *requestOrderStatus;
     DriveLocationViewController* driveMap;
+    MBProgressHUD *HUD;
 }
 @end

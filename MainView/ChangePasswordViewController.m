@@ -139,7 +139,7 @@
     centerLable.font = [UIFont systemFontOfSize:17.0f];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text =@"修 改 密 码";
     [self.navigationController.navigationBar addSubview:centerLable];
        

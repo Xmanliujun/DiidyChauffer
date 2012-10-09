@@ -20,6 +20,7 @@
     UIButton*rigthbutton;
     UILabel *centerLable;
     UIImageView*topImageView;
+    int number;
 }
 @property(nonatomic,assign)id<CouponDelegate>delegate;
 @property(nonatomic,retain)NSArray * selectCouponAray;//存放数据类

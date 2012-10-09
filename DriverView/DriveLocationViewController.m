@@ -134,11 +134,11 @@
          _mapView.showsUserLocation=NO;
         
        
-//                       NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
-//                      [_mapView removeAnnotations:array];
-//                        array = [NSArray arrayWithArray:_mapView.overlays];
-//                    [_mapView removeOverlays:array];
-                
+                       NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
+                      [_mapView removeAnnotations:array];
+                        array = [NSArray arrayWithArray:_mapView.overlays];
+                    [_mapView removeOverlays:array];
+         
                         CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
                        
                             pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
@@ -189,10 +189,7 @@
 		return newAnnotation;   
 	}
     
-    
-        
-   
-	return nil;
+    return nil;
 }
 
 
@@ -218,16 +215,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
-   _mapView = [[BMKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 340)];
+    _mapView = [[BMKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 340)];
     _mapView.delegate = self;
-	
 	_mapView.showsUserLocation = YES;
     [_mapView setZoomEnabled: YES];
     [_mapView setScrollEnabled:YES];
     
     [self.view addSubview:_mapView];
     
-     
     _search = [[BMKSearch alloc]init];
 	_search.delegate = self;
 	

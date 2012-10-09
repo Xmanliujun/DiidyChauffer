@@ -91,7 +91,7 @@
     centerLable.font = [UIFont fontWithName:@"Arial" size:17];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text = @"在 线 约";
     self.navigationItem.titleView = centerLable;
     [centerLable release]; 

@@ -23,7 +23,7 @@
 @synthesize departureLable,numberPeopleLable,newsImangeView,backGroundView;
 @synthesize destinationField,nameField,telNumberField;
 @synthesize couponView,departureMinuteLable,couponLable,landed;
-@synthesize departuretimes,departureMinutes,couponaArray;
+@synthesize couponaArray;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -48,6 +48,7 @@
 -(void)downLoadTheCouponData
 {
     NSString * baseUrl = [NSString stringWithFormat:COUPON,ShareApp.mobilNumber];
+    NSLog(@"%@",baseUrl);
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     NSURL * url = [NSURL URLWithString:baseUrl];
     ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
@@ -59,9 +60,9 @@
 {
     total = 0;
     [dataArry removeAllObjects];
-    
+
     NSArray* jsonParser =[str JSONValue];
-    
+    NSLog(@"%d",[jsonParser count]);
     for (int i = 0; i<[jsonParser count]; i++) {
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
@@ -75,6 +76,7 @@
         [dataArry addObject:diidy];
         [diidy release];
     }
+    NSLog(@"data    %@",dataArry);
     if(total!=0){
         self.couponLable.text = [NSString stringWithFormat:@"%d张",total];
         self.couponView.hidden = NO;
@@ -191,28 +193,9 @@
     
 }
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
-    
-    if(pickerView.tag ==50){
-        switch (component) {
-            case 0:
-                self.departuretimes = [NSString stringWithFormat:@"%d",row]; 
-                break;
-            case 1:
-                if(row<10){
-                    self.departureMinutes= [NSString stringWithFormat:@"0%d",row];
-                    
-                }else {
-                    self.departureMinutes = [NSString stringWithFormat:@"%d",row];
-                }
-                break;
-            default:
-                break;
-        } 
-        self.departureMinuteLable.text = [NSString stringWithFormat:@"%@:%@",self.departuretimes,self.departureMinutes];
-        
-    }else {
+       
         self.numberPeopleLable.text = [NSString stringWithFormat:@"%d人",row+1];
-    }
+    
 }
 #pragma mark-Button
 -(void)selectOK:(id)sender
@@ -220,7 +203,7 @@
     [UIView beginAnimations:@"animation" context:nil];
     [UIView setAnimationDuration:0.5];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    timePickView.alpha = 0;
+    datePicker.alpha = 0;
     pickImageView.alpha = 0;
     peoplePickView.alpha = 0;
     [UIView commitAnimations];
@@ -233,28 +216,44 @@
 }
 -(void)nextStep:(id)sender
 { 
-
-    if (!self.landed) {
-        LandingViewController * landedController = [[LandingViewController alloc] init];
-        UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:landedController];
-        
-        NSString * timeString = [NSString stringWithFormat:@"%@:%@",self.departuretimes,self.departureMinutes];
-        landedController.couponArray = [NSArray arrayWithObjects:self.departureLable.text,timeString,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
-        [self presentModalViewController:landNa animated:YES];
-        [landedController release];
-        [landNa release];
-    }else {
+   NSDate *today = [[NSDate alloc] init];
+   NSTimeInterval date1 = [today timeIntervalSinceReferenceDate];
+   
+    NSTimeInterval date2 = [_date timeIntervalSinceReferenceDate]; 
+    double diff = date2 -date1;
     
-        OrdersPreviewViewController * orderController = [[OrdersPreviewViewController alloc] init];
-        NSString * timeString = [NSString stringWithFormat:@"%@:%@",self.departuretimes,self.departureMinutes];
-        NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,timeString,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
-        orderController.orderArray = ayy;
-        orderController.useCouponArray = self.couponaArray;
-        orderController.selectArray = dataArry;
-        [self.navigationController pushViewController:orderController animated:YES];
-        [orderController release];
+    if (diff<60*30-20) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                       message:@"出发时间需要在当前时间30分以后"
+                                                      delegate:nil 
+                                             cancelButtonTitle:@"取消" 
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+    }else {
+        if (!self.landed) {
+            LandingViewController * landedController = [[LandingViewController alloc] init];
+            UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:landedController];
+            NSLog(@"%@",self.departureMinuteLable.text);
+            landedController.couponArray = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+            [self presentModalViewController:landNa animated:YES];
+            [landedController release];
+            [landNa release];
+        }else {
+            
+            OrdersPreviewViewController * orderController = [[OrdersPreviewViewController alloc] init];
+            NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+            orderController.orderArray = ayy;
+            orderController.useCouponArray = self.couponaArray;
+            orderController.selectArray = dataArry;
+            [self.navigationController pushViewController:orderController animated:YES];
+            [orderController release];
+        }
+
     }
     
+        
+       
 }
 -(IBAction)selectDeparture:(id)sender{
     EditDepartureViewController * editDeparture = [[EditDepartureViewController alloc] init];
@@ -270,7 +269,7 @@
     [UIView beginAnimations:@"animation" context:nil];
     [UIView setAnimationDuration:0.5];
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    timePickView.alpha = 1;
+    datePicker.alpha = 1;
     pickImageView.alpha = 1;
     peoplePickView.alpha = 0;
     [UIView commitAnimations];
@@ -283,14 +282,13 @@
     [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
     peoplePickView.alpha = 1;
     pickImageView.alpha = 1;
-    timePickView.alpha = 0;
+    datePicker.alpha = 0;
     [UIView commitAnimations];
 }
 
 -(IBAction)useCoupon:(id)sender
 {
-    NSString * timeString = [NSString stringWithFormat:@"%@:%@",self.departuretimes,self.departureMinutes];
-    NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,timeString,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+    NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
     SelectCouponViewController * selectCoupon = [[SelectCouponViewController alloc]init];
     selectCoupon.selectCouponAray = dataArry;
     selectCoupon.orderPreArray= ayy;
@@ -349,11 +347,19 @@
     centerLable.text = @"填 写 订 单";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:centerLable];
 }
+-(void)dateChanged:(id)sender{  
+    UIDatePicker* control = (UIDatePicker*)sender;  
+     _date = control.date;  
+    
+    NSString * locationString=[dateformatter stringFromDate:_date];
+    NSLog(@"%@",locationString);
+    self.departureMinuteLable.text = locationString;
 
+}  
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -364,22 +370,48 @@
     self.telNumberField.delegate = self;
     self.couponView.hidden = YES;
     self.departureLable.text = departure;
+    self.departureLable.numberOfLines = 0;
     
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
-    timeArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ProvincesAndCities.plist" ofType:nil]];
-    minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
-    peopleArray = [[timeArray objectAtIndex:1]objectForKey:@"Cities"];
-    
     [self downLoadTheCouponData];
     [self setTheNavigationBar];
     
-    timePickView = [[UIPickerView alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];
-    timePickView.delegate = self;  
-    timePickView.dataSource = self;
-    timePickView.alpha = 0;
-    timePickView.tag = 50;
-    timePickView.showsSelectionIndicator = YES; 
-    [self.view addSubview:timePickView];
+    timeArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ProvincesAndCities.plist" ofType:nil]];
+    minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
+    peopleArray = [[timeArray objectAtIndex:1]objectForKey:@"Cities"];
+
+   // NSDate * senddate=[NSDate date];
+    
+    NSDate *today = [[NSDate alloc] init]; 
+    NSLog(@"tody  %@",today);
+    
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]; 
+    
+    NSDateComponents *offsetComponents = [[NSDateComponents alloc] init]; 
+    // [offsetComponents setHour:1]; 
+    [offsetComponents setMinute:30]; 
+    NSDate *endOfWorldWar3 = [gregorian dateByAddingComponents:offsetComponents toDate:today options:0]; 
+    _date = [endOfWorldWar3  retain];
+    dateformatter=[[NSDateFormatter alloc] init];
+    [dateformatter setDateFormat:@"YYYY年MM月d日HH时mm分"];
+    NSString * locationString=[dateformatter stringFromDate:endOfWorldWar3];
+    self.departureMinuteLable.text = locationString;
+    [today release];
+    [offsetComponents release];
+    [gregorian release];
+    
+    
+    datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];  
+    datePicker.datePickerMode =UIDatePickerModeDateAndTime;   
+    datePicker.alpha = 0;
+    NSDate* minDate = [[NSDate alloc]initWithString:@"1900-01-01 00:00:00 -0500"];    
+    NSDate* maxDate = [[NSDate alloc]initWithString:@"2099-01-01 00:00:00 -0500"];    
+    [datePicker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged ];
+    datePicker.minimumDate = minDate;    
+    datePicker.maximumDate = maxDate;  
+    [self.view addSubview:datePicker]; 
+    [minDate release];
+    [maxDate release];
     
     UIButton *rigthPickbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthPickbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
@@ -389,7 +421,7 @@
     UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];
     travelTimeLableq.text = @"选择出发时间";
     travelTimeLableq.font = [UIFont fontWithName:@"Arial" size:14];
-    travelTimeLableq.textAlignment = UITextAlignmentCenter;
+    travelTimeLableq.textAlignment = NSTextAlignmentCenter;
     travelTimeLableq.backgroundColor = [UIColor clearColor];
     travelTimeLableq.textColor = [UIColor whiteColor];
     
@@ -434,8 +466,6 @@
     [couponaArray release];
     [couponLable release];
     [departure release];
-    [departuretimes release];
-    [departureMinutes release];
     [departureLable release];
     [destinationField release];
     [dataArry release];
@@ -447,7 +477,7 @@
     [pickImageView release];
     [telNumberField release];
     [timeArray release];
-    [timePickView release];
+    [datePicker release];
     [topImageView release];
     [super dealloc];
 

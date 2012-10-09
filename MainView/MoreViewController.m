@@ -95,7 +95,37 @@
         noviceGudice.noviceGuidan = @"more";
         [self.navigationController pushViewController:noviceGudice animated:YES];
         [noviceGudice release];
+    }else if (indexPath.section==1&&indexPath.row ==3) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"确定要注销登陆吗？" 
+                                                       message:@""
+                                                      delegate:self 
+                                             cancelButtonTitle:@"确定" 
+                                             otherButtonTitles:@"取消",nil ];
+        [alert show];
+        [alert release];
+
     }
+
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+    if (buttonIndex==0) {
+        NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);  
+        NSString *documentsDirectory = [paths objectAtIndex:0];
+        NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"test.plist"];
+        NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
+        NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
+        [plugin1 setObject:@"r"forKey:@"status"];
+        [plugin1 setObject:@"" forKey:@"telephone"];
+        [dictplist setObject:plugin1 forKey:@"statusDict"];
+        [dictplist writeToFile:plistPath atomically:YES];
+        [dictplist release];
+        [plugin1 release];
+        [self dismissModalViewControllerAnimated:NO];
+    }
+
 
 }
 -(void)onRequestCompelte:(NSNotification *)notification
@@ -126,7 +156,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-     self.navigationItem.hidesBackButton = YES;   
+     self.navigationItem.hidesBackButton = YES;
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRequestCompelte:) name:MORE_QUEST object:nil];
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
@@ -152,6 +183,7 @@
     
     UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    moreTableView.backgroundView=nil;
     [moreTableView setSeparatorColor:[UIColor blackColor]];
     moreTableView.delegate = self;
     moreTableView.dataSource = self;

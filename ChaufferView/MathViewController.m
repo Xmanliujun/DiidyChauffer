@@ -75,7 +75,7 @@
             travelTime.text = [NSString stringWithFormat:@"%d:",row];
             if (row>=21||row<6) {
                 if (_sixOutSide.selected) {
-                     startLable.text = @"出发地在六环外加收:50元.";
+                     startLable.text = @"出发地在六环外加收:50元";
                 }
                 
                 if (_deSixOutSide.selected) {
@@ -84,7 +84,7 @@
             
             }else {
                 if (_sixOutSide.selected) {
-                    startLable.text = @"出发地在六环外加收:20元.";
+                    startLable.text = @"出发地在六环外加收:20元";
                 }
                 
                 if (_deSixOutSide.selected) {
@@ -111,7 +111,14 @@
 {
     
     int travelTimea= self.travelTimeSlider.value;
-    self.travelTimeLable.text = [NSString stringWithFormat:@"%d分钟",travelTimea];
+    if (self.travelTimeSlider.value/60>=1) {
+        int traverTimeA = self.travelTimeSlider.value/60;
+        int travelMin = self.travelTimeSlider.value-traverTimeA*60;
+         self.travelTimeLable.text = [NSString stringWithFormat:@"%d小时%d分钟",traverTimeA,travelMin];
+    }else{
+         self.travelTimeLable.text = [NSString stringWithFormat:@"%d分钟",travelTimea];
+    }
+    
     NSArray* travelTimeArray = [travelTime.text componentsSeparatedByString:@":"];
     int departureTimeINT = [[travelTimeArray objectAtIndex:0] intValue];
     int departureMinuteINT = [travelMinute.text intValue];
@@ -534,13 +541,13 @@
             int mHour = [travelTime.text intValue];
             if(mHour >= 21 || (mHour >= 0 && mHour <6)){
                
-                startLable.text = @"出发地在六环外加收:50元.";
+                startLable.text = @"出发地在六环外加收:50元";
                 additional=50;
                 int total = additional+price+endAddional;
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
             }else{
-                startLable.text=@"出发地在六环外加收:20元.";
+                startLable.text=@"出发地在六环外加收:20元";
                 additional= 20;
                 int total = additional+price+endAddional;
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
@@ -551,14 +558,14 @@
             int mHour = [travelTime.text intValue];
             if(mHour >= 21 || (mHour >= 0 && mHour <6)){
                 
-                startLable.text = @"出发地在六环外加收:50元.";
+                startLable.text = @"出发地在六环外加收:50元";
                 additional=50;
                 int total = additional+price+endAddional;
                 endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 328, costRect.size.width, costRect.size.height);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
             }else{
-                startLable.text=@"出发地在六环外加收:20元.";
+                startLable.text=@"出发地在六环外加收:20元";
                 additional= 20;
                 int total = additional+price+endAddional;
                 endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
@@ -638,14 +645,14 @@
             int mHour = [travelTime.text intValue];
             if(mHour >= 21 || (mHour >= 0 && mHour <6)){
                 
-                endLable.text = @"目的地在六环外加收:50元.";
+                endLable.text = @"目的地在六环外加收:50元";
                 endAddional=50;
                 int total = additional+price+endAddional;
                 endLable.frame = CGRectMake(endLable.frame.origin.x, 291, endLable.frame.size.width, endLable.frame.size.height);
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
             }else{
-                endLable.text=@"目的地在六环外加收:20元.";
+                endLable.text=@"目的地在六环外加收:20元";
                endAddional= 20;
                 int total = endAddional+price+additional;
                 endLable.frame = CGRectMake(endRect.origin.x, 291, endRect.size.width, endRect.size.height);
@@ -657,14 +664,14 @@
             int mHour = [travelTime.text intValue];
             if(mHour >= 21 || (mHour >= 0 && mHour <6)){
                 
-                endLable.text = @"目的地在六环外加收:50元.";
+                endLable.text = @"目的地在六环外加收:50元";
                 endAddional=50;
                 int total = endAddional+price+additional;
                 endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 328, costRect.size.width, costRect.size.height);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
             }else{
-                endLable.text=@"目的地在六环外加收:20元.";
+                endLable.text=@"目的地在六环外加收:20元";
                 endAddional= 20;
                 int total =endAddional+price+additional;
                 endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
@@ -709,7 +716,7 @@
     centerLable.font = [UIFont fontWithName:@"Arial" size:17];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text = @"算 算 看";
     self.navigationItem.titleView = centerLable;
     [centerLable release]; 
@@ -735,13 +742,13 @@
     
     travelTime = [[UILabel alloc] initWithFrame:CGRectMake(95.0, 33.0, 61.0, 34.0)];
     travelTime.backgroundColor = [UIColor clearColor];
-    travelTime.textAlignment = UITextAlignmentRight;
+    travelTime.textAlignment = NSTextAlignmentRight;
     travelTime.font = [UIFont fontWithName:@"Arial" size:14];
     [self.view addSubview:travelTime];
     
     travelMinute = [[UILabel alloc] initWithFrame:CGRectMake(156.0, 33.0, 61.0, 34.0)];
     travelMinute.backgroundColor = [UIColor clearColor];
-    travelMinute.textAlignment = UITextAlignmentLeft;
+    travelMinute.textAlignment = NSTextAlignmentLeft;
     travelMinute.font = [UIFont fontWithName:@"Arial" size:14];
     [self.view addSubview:travelMinute];
     
@@ -753,7 +760,6 @@
     
     travelTime.text = [NSString stringWithFormat:@"%@:",[timesArray objectAtIndex:0]];
     travelMinute.text = [NSString stringWithFormat:@"%@",[timesArray objectAtIndex:1]];
-    
     self.time.text = [NSString stringWithFormat:@"出发时间:  %@点%@分",[timesArray objectAtIndex:0],[timesArray objectAtIndex:1]];
     
     UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -764,7 +770,7 @@
     UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];
     travelTimeLableq.text = @"选择出发时间";
     travelTimeLableq.font = [UIFont fontWithName:@"Arial" size:14];
-    travelTimeLableq.textAlignment = UITextAlignmentCenter;
+    travelTimeLableq.textAlignment = NSTextAlignmentCenter;
     travelTimeLableq.backgroundColor = [UIColor clearColor];
     travelTimeLableq.textColor = [UIColor whiteColor];
     

@@ -38,7 +38,7 @@
     UILabel * inputLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 60.0f, 51.0f)];
     inputLable.text = @"手机号:";
     inputLable.backgroundColor = [UIColor clearColor];
-    inputLable.textAlignment = UITextAlignmentCenter;
+    inputLable.textAlignment = NSTextAlignmentCenter;
     inputLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:15.0f];
     
     inputNumberText = [[UITextField alloc] initWithFrame:CGRectMake(60.0f, 5.0f, 200.0f,45.0f)];
@@ -65,7 +65,7 @@
     UILabel * passWordLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0f, 0.0f, 40.0f, 51.0f)];
     passWordLable.text = @"密码:";
     passWordLable.backgroundColor = [UIColor clearColor];
-    passWordLable.textAlignment = UITextAlignmentLeft;
+    passWordLable.textAlignment = NSTextAlignmentLeft;
     passWordLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:15.0f];
     
     passWordText = [[UITextField alloc] initWithFrame:CGRectMake(45.0f, 5.0f, 200.0f,45.0f)];
@@ -123,17 +123,55 @@
     [self dismissModalViewControllerAnimated:YES];
     
 }
--(void)clientLandedPage:(id)sender
-{
+-(void)startASync:(id)urlString1{
+    NSURL *url=[NSURL URLWithString:urlString1];
+    NSLog(@"url========%@",url);
+//    NSError *error=nil;
+//    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+//    
+//    NSLog(@"response data is %@", responseString);
+//    
+//    [self parseStringJson:responseString];
+//       NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName]; 
+//        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//        NSURL * url = [NSURL URLWithString:baseUrl];
+        
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+        NSLog(@"%@",url);
+        [request setDelegate:self];
+        [request setTag:500];
+        [request startAsynchronous];
+}
+-(void)myTask{
+    //形成异步加载
     NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName]; 
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
+    NSLog(@"%@",baseUrl);
+    [self startASync:baseUrl];
     
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    NSLog(@"%@",url);
-    [request setDelegate:self];
-    [request setTag:500];
-    [request startAsynchronous];
+}
+-(void)clientLandedPage:(id)sender
+{
+    
+    [inputNumberText resignFirstResponder];
+    [passWordText resignFirstResponder];
+//    NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName]; 
+//    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+//    NSURL * url = [NSURL URLWithString:baseUrl];
+//    
+//    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+//    NSLog(@"%@",url);
+//    [request setDelegate:self];
+//    [request setTag:500];
+//    [request startAsynchronous];
+    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:HUD];
+    HUD.delegate=self;
+    HUD.labelText=@"正在登陆...";
+    //HUD.detailsLabelText=@"正在加载...";
+    HUD.square=YES;
+    //此处进入多线程处理
+    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
     
 }
 
@@ -154,14 +192,10 @@
 -(void)parseCouponStringJson:(NSString*)str
 {   
    int total = 0;
-    NSArray* jsonParser =[str JSONValue];
+   [dataArry removeAllObjects];
+   NSArray* jsonParser =[str JSONValue];
     
     for (int i = 0; i<[jsonParser count]; i++) {
-        total = 0;
-       
-        NSArray* jsonParser =[str JSONValue];
-        
-        for (int i = 0; i<[jsonParser count]; i++) {
             DIIdyModel * diidy = [[DIIdyModel alloc] init];
             NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
             diidy.ID = [diidyDict objectForKey:@"id"];
@@ -174,9 +208,8 @@
             [dataArry addObject:diidy];
             [diidy release];
         }
-    }
+    
     if(total!=0){
-            
         SelectCouponViewController * selectCoupon = [[SelectCouponViewController alloc]init];
         selectCoupon.selectCouponAray = dataArry;
         selectCoupon.rowNumber = total;
@@ -197,12 +230,29 @@
 }
 -(void)parseStringJson:(NSString *)str
 {
-    [inputNumberText resignFirstResponder];
-    [passWordText resignFirstResponder];
+   
     
     NSDictionary * jsonParser =[str JSONValue];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
-    ShareApp.logInState = returenNews;
+   // ShareApp.logInState = returenNews;
+    
+    NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);  
+    //获取完整路径
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"test.plist"];
+    NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
+    //定义第一个插件的属性
+    NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
+    [plugin1 setObject:returenNews forKey:@"status"];
+    [plugin1 setObject:inputNumberText.text forKey:@"telephone"];
+    //设置属性值
+    [dictplist setObject:plugin1 forKey:@"statusDict"];
+    
+    //写入文件
+    [dictplist writeToFile:plistPath atomically:YES];
+    [plugin1 release];
+    [dictplist release];
+    
     
     if([returenNews isEqualToString:@"s"])
     {
@@ -215,6 +265,7 @@
         }else if([ShareApp.pageManageMent isEqualToString:@"manage"]) {
             ManageMentViewController * manage = [[ManageMentViewController alloc] init];
             ShareApp.mobilNumber = inputNumberText.text;
+            NSLog(@"%@",inputNumberText.text);
             [self.navigationController pushViewController:manage animated:YES];
             [manage release];
         }else if ([ShareApp.pageManageMent isEqualToString:@"chauffer"]) {

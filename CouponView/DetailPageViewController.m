@@ -207,23 +207,23 @@
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     
     if([returenNews isEqualToString:@"s"]){
-   
-    Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
-    if (messageClass != nil) {
-        if ([messageClass canSendText]) {
-            [self displaySMSComposerSheet];
-            }
-        else {
-            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"设备没有短信功能" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
-            [alert show];
-            [alert release];
-            }
-        }
-    else {
-        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"iOS版本过低,iOS4.0以上才支持程序内发送短信" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-        }
+      [self.navigationController popViewControllerAnimated:YES];
+//    Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
+//    if (messageClass != nil) {
+//        if ([messageClass canSendText]) {
+//            [self displaySMSComposerSheet];
+//            }
+//        else {
+//            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"设备没有短信功能" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
+//            [alert show];
+//            [alert release];
+//            }
+//        }
+//    else {
+//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"iOS版本过低,iOS4.0以上才支持程序内发送短信" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
+//        [alert show];
+//        [alert release];
+//        }
 
     }else {
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送失败，请重试" delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil];

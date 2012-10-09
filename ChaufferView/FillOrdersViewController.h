@@ -20,7 +20,7 @@
     NSMutableArray * dataArry;//存放数据类
     NSArray *timeArray;
     NSString * departure;
-    UIPickerView * timePickView;
+    UIDatePicker *datePicker;
     UIPickerView *peoplePickView;
     UIImageView *pickImageView;
     UIImageView*topImageView;
@@ -29,11 +29,13 @@
     UILabel*centerLable ;
     BOOL landed;
     int total;
+    
+    NSDate* _date;
+   
+    NSDateFormatter*dateformatter;
 }
 
 @property(nonatomic,retain)NSArray*couponaArray;//存放选择的优惠劵
-@property(nonatomic,retain) NSString *departuretimes;//出发时间
-@property(nonatomic,retain) NSString *departureMinutes;//出发时间
 @property(nonatomic,assign) BOOL landed;
 @property(nonatomic,retain)IBOutlet UITextField *destinationField;
 @property(nonatomic,retain)IBOutlet UITextField *nameField;

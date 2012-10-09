@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "DIIdyModel.h"
 #import "ASIHTTPRequest.h"
+#import "VerticallyAlignedLabel.h"
 @interface OrdersPreviewViewController : UIViewController
-<UITableViewDataSource,UITableViewDelegate,UIAlertViewDelegate,ASIHTTPRequestDelegate>
+<UIAlertViewDelegate,ASIHTTPRequestDelegate>
 {
     NSMutableArray * couponArray;
     UIButton*returnButton;
@@ -27,6 +28,6 @@
 @property(nonatomic,retain)IBOutlet UILabel *destinationLable;//目的地
 @property(nonatomic,retain)IBOutlet UILabel *contactLable;//联系人
 @property(nonatomic,retain)IBOutlet UILabel *mobilNumberLable;//手机号码
-@property(nonatomic,retain)IBOutlet UITableView*couponTableView;//优惠劵列表
 @property(nonatomic,retain)IBOutlet UILabel *remarkLable;//备注
+@property(nonatomic,retain)IBOutlet VerticallyAlignedLabel *couponLable;//优惠劵
 @end

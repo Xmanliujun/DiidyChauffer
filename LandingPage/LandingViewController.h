@@ -8,9 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
-
+#import "MBProgressHUD.h"
 @interface LandingViewController : UIViewController
-<UITextFieldDelegate,UIAlertViewDelegate,ASIHTTPRequestDelegate>
+<UITextFieldDelegate,UIAlertViewDelegate,ASIHTTPRequestDelegate,MBProgressHUDDelegate>
 {
     UITextField* passWordText;
     UITextField* inputNumberText;
@@ -18,6 +18,7 @@
     NSMutableArray * dataArry;
   //  UIImageView * LandImageView;
     UIImageView * topImageView;
+    MBProgressHUD *HUD;
     
 }
 @property(nonatomic,retain)NSArray * couponArray;

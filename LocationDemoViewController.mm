@@ -47,21 +47,30 @@
 - (void)onGetAddrResult:(BMKAddrInfo*)result errorCode:(int)error
 {
        if (error == 0) {
-          CLLocationCoordinate2D center;
-            center = result.geoPt;
+           CLLocationCoordinate2D center;
+           center = result.geoPt;
            if (UpdateUserLocation) {
                if (firstMenue) {
-                   [self glassMenuWithContent:result.strAddr];
-                   firstMenue = NO;
-
+                   if ([result.poiList count]!=0) {
+                       BMKPoiInfo * info= [result.poiList objectAtIndex:0];
+                       [self glassMenuWithContent:info.name];
+                   }else{
+                       [self glassMenuWithContent:result.strAddr];
+                   }
+                       firstMenue = NO;
                }
-                BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
+               BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
                item.coordinate = center;
                item.title = result.strAddr;
                [_mapView addAnnotation:item];
                [item release];
             } else {
-                [self glassMenuWithContent:result.strAddr];
+                if ([result.poiList count]!=0) {
+                    BMKPoiInfo * info= [result.poiList objectAtIndex:0];
+                    [self glassMenuWithContent:info.name];
+                }else{
+                    [self glassMenuWithContent:result.strAddr];
+                }
                 
             }             
     }
@@ -292,9 +301,9 @@
     newinmage.userInteractionEnabled = YES;
     
     UIButton *newButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    newButton.frame = CGRectMake(150, 5, 50, 40);
+    newButton.frame = CGRectMake(5,5,190,40);
     newButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:18];
-    [newButton setTitle:@">" forState:UIControlStateNormal];
+    [newButton setTitle:@"                                >" forState:UIControlStateNormal];
     [newButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [newButton addTarget:self action:@selector(selectTheCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
     
@@ -305,16 +314,16 @@
     pickupLable.backgroundColor = [UIColor clearColor];
     pickupLable.font = [UIFont fontWithName:@"Arial" size:14];
     [pickupLable setTextColor:[UIColor whiteColor]];
-    [pickupLable setTextAlignment:UITextAlignmentCenter];
+    [pickupLable setTextAlignment:NSTextAlignmentCenter];
     [pickupLable setText:@"到这儿接我"];
     [newinmage addSubview:pickupLable];
-    
+    [pickupLable release];
     textLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,20, _glassMenuView.frame.size.width - 30, 30)];
     textLabel.backgroundColor = [UIColor clearColor];
     textLabel.numberOfLines = 0;
     textLabel.font = [UIFont fontWithName:@"Arial" size:12];
     [textLabel setTextColor:[UIColor whiteColor]];
-    [textLabel setTextAlignment:UITextAlignmentCenter];
+    [textLabel setTextAlignment:NSTextAlignmentCenter];
     [textLabel setText:text];
     [newinmage addSubview:textLabel];
     [textLabel release];   
@@ -323,6 +332,7 @@
     
     [self.view addSubview:_glassMenuView];
     [_glassMenuView release];
+    [newinmage release];
     
 }
 

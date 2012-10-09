@@ -159,6 +159,7 @@
     
     UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    moreTableView.backgroundView = nil;
     [moreTableView setSeparatorColor:[UIColor blackColor]];
     moreTableView.delegate = self;
     moreTableView.dataSource = self;

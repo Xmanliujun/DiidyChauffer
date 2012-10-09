@@ -105,19 +105,16 @@
     [self setTheNavigationBar];
     NSLog(@"%@",self.diidyModel.status);
     if([self.diidyModel.status isEqualToString:@"已受理"]){
-        NSLog(@"1");
         self.leftDepartureTimeLable.text = @"出发时间";
-        UIImage * changeOrderImage =[UIImage imageNamed:@"u14_normal.png" ];
+        UIImage * changeOrderImage =[UIImage imageNamed:@"orderchange_down.png" ];
         UIButton*changeOrderButton = [UIButton buttonWithType:UIButtonTypeCustom];
         changeOrderButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
         [changeOrderButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        changeOrderButton.frame=CGRectMake(60.0, 365.0,200, changeOrderImage.size.height);
+        changeOrderButton.frame=CGRectMake(60.0, 365.0,changeOrderImage.size.width-118.0, changeOrderImage.size.height-25.0);
         [changeOrderButton setBackgroundImage:changeOrderImage forState:UIControlStateNormal];
-        [changeOrderButton setTitle:@"变更或者取消订单 拨打400电话" forState:UIControlStateNormal];
         [changeOrderButton addTarget:self action:@selector(changeOrCancelTheOrder:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:changeOrderButton];    
     }else if ([self.diidyModel.status isEqualToString:@"完成"]) {
-        NSLog(@"2");
         self.leftDepartureTimeLable.text = @"开始时间";
         UIImage * billingDetailImage =[UIImage imageNamed:@"u148_normal.png" ];
         UIButton*billingDetailButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -130,7 +127,6 @@
         [billingDetailButton addTarget:self action:@selector(billingDetailView:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:billingDetailButton];
     }else {
-        NSLog(@"3");
         self.leftDepartureTimeLable.text = @"出发时间";
     }
     

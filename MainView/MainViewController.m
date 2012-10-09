@@ -148,7 +148,7 @@
         [ShareApp.window setRootViewController:tabController];
 
         
-    }else if (sender.tag ==101) {
+    }else if (sender.tag ==111) {
         if([ShareApp.logInState isEqualToString:@"s"]){
             
             ManageMentViewController * mange = [[ManageMentViewController alloc] init];
@@ -244,9 +244,9 @@
     
     UIButton* telButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    telButton.frame=CGRectMake(60.0f, 340.0f, 200.0f, 30.0f);
-    [telButton setBackgroundImage:[UIImage imageNamed:@"u106_normal.png"] forState:UIControlStateNormal];
-    [telButton setTitle:@"4 0 0 6  9 6 0  6 6 6" forState:UIControlStateNormal];
+    telButton.frame=CGRectMake(80.0f, 340.0f, 160.0f, 30.0f);
+    [telButton setBackgroundImage:[UIImage imageNamed:@"call_up.png"] forState:UIControlStateNormal];
+    //[telButton setTitle:@"4 0 0 6  9 6 0  6 6 6" forState:UIControlStateNormal];
     [telButton addTarget:self action:@selector(telephoneInquiries:) forControlEvents:UIControlEventTouchUpInside];
     [priceImageView addSubview:telButton];
     [self.view addSubview:priceImageView];
@@ -254,8 +254,8 @@
 -(void)creatMainView
 {
     NSArray * promptingArray =[NSArray arrayWithObjects:@"价格",@"分享",@"更多", nil];
-    NSArray * imageArray = [NSArray arrayWithObjects:@"driver_find_u.png",@"order_check_u.png",@"coupon_u.png",@"driver_look_u.png", nil];
-    NSArray * secondArray = [NSArray arrayWithObjects:@"driver_find_d.png",@"order_check_d.png",@"coupon_d.png",@"driver_look_d.png", nil];
+    NSArray * imageArray = [NSArray arrayWithObjects:@"driver_find_u.png",@"driver_look_u.png",@"order_check_u.png",@"coupon_u.png", nil];
+    NSArray * secondArray = [NSArray arrayWithObjects:@"driver_find_d.png",@"driver_look_d.png",@"order_check_d.png",@"coupon_d.png", nil];
     
     for(int i = 0;i<2;i++)
         for(int j = 0;j<2;j++){
@@ -328,9 +328,23 @@
     [mainImageView release];
     [self creatMainView];
     [self creatPriceView];
+    
+    
+   
 
 }
-
+-(void)viewWillAppear:(BOOL)animated
+{
+    NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);  
+    //获取完整路径
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"test.plist"];
+    NSDictionary * dict = [NSDictionary dictionaryWithContentsOfFile:plistPath];
+    NSDictionary * dictStat = [dict objectForKey:@"statusDict"];
+    NSString * status = [dictStat objectForKey:@"status"];
+    ShareApp.logInState = status;
+    ShareApp.mobilNumber = [dictStat objectForKey:@"telephone"];
+}
 - (void)viewDidUnload
 {
     [super viewDidUnload];

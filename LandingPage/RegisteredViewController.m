@@ -132,34 +132,70 @@
     [self.navigationController pushViewController:set animated:YES];
     [set release];
 }
+
+
+-(void)startASync:(id)urlString1{
+    NSURL *url=[NSURL URLWithString:urlString1];
+    NSLog(@"url========%@",url);
+    NSError *error=nil;
+    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    
+    NSLog(@"response data is %@", responseString);
+    
+    [self parseStringJson:responseString];
+}
+
+-(void)myTask{
+    //形成异步加载
+   
+    [self startASync:baseUrl];
+    
+    
+}
+
+-(void)showWithDetails{
+    
+    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:HUD];
+    HUD.delegate=self;
+    HUD.labelText=baseStatus;
+    //HUD.detailsLabelText=@"正在加载...";
+    HUD.square=YES;
+    //此处进入多线程处理
+    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+}
+
 -(void)nextStep:(id)sender
 {
     ShareApp.mobilNumber = inputNumberText.text;
-    NSLog(@"%@",inputNumberText.text);
     [inputNumberText resignFirstResponder];
     if (inputNumberText.text !=NULL) {
         
         if([registerIsTrue isEqualToString:@"TRUE"]){
             NSLog(@"注册账号");
-            NSString * baseUrl = [NSString stringWithFormat:REGISTER,inputNumberText.text];
+            baseUrl = [NSString stringWithFormat:REGISTER,inputNumberText.text];
             baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            NSURL * url = [NSURL URLWithString:baseUrl];
-            ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-            NSLog(@"url=%@",url);
-            [request setDelegate:self];
-            [request setTag:101];
-            [request startAsynchronous];
+            baseStatus = @"用户注册...";
+            [self showWithDetails];
+//            NSURL * url = [NSURL URLWithString:baseUrl];
+//            ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+//            NSLog(@"url=%@",url);
+//            [request setDelegate:self];
+//            [request setTag:101];
+//            [request startAsynchronous];
             
         }else {
             NSLog(@"修改密码");
-            NSString * baseUrl = [NSString stringWithFormat:PASSWORD,inputNumberText.text];
+            baseUrl = [NSString stringWithFormat:PASSWORD,inputNumberText.text];
             baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            NSURL * url = [NSURL URLWithString:baseUrl];
-            ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-            NSLog(@"url=%@",url);
-            [request setDelegate:self];
-            [request setTag:100];
-            [request startAsynchronous];
+            baseStatus = @"找回密码...";
+            [self showWithDetails];
+//            NSURL * url = [NSURL URLWithString:baseUrl];
+//            ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+//            NSLog(@"url=%@",url);
+//            [request setDelegate:self];
+//            [request setTag:100];
+//            [request startAsynchronous];
         }
         
     }else {

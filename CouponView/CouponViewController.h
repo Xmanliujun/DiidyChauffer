@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
+#import "MBProgressHUD.h"
 @interface CouponViewController : UIViewController
-<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate>
+<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,MBProgressHUDDelegate>
 {
    // UIImageView* leftImage;
     UIPageControl * couponPage;
@@ -21,6 +22,7 @@
     UIScrollView * couponScrollView;
     int page;
     NSTimer *couponTimer;
+    MBProgressHUD *HUD;
 }
 
 @end

@@ -8,8 +8,9 @@
 
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
+#import "MBProgressHUD.h"
 @interface RegisteredViewController : UIViewController
-<ASIHTTPRequestDelegate,UIAlertViewDelegate>
+<ASIHTTPRequestDelegate,UIAlertViewDelegate,MBProgressHUDDelegate>
 {
     UILabel * contentLable;
     UILabel * promptLable;
@@ -20,5 +21,9 @@
     UIButton * returnButton;
     UIImageView* topImageView;
     UIButton *rigthbutton;
+    
+    MBProgressHUD *HUD;
+    NSString * baseUrl;
+    NSString * baseStatus;
 }@property(nonatomic,retain)NSString *registerIsTrue;
 @end

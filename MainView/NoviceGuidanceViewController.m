@@ -131,7 +131,7 @@
     centerLable.font = [UIFont systemFontOfSize:17.0f];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text =@"新 手 指 导";
     [self.navigationController.navigationBar addSubview:centerLable];
    

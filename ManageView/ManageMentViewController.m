@@ -35,7 +35,7 @@
     topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
-       returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
     returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
@@ -79,6 +79,7 @@
 {
     UITableView * orderTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    orderTableView.backgroundView=nil;
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
     [orderTableView setSeparatorColor:[UIColor blackColor]];
@@ -86,11 +87,42 @@
     [orderTableView release];
     
 }
+-(void)startASync:(id)urlString1{
+    NSURL *url=[NSURL URLWithString:urlString1];
+    NSLog(@"url========%@",url);
+    NSError *error=nil;
+    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    
+    NSLog(@"response data is %@", responseString);
+    
+    [self parseStringJson:responseString];
+}
+
+-(void)myTask{
+    //形成异步加载
+   
+    [self startASync:baseUrl];
+    
+    
+}
+
+-(void)showWithDetails{
+    
+    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+    [self.navigationController.view addSubview:HUD];
+    HUD.delegate=self;
+    HUD.labelText=@"Loading";
+    HUD.detailsLabelText=@"正在加载...";
+    HUD.square=YES;
+    //此处进入多线程处理
+    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+}
+
 
 -(void)goToTheDownLoadPage
 {
     NSArray * sqlitArray = [ShareApp.mDatabase readDataWithFMDB];
-    NSString * baseUrl;
+   // NSString * baseUrl;
     if (sqlitArray.count!=0) {
         sqlitBool = YES;
         DIIdyModel*diiModel = [sqlitArray objectAtIndex:0];
@@ -122,15 +154,17 @@
         sqlitBool = NO;
         baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
     }
+   
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    NSURLRequest * urlRequest = [NSURLRequest requestWithURL:url];  
-    urlConnecction = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];  
-    //为了安全，捕捉不存在的连接  
-    if(urlConnecction != nil)  {
-        receivedData =[[NSMutableData data] retain];
-        return;
-    }
+    [self showWithDetails];
+//    NSURL * url = [NSURL URLWithString:baseUrl];
+//    NSURLRequest * urlRequest = [NSURLRequest requestWithURL:url];  
+//    urlConnecction = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];  
+//    //为了安全，捕捉不存在的连接  
+//    if(urlConnecction != nil)  {
+//        receivedData =[[NSMutableData data] retain];
+//        return;
+//    }
           
 }
 #pragma mark-HTTPDown
@@ -158,6 +192,7 @@
 -(void)connectionDidFinishLoading:(NSURLConnection *)connection{  
     
    NSString *result = [[[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding] autorelease];
+    NSLog(@"%@",result);
     [self parseStringJson:result];
     [urlConnecction release]; 
     [receivedData release];
@@ -166,6 +201,7 @@
 
 -(void)parseStringJson:(NSString *)str
 {
+    NSLog(@"str   %@",str);
     NSArray* jsonParser =[str JSONValue];
     int i;
     if (sqlitBool) {
