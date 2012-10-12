@@ -115,9 +115,17 @@
 }
 -(void)goNextView:(UIButton *)sender
 {
-   
-    if(sender.tag ==100)
-    {
+    if ([ShareApp.reachable isEqualToString:@"没有网络连接"]) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message: @"当前网络不可用"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+
+    }else{
+      if(sender.tag ==100){
         TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
         ShareApp.pageManageMent = @"chauffer";
         
@@ -131,7 +139,7 @@
         
         OnLineAboutViewController * online = [[[OnLineAboutViewController alloc] init] autorelease];
        // online.title = @"在线约";
-        online.possible = NO;
+        online.possible = YES;
         UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
         
         MathViewController *math = [[[MathViewController alloc] init] autorelease];
@@ -143,12 +151,13 @@
         NSArray *viewControllerArray = [[[NSArray alloc] initWithObjects:na,onlineNa, mathNa, nil] autorelease];
         
         custom_tabbar * tabController  = [[custom_tabbar alloc] init];
+       
         tabController.viewControllers = viewControllerArray;
         tabController.selectedIndex = 1;
         [ShareApp.window setRootViewController:tabController];
 
         
-    }else if (sender.tag ==111) {
+    }else if (sender.tag ==110) {
         if([ShareApp.logInState isEqualToString:@"s"]){
             
             ManageMentViewController * mange = [[ManageMentViewController alloc] init];
@@ -164,7 +173,7 @@
             [land release];
             [landNa release];
         }
-    }else if(sender.tag ==110){
+    }else if(sender.tag ==111){
         
         if([ShareApp.logInState isEqualToString:@"s"]){
             CouponViewController * coupon = [[CouponViewController alloc] init];
@@ -199,7 +208,7 @@
 
         }
     }
-    
+    }
 }
 
 -(void)telephoneInquiries:(id)sender
@@ -264,7 +273,7 @@
             UIButton*  mainButton = [UIButton buttonWithType:UIButtonTypeCustom];
             mainButton.alpha = 0.7;
             mainButton.tag = 100.0+j+i*10.0;
-            mainButton.frame=CGRectMake(30.0f+j*140.0f,100.0f+i*140.0f, 120.0f,120.0f);
+            mainButton.frame=CGRectMake(30.0f+j*140.0f,90.0f+i*140.0f, 120.0f,120.0f);
             [mainButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             [mainButton setImage:mainImage forState:UIControlStateNormal];
             [mainButton setImage:secondImage forState:UIControlStateHighlighted];

@@ -103,7 +103,7 @@
     self.navigationItem.hidesBackButton = YES;
     self.departureLable.numberOfLines = 0;
     [self setTheNavigationBar];
-    NSLog(@"%@",self.diidyModel.status);
+   
     if([self.diidyModel.status isEqualToString:@"已受理"]){
         self.leftDepartureTimeLable.text = @"出发时间";
         UIImage * changeOrderImage =[UIImage imageNamed:@"orderchange_down.png" ];

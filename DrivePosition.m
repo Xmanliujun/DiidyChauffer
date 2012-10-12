@@ -21,7 +21,6 @@
     
     self = [super init];
     if(self){
-        NSLog(@"ssdsd");
         CLLocationCoordinate2D theCoordinate;
         theCoordinate.latitude = lat;
         theCoordinate.longitude = lng;

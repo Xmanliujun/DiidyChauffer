@@ -45,7 +45,21 @@
     driverMobile = [mobile retain];
     _lat =lat;
     _long = lng;
-
+    
+    
+    BMKCoordinateSpan span;
+	
+    span.latitudeDelta = 0.01f; //zoom level
+    span.longitudeDelta = 0.01f; //zoom level
+    
+    BMKCoordinateRegion region;
+    region.span = span;
+    region.center.latitude = lat;
+    region.center.longitude = lng;
+    
+    //_mapView.showsUserLocation=YES;
+    [_mapView setRegion:region animated:YES];
+    
     driveAnnotation = [[BMKPointAnnotation alloc]init];
 	CLLocationCoordinate2D coor;
 	coor.latitude = lat;
@@ -55,6 +69,7 @@
 	 driveAnnotation.title = @"司机";
 	 driveAnnotation.subtitle = @"呼叫我";
 	[_mapView addAnnotation: driveAnnotation];
+    
     
 }
 
@@ -115,7 +130,7 @@
 
 - (void)mapView:(BMKMapView *)mapView didUpdateUserLocation:(BMKUserLocation *)userLocation
 {
-    
+   
      if (userLocation != nil) {
 		
         CLLocationCoordinate2D center;
@@ -135,9 +150,9 @@
         
        
                        NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
-                      [_mapView removeAnnotations:array];
+                      [_mapView removeAnnotation:item];
                         array = [NSArray arrayWithArray:_mapView.overlays];
-                    [_mapView removeOverlays:array];
+                      [_mapView removeOverlays:array];
          
                         CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
                        
@@ -174,14 +189,20 @@
 {
 	NSLog(@"start locate");
 }
+- (void)mapViewDidStopLocatingUser:(BMKMapView *)mapView{
+
+    NSLog(@"qqqq");
+}
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
 {
     NSLog(@"diOYONG");
 	if ([annotation isKindOfClass:[BMKPointAnnotation class]]) {
 		BMKPinAnnotationView *newAnnotation = [[[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"myAnnotation"]autorelease];   
-		newAnnotation.pinColor = BMKPinAnnotationColorPurple;   
+		[newAnnotation setSelected:YES];
+        newAnnotation.pinColor = BMKPinAnnotationColorPurple;
 		newAnnotation.animatesDrop = YES;
-		newAnnotation.draggable = YES;
+		newAnnotation.draggable = NO;
+        
         UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
         [rightButton addTarget:self action:@selector(telDrive:) forControlEvents:UIControlEventTouchUpInside];
         [newAnnotation setCanShowCallout:YES]; //点击能否显示
@@ -202,9 +223,10 @@
 
 -(void)telDrive:(id)sender
 { 
-    
+    NSLog(@"%@",driverMobile);
     UIWebView*callWebview =[[UIWebView alloc] init];
-    NSURL *telURL =[NSURL URLWithString:driverMobile];
+    NSString * telMobile = [NSString stringWithFormat:@"tel:%@",driverMobile];
+    NSURL *telURL =[NSURL URLWithString:telMobile];
     [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
     //记得添加到view上
     [self.view addSubview:callWebview];
@@ -214,7 +236,7 @@
 #pragma mark - System Approach
 - (void)viewDidLoad {
     [super viewDidLoad];
-    
+   
     _mapView = [[BMKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 340)];
     _mapView.delegate = self;
 	_mapView.showsUserLocation = YES;

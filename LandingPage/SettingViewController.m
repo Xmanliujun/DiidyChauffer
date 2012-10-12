@@ -14,6 +14,7 @@
 #import "NSString+Hashing.h"
 #import "CouponViewController.h"
 #import "ManageMentViewController.h"
+#import "JSONKit.h"
 @interface SettingViewController ()
 
 @end
@@ -43,9 +44,7 @@
 }
 -(void)startASetNumber:(NSTimer*)time
 {
-    
     currentTime--;
-    
     NSString * verifcationCodeTime = [NSString stringWithFormat:@"重新获取验证码(%ds)",currentTime];
     [regainbutton setBackgroundImage:[UIImage imageNamed:@"u190_normal.png"] forState:UIControlStateNormal];
     [regainbutton setTitle:verifcationCodeTime forState:UIControlStateNormal];
@@ -65,7 +64,7 @@
 {
     if([_judge isEqualToString:@"TRUE"]){
     
-        if(passWordText.text!=NULL){
+        if([passWordText.text length]!=0){
     
             if([passWordText.text isEqualToString:confirmText.text]){
                 
@@ -104,7 +103,7 @@
         }
         
     }else{
-        if(passWordText.text!=NULL){
+        if([passWordText.text length]!=0){
             
             if([passWordText.text isEqualToString:confirmText.text]){
                 
@@ -113,7 +112,6 @@
                 NSURL * url = [NSURL URLWithString:baseUrl];
                 
                 ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-                NSLog(@"url=%@",url);
                 [request setDelegate:self];
                 [request setTag:101];
                 [request startAsynchronous];
@@ -146,7 +144,8 @@
 }
 -(void)parseStringJson:(NSString *)str
 {
-    NSDictionary * jsonParser =[str JSONValue];
+   // NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     returenNews =[[jsonParser objectForKey:@"r"] retain];
     if([_judge isEqualToString:@"TRUE"]){
        if([returenNews isEqualToString:@"s"]){
@@ -192,9 +191,7 @@
            
            [alert show];
            [alert release];
-
-
-        }
+       }
     }
     
 }
@@ -221,8 +218,32 @@
 }
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
-    
-    [self parseStringJson:[request responseString]];
+    if ([[request responseString] length]==0) {
+        if([_judge isEqualToString:@"TRUE"]){
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"注册失败"
+                                                           message:@"请检查网络是否连接"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"OK"
+                                                 otherButtonTitles:nil ];
+            [alert show];
+            [alert release];
+        }else{
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"修改密码失败"
+                                                           message:@"请检查网络是否连接"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"OK"
+                                                 otherButtonTitles:nil ];
+            [alert show];
+            [alert release];
+        
+        
+        }
+        
+       
+    }else{
+        
+        [self parseStringJson:[request responseString]];
+    }
 }
 -(void)getSMSCodeAgain:(id)sender
 {
@@ -254,6 +275,7 @@
     return YES;
 
 }
+#pragma mark - System Approach
 - (void)viewDidLoad
 {
     [super viewDidLoad];

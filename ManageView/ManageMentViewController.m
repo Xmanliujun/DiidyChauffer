@@ -14,6 +14,8 @@
 #import "DIIdyModel.h"
 #import "ManageTableViewCell.h"
 #import "QFDatabase.h"
+#import "JSONKit.h"
+#import "Reachability.h"
 @interface ManageMentViewController ()
 
 @end
@@ -77,7 +79,15 @@
 
 -(void)creatHaveOrderView
 {
-    UITableView * orderTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
+    CGRect rect;
+    if (100*[listOrderArray count]>400) {
+        rect =self.view.bounds;
+    }else {
+        rect = CGRectMake(0.0, 0.0, 320.0, 100*[listOrderArray count]);
+    }
+    
+    
+    UITableView * orderTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
     orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     orderTableView.backgroundView=nil;
     orderTableView.delegate = self;
@@ -156,7 +166,13 @@
     }
    
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self showWithDetails];
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+  
+    if ([r currentReachabilityStatus]==0) {
+        
+    }else{
+        [self showWithDetails];
+    }
 //    NSURL * url = [NSURL URLWithString:baseUrl];
 //    NSURLRequest * urlRequest = [NSURLRequest requestWithURL:url];  
 //    urlConnecction = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];  
@@ -201,8 +217,9 @@
 
 -(void)parseStringJson:(NSString *)str
 {
-    NSLog(@"str   %@",str);
-    NSArray* jsonParser =[str JSONValue];
+//    NSArray* jsonParser =[str JSONValue];
+    NSArray* jsonParser =[str objectFromJSONString];
+    NSLog(@"coun  %d",[jsonParser count]);
     int i;
     if (sqlitBool) {
         i=1;
@@ -213,7 +230,6 @@
     for(;i<[jsonParser count];i++){
       
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
-        
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
         diidy.orderID = [diidyDict objectForKey:@"orderid"];
         diidy.startTime = [diidyDict objectForKey:@"starttime"];
@@ -274,23 +290,27 @@
     if(cell ==nil)
     {
         cell = [[[ManageTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-        cell.backgroundColor = [UIColor whiteColor];
+        //cell.backgroundColor = [UIColor darkGrayColor];
+        cell.contentView.backgroundColor = [UIColor darkGrayColor];
         
     }
     DIIdyModel * diidy = [listOrderArray objectAtIndex:indexPath.row];
     
     if ([diidy.status isEqualToString:@"已受理"]) {
         cell.statusLable.textColor = [UIColor redColor];
+        cell.statusLable.text = [NSString stringWithFormat:@"%@>",diidy.status];
     }else if([diidy.status isEqualToString:@"完成"]){
         cell.statusLable.textColor = [UIColor greenColor];
+        cell.statusLable.text = [NSString stringWithFormat:@"以%@>",diidy.status];
     }else {
         cell.statusLable.textColor = [UIColor grayColor];
+        cell.statusLable.text = [NSString stringWithFormat:@"%@>",diidy.status];
     }
-    cell.statusLable.text = diidy.status;
+   
     cell.orderNumberLable.text = diidy.orderID;
     cell.startTimeLable.text = diidy.startTime;
     cell.departureLable.text =diidy.startAddr;
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    //cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     return cell;
     

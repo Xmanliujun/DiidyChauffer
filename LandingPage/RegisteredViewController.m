@@ -12,6 +12,7 @@
 #import "CONST.h"
 #import "SBJson.h"
 #import "Landing_DownLoadView.h"
+#import "JSONKit.h"
 @interface RegisteredViewController ()
 
 @end
@@ -43,9 +44,10 @@
 }
 -(void)parseStringJson:(NSString *)str
 {
-    NSDictionary * jsonParser =[str JSONValue];
+//    NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
-   if([registerIsTrue isEqualToString:@"TRUE"]){ 
+    if([registerIsTrue isEqualToString:@"TRUE"]){ 
     
        if([returenNews isEqualToString:@"s"])
        {
@@ -141,15 +143,23 @@
     NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
     
     NSLog(@"response data is %@", responseString);
-    
-    [self parseStringJson:responseString];
+    if ([responseString length]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"注册失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+    }else{
+        [self parseStringJson:responseString];
+    }
 }
 
 -(void)myTask{
     //形成异步加载
    
     [self startASync:baseUrl];
-    
     
 }
 

@@ -19,5 +19,8 @@
     ASIHTTPRequest *requestOrderStatus;
     DriveLocationViewController* driveMap;
     MBProgressHUD *HUD;
+    MBProgressHUD *HUDB;
 }
+//@property (nonatomic, copy) NSString *urlordering;
+//@property (nonatomic, copy) NSString *urlpositionDriver;
 @end

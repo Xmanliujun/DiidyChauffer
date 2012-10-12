@@ -12,6 +12,7 @@
 #import "AppDelegate.h"
 #import "SBJson.h"
 #import "MoreViewController.h"
+#import "JSONKit.h"
 @interface ChangePasswordViewController ()
 
 @end
@@ -60,9 +61,8 @@
 #pragma mark-Http
 -(void)parseStringJson:(NSString *)str
 {
-
-    
-    NSDictionary * jsonParser =[str JSONValue];
+//  NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     
     if([returenNews isEqualToString:@"s"])
@@ -96,7 +96,7 @@
 
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
-    
+  
     [self parseStringJson:[request responseString]];
 
 }

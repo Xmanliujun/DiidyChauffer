@@ -28,13 +28,13 @@
         
         nameLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 160, 30)];
         nameLable.backgroundColor = [UIColor clearColor];
-        nameLable.textColor = [UIColor orangeColor];
+        nameLable.textColor = [UIColor whiteColor];
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
         [self.contentView addSubview:nameLable];
             
         closeDataLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 30, 140, 30)];
         closeDataLable.backgroundColor = [UIColor clearColor];
-        closeDataLable.textColor = [UIColor orangeColor];
+        closeDataLable.textColor = [UIColor whiteColor];
         closeDataLable.font = [UIFont fontWithName:@"Arial" size:14];
         [self.contentView addSubview:closeDataLable];
         

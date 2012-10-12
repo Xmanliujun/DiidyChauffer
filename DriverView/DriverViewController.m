@@ -10,14 +10,14 @@
 #import "CONST.h"
 #import "SBJson.h"
 #import "AppDelegate.h"
-
+#import "JSONKit.h"
 #import "DriveLocationViewController.h"
 @interface DriverViewController ()
 
 @end
 
 @implementation DriverViewController
-
+//@synthesize urlordering,urlpositionDriver;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -30,72 +30,88 @@
     NSURL *url=[NSURL URLWithString:urlString1];
     NSLog(@"url========%@",url);
     NSError *error=nil;
-    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    NSString *responseString=[[NSString  alloc] initWithContentsOfURL:url  encoding:NSUTF8StringEncoding error:&error];
     
     NSLog(@"response data is %@", responseString);
-    
-    [self parseStringJson:responseString];
+    if ([responseString length]==0) {
+        
+    }else{
+       
+        [self parseStringJson:responseString];
+    }
+    [responseString release]; responseString = nil;
 }
 
 -(void)myTask{
     //形成异步加载
     NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self startASync:baseUrl];
-    
-    
-}
-
--(void)getExecutionOrderStatus{
-    
-    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
-    [self.navigationController.view addSubview:HUD];
    
-    HUD.delegate=self;
-    HUD.labelText=@"正在定位我的司机...";
-   // HUD.detailsLabelText=@"正在加载...";
-    HUD.square=YES;
-    //此处进入多线程处理
-    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+    [self startASync:baseUrl];
 }
 
-//-(void)getExecutionOrderStatus
-//{
-//    NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
-//    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//    NSURL * url = [NSURL URLWithString:baseUrl];
-//    requestOrderStatus = [ASIHTTPRequest requestWithURL:url];
-//    [requestOrderStatus setTag:100];
-//    [requestOrderStatus setDelegate:self];
-//    [requestOrderStatus startAsynchronous];
-//
-//
+//-(void)getExecutionOrderStatus{
+//    
+//    HUDB=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+//    [self.navigationController.view addSubview:HUDB];
+//   
+//    HUDB.delegate=self;
+//    HUDB.labelText=@"正在定位我的司机...";
+//   // HUD.detailsLabelText=@"正在加载...";
+//    HUDB.square=YES;
+//    //此处进入多线程处理
+//    [HUDB showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
 //}
+
+-(void)getExecutionOrderStatus
+{
+    NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
+    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    NSURL * url = [NSURL URLWithString:baseUrl];
+    requestOrderStatus = [ASIHTTPRequest requestWithURL:url];
+    [requestOrderStatus setTag:100];
+    [requestOrderStatus setDelegate:self];
+    [requestOrderStatus startAsynchronous];
+
+
+}
 -(void)startASyncB:(id)urlString1{
     NSURL *url=[NSURL URLWithString:urlString1];
     NSLog(@"url========%@",url);
     NSError *error=nil;
-    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
-    
+    //NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    NSString *responseString=[[NSString  alloc] initWithContentsOfURL:url  encoding:NSUTF8StringEncoding error:&error];
+
     NSLog(@"response data is %@", responseString);
-    [self parseStatusStringJson:responseString];
+    
+    if ([responseString length]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"获取信息失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+    }else{
+        [self parseStatusStringJson:responseString];
+    }
+
+    [responseString release];responseString = nil;
    // [self parseStringJson:responseString];
 }
 
 -(void)myTaskStatus
 {
-    NSString * baseUrl = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self startASyncB:baseUrl];
+    NSString * baseUrlb = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
+    baseUrlb = [baseUrlb stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+   
+    [self startASyncB:baseUrlb];
 
 }
 -(void)getDriverStatus
 {
-    
-    
     HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
-   
-    [self.navigationController.view addSubview:HUD];
+   [self.navigationController.view addSubview:HUD];
     HUD.delegate=self;
     HUD.labelText=@"正在定位我的司机...";
     // HUD.detailsLabelText=@"正在加载...";
@@ -116,7 +132,9 @@
 -(void)parseStatusStringJson:(NSString*)str
 { 
     
-    NSArray* jsonParser =[str JSONValue];
+    //NSArray* jsonParser =[[str JSONValue] retain];
+    NSArray* jsonParser =[str objectFromJSONString];
+
     
     if ([jsonParser count]==5) {
         centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
@@ -125,6 +143,7 @@
         NSDictionary * jsonParserDict = [jsonParser objectAtIndex:0];
         
         NSString* status = [jsonParserDict objectForKey:@"status"];
+        
         NSString* driver = [jsonParserDict objectForKey:@"driver"];
         NSString* geo = [jsonParserDict objectForKey:@"geo"];
         
@@ -151,7 +170,6 @@
         }
 
     }
-    
    
    
 }
@@ -159,7 +177,8 @@
 {
     
     NSString * status;
-    NSArray* jsonParser =[str JSONValue];
+   // NSArray* jsonParser =[[str JSONValue] retain];
+     NSArray* jsonParser =[str objectFromJSONString];
     NSLog(@"收拾收拾%@",jsonParser);
     for(int i = 0;i<[jsonParser count];i++){
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
@@ -172,7 +191,7 @@
         }else {
            status = @"已取消";
         }
-        
+
     }
     if([status isEqualToString:@"已受理"]){
     
@@ -187,13 +206,10 @@
 
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
-    NSLog(@"%@",[request responseString]);
-    
+        
     if(request.tag ==100){
-       
         [self parseStringJson:[request responseString]];
     }else if(request.tag ==101) {
-
         [self parseStatusStringJson:[request responseString]];
     }else {
         [self parseStatusStringJson:[request responseString]];
@@ -216,9 +232,9 @@
 {
    // [driveMap initWithTitle:nil withSubtitle:nil withLatitude:0 withLongtitude:0];
     if (driverStatus) {
-        NSString * baseUrl = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
-        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL * url = [NSURL URLWithString:baseUrl];
+        NSString * baseUrlk = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
+        baseUrlk = [baseUrlk stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSURL * url = [NSURL URLWithString:baseUrlk];
         ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
         [request setTag:110];
         [request setDelegate:self];
@@ -229,6 +245,7 @@
 -(void)returnMainView:(id)sender
 {
     [self dismissModalViewControllerAnimated:NO];
+   // [self dismissViewControllerAnimated:NO completion:nil];
 
 }
 
@@ -258,11 +275,10 @@
     topCenterLable.text = @"看司机";
     topCenterLable.textColor = [UIColor orangeColor];
     topCenterLable.backgroundColor = [UIColor clearColor];
-    topCenterLable.textAlignment = UITextAlignmentCenter;
+    topCenterLable.textAlignment = NSTextAlignmentCenter;
     topCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:topCenterLable];
     [topCenterLable release];
-    
     
     driveMap =[[DriveLocationViewController alloc] init];
     driveMap.view.frame = CGRectMake(0.0f, 40.0f, 320.0f, 340.0f);
@@ -301,6 +317,7 @@
 
 -(void)dealloc
 {
+   
     [driveMap release];
     [centerLable release];
     [super dealloc];

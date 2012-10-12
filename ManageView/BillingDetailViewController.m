@@ -9,6 +9,7 @@
 #import "BillingDetailViewController.h"
 #import "SBJson.h"
 #import "CONST.h"
+#import "JSONKit.h"
 @interface BillingDetailViewController ()
 
 @end
@@ -41,7 +42,8 @@
 -(void)parseStringJson:(NSString *)str
 {
     
-    NSDictionary * jsonParser =[str JSONValue];
+   // NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     self.couponLable.text = [jsonParser objectForKey:@"account_coupon"];
     self.enioyCardLable.text =  [jsonParser objectForKey:@"account_discount"];
     self.giftCardLable.text= [jsonParser objectForKey:@"account_giftcard"];
@@ -84,8 +86,7 @@
     [self.navigationController popViewControllerAnimated:YES];
     
 }
-
-
+#pragma mark - System Approach
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -100,8 +101,6 @@
         [billRequest clearDelegatesAndCancel];
         [billRequest release];
     }
-    
-
 }
 -(void)viewDidDisappear:(BOOL)animated
 {

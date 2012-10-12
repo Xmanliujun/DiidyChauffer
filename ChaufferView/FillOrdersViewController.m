@@ -15,6 +15,7 @@
 #import "AppDelegate.h"
 #import "SBJson.h"
 #import "DIIdyModel.h"
+#import "JSONKit.h"
 @interface FillOrdersViewController ()
 
 @end
@@ -61,7 +62,8 @@
     total = 0;
     [dataArry removeAllObjects];
 
-    NSArray* jsonParser =[str JSONValue];
+//    NSArray* jsonParser =[str JSONValue];
+    NSArray* jsonParser =[str objectFromJSONString];
     NSLog(@"%d",[jsonParser count]);
     for (int i = 0; i<[jsonParser count]; i++) {
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
@@ -353,8 +355,7 @@
 }
 -(void)dateChanged:(id)sender{  
     UIDatePicker* control = (UIDatePicker*)sender;  
-     _date = control.date;  
-    
+     _date = [control.date retain];
     NSString * locationString=[dateformatter stringFromDate:_date];
     NSLog(@"%@",locationString);
     self.departureMinuteLable.text = locationString;

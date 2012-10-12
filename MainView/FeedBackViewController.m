@@ -10,6 +10,7 @@
 #import "AppDelegate.h"
 #import "CONST.h"
 #import "SBJson.h"
+#import "JSONKit.h"
 @interface FeedBackViewController ()
 
 @end
@@ -45,7 +46,8 @@
 
 -(void)parseStringJson:(NSString *)str
 {
-    NSDictionary * jsonParser =[str JSONValue];
+   // NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
      NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:returenNews,@"return", nil];
     if ([self.judge isEqualToString:@"more"]) {

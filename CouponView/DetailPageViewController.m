@@ -11,7 +11,7 @@
 #import "CONST.h"
 #import "SBJson.h"
 #import "AppDelegate.h"
-
+#import "JSONKit.h"
 @interface DetailPageViewController ()
 
 @end
@@ -203,7 +203,8 @@
 -(void)parseStringJson:(NSString *)str
 {
     
-    NSDictionary * jsonParser =[str JSONValue];
+//    NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     
     if([returenNews isEqualToString:@"s"]){

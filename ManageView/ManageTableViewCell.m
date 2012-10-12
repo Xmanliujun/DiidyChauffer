@@ -22,6 +22,7 @@
             UILabel * firstOrderLable = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 5.0+30.0*i, 60.0, 30)];
             firstOrderLable.backgroundColor = [UIColor clearColor];
             firstOrderLable.text = [orderArray objectAtIndex:i];
+            firstOrderLable.textColor = [UIColor whiteColor];
             firstOrderLable.font = [UIFont fontWithName:@"Arial" size:13.0];
             [self.contentView addSubview:firstOrderLable];
             [firstOrderLable release];
@@ -29,6 +30,7 @@
         orderNumberLable = [[UILabel alloc] init];
         orderNumberLable.frame = CGRectMake(75, 5, 140, 30);
         orderNumberLable.backgroundColor = [UIColor clearColor];
+        orderNumberLable.textColor = [UIColor whiteColor];
         orderNumberLable.font = [UIFont fontWithName:@"Arial" size:13.0];
         [self.contentView addSubview:orderNumberLable];
         
@@ -36,16 +38,18 @@
         startTimeLable.frame = CGRectMake(75, 35, 140, 30);
         startTimeLable.backgroundColor = [UIColor clearColor];
         startTimeLable.font = [UIFont fontWithName:@"Arial" size:13.0];
+        startTimeLable.textColor = [UIColor whiteColor];
         [self.contentView addSubview: startTimeLable];
         
         departureLable = [[UILabel alloc] init];
         departureLable.frame = CGRectMake(75, 65, 180, 30);
         departureLable.backgroundColor = [UIColor clearColor];
         departureLable.numberOfLines = 0;
+        departureLable.textColor = [UIColor whiteColor];
         departureLable.font = [UIFont fontWithName:@"Arial" size:13.0];
         [self.contentView addSubview: departureLable];
         
-        statusLable = [[UILabel alloc] initWithFrame:CGRectMake(230, 35, 60, 30)];
+        statusLable = [[UILabel alloc] initWithFrame:CGRectMake(250, 35, 60, 30)];
         statusLable.backgroundColor = [UIColor clearColor];
         statusLable.textColor = [UIColor redColor];
         statusLable.font = [UIFont fontWithName:@"Arial" size:14.0];

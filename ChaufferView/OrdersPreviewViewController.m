@@ -13,6 +13,7 @@
 #import "AppDelegate.h"
 #import "MainViewController.h"
 #import "AppDelegate.h"
+#import "JSONKit.h"
 @interface OrdersPreviewViewController ()
 
 @end
@@ -97,13 +98,13 @@
         }
         NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,self.departureTimeLable.text,self.departureLable.text,self.numberOfPeopleLable.text,self.destinationLable.text,self.mobilNumberLable.text,self.contactLable.text,couString,ShareApp.mobilNumber];
         NSLog(@"%@",baseUrl);
-//        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//        NSURL * url = [NSURL URLWithString:baseUrl];
-//        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-//        [request setTimeOutSeconds:15.0];
-//        [request setDelegate:self];
-//        [request setTag:505];
-//        [request startAsynchronous];
+        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSURL * url = [NSURL URLWithString:baseUrl];
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+        [request setTimeOutSeconds:15.0];
+        [request setDelegate:self];
+        [request setTag:505];
+        [request startAsynchronous];
     }
 
 }
@@ -111,8 +112,8 @@
 
 -(void)parseStringJson:(NSString *)str
 {
-    NSLog(@"%@",str);
-   NSDictionary * jsonParser =[str JSONValue];
+//   NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     if ([returenNews isEqualToString:@"s"]) {
         
@@ -137,7 +138,7 @@
 
 -(void)requestFinished:(ASIHTTPRequest *)request
 {
-        [self parseStringJson:[request responseString]];
+    [self parseStringJson:[request responseString]];
 }
 
 #pragma mark - System Approach

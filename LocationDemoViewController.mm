@@ -18,11 +18,7 @@
 @implementation LocationDemoViewController
 @synthesize readonly,mapAnnon,LocationDelegate,path;
 @synthesize possible,possibleLoca;
-//-(void)backToTheOriginalPosition
-//{
-//    
-//    
-//}
+
 - (void)setCurrentLocation{
     
     BMKCoordinateRegion region ;
@@ -46,10 +42,23 @@
 #pragma mark-reverseGeocode
 - (void)onGetAddrResult:(BMKAddrInfo*)result errorCode:(int)error
 {
+    
+    if (!self.possible) {
+        NSLog(@"1");
+       
+        UpdateUserLocation = YES;
+        if ([result.poiList count]!=0) {
+            BMKPoiInfo * info= [result.poiList objectAtIndex:0];
+            [self glassMenuWithContent:info.name];
+        }else{
+            [self glassMenuWithContent:result.strAddr];
+        }
+
+    }else{
        if (error == 0) {
            CLLocationCoordinate2D center;
            center = result.geoPt;
-           if (UpdateUserLocation) {
+           if (!UpdateUserLocation) {
                if (firstMenue) {
                    if ([result.poiList count]!=0) {
                        BMKPoiInfo * info= [result.poiList objectAtIndex:0];
@@ -59,9 +68,16 @@
                    }
                        firstMenue = NO;
                }
+               UpdateUserLocation = YES;
                BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
                item.coordinate = center;
-               item.title = result.strAddr;
+               item.subtitle = @"我的位置";
+               if ([result.poiList count]!=0) {
+                   BMKPoiInfo * info= [result.poiList objectAtIndex:0];
+                   item.title = info.name;
+               }else{
+                   item.title = result.strAddr;
+               }
                [_mapView addAnnotation:item];
                [item release];
             } else {
@@ -73,18 +89,19 @@
                 }
                 
             }             
+        }
     }
 }
 
 - (void)mapView:(BMKMapView *)mapView didUpdateUserLocation:(BMKUserLocation *)userLocation
 {
-
+    
 	if (userLocation != nil) {
         if (self.possible) {
             UpdateUserLocation = YES;
             locationPeson = YES;
+            _mapView.showsUserLocation=NO;
             
-            NSLog(@"location：%f long：%f", userLocation.location.coordinate.latitude, userLocation.location.coordinate.longitude);
             CLLocationCoordinate2D center;
             center.latitude = userLocation.location.coordinate.latitude;
             center.longitude = userLocation.location.coordinate.longitude;
@@ -98,14 +115,7 @@
             region.span = span;
             region.center = userLocation.location.coordinate;
             
-            _mapView.showsUserLocation=YES;
             [_mapView setRegion:region animated:YES];
-            
-            NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
-            [_mapView removeAnnotations:array];
-            array = [NSArray arrayWithArray:_mapView.overlays];
-            [_mapView removeOverlays:array];
-            
             CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
             
             pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
@@ -113,29 +123,30 @@
             if(firstCreat){
                 [self createMarker];
                 if(location.latitude == 0 && location.longitude == 0) return;
-                [self searchAddress:mapView.centerCoordinate];
+                [self searchAddress:userLocation.location.coordinate];
                 firstCreat = NO;
             }            
-            //        BOOL flag = [_search reverseGeocode:pt];
-            //                        
-            //        if (!flag) {
-            //            NSLog(@"search failed!");
-            //        }
         }
-
-        }
+    }else
+    {
+        _mapView.showsUserLocation=NO;
+        UpdateUserLocation = YES;
+        locationPeson = YES;
+    
+    }
         
-       	
 }
 
 - (void)mapView:(BMKMapView *)mapView didFailToLocateUserWithError:(NSError *)error
 {
 	if (error != nil)
+        
 		NSLog(@"locate failed: %@", [error localizedDescription]);
+    
 	else {
+        
 		NSLog(@"locate failed");
 	}
-    
     
     NSString *errorMessage;
     
@@ -148,6 +159,7 @@
 - (void)mapViewWillStartLocatingUser:(BMKMapView *)mapView
 {
 	NSLog(@"start locate");
+ 
 }
 
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
@@ -162,12 +174,14 @@
 	}
 	return nil;
 }
-
+- (void)mapViewDidStopLocatingUser:(BMKMapView *)mapView{
+    
+    UpdateUserLocation = NO;
+}
 - (void)mapView:(BMKMapView *)mapView regionWillChangeAnimated:(BOOL)animated
 {
-   
+
     if(!firstLoaded) return;
-    UpdateUserLocation = NO;    
     if(location.latitude != 0 && location.longitude != 0){
         [_glassMenuView removeFromSuperview];
         _glassMenuView = nil;
@@ -177,16 +191,17 @@
     }
 }
 - (void)mapView:(BMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
-    
+    NSLog(@"2");
     CLLocationCoordinate2D center;
     center.latitude = mapView.centerCoordinate.latitude;
     center.longitude = mapView.centerCoordinate.longitude;
     location = center;
-    if (UpdateUserLocation)return;
+    if (!UpdateUserLocation)return;
     if(!firstLoaded) return;
     else [self createMarker];
-    
+     
     if(location.latitude == 0 && location.longitude == 0) return;
+   
     [self searchAddress:mapView.centerCoordinate];
     
     locationPeson = NO;
@@ -204,7 +219,7 @@
                                                                f.origin.y + f.size.height/2, 
                                                                32, 36)];
         _markerView.backgroundColor = [UIColor clearColor];
-        _markerTip = [[UIImageView alloc] initWithFrame:CGRectMake(-16, -16, 32, 32)];
+        _markerTip = [[UIImageView alloc] initWithFrame:CGRectMake(-16, -16, 26, 25)];
         [_markerTip setImage:[UIImage imageNamed:@"btn_map_current1.png"]];
         [_markerView addSubview:_markerTip];
         [_markerTip release];
@@ -221,14 +236,14 @@
 {
     [UIView animateWithDuration:0.3
                      animations:^{
-                         [_markerTip setFrame:CGRectMake(-16, -32, 32, 32)];
+                         [_markerTip setFrame:CGRectMake(-16, -32, 26, 25)];
                          [_markerShadow setFrame:CGRectMake(16, 34, 0, 0)];
                      } 
                      completion:^(BOOL finished) {
                          
                          [UIView animateWithDuration:0.2
                                           animations:^{
-                                              [_markerTip setFrame:CGRectMake(-16, -16, 32, 32)];
+                                              [_markerTip setFrame:CGRectMake(-16, -16, 26, 25 )];
                                               [_markerShadow setFrame:CGRectMake(0, 32, 32, 4)];
                                           } 
                                           completion:^(BOOL finished) {
@@ -374,9 +389,6 @@
     NSString* lation =[dict objectForKey:@"lation"];
     NSString * locations = [dict objectForKey:@"longitue"];
     
-    NSLog(@"%@",lation);
-    NSLog(@"%@",locations);
-    
     CLLocationCoordinate2D cityLocation;
     cityLocation.latitude = [lation floatValue];
     cityLocation.longitude = [locations floatValue];
@@ -388,9 +400,6 @@
     BMKCoordinateRegion region;
     region.span = span;
     region.center = cityLocation;
-    NSLog(@"%f  %f ",cityLocation.latitude,cityLocation.longitude );
-    // map.showsUserLocation=NO;
-    
     [_mapView setRegion:region animated:YES];
     
 //    [self createMarker];
@@ -402,6 +411,16 @@
 //        [self searchAddress:cityLocation];
 //        locationPeson = NO;
     
+}
+- (id) initWithPossible:(BOOL)possibleM withLocation:(CLLocationCoordinate2D )Latitudelong
+{
+    if ([super init]) {
+        self.possibleLoca = Latitudelong;
+        self.possible = possibleM;
+    }
+    return  self;
+
+
 }
 
 #pragma mark - System Approach
@@ -424,8 +443,8 @@
     _search = [[BMKSearch alloc]init];
 	_search.delegate = self;
     [self.view addSubview:_mapView];
-    if (self.possible) {
-        
+    
+    if (!self.possible) {
         BMKCoordinateSpan span;
         span.latitudeDelta = 0.01f; //zoom level
         span.longitudeDelta = 0.01f; //zoom level
@@ -437,8 +456,14 @@
         [self createMarker];
         [self searchAddress:self.possibleLoca];
     }
+
 }
 
+-(void)viewDidDisappear:(BOOL)animated
+{
+    _mapView.showsUserLocation = NO;
+
+}
 - (void)dealloc {
     
     [_search release];

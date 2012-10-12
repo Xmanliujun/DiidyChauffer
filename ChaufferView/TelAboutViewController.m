@@ -100,7 +100,7 @@
     UIImage * telImage = [UIImage imageNamed:@"call_btn_d.png"];
     UIButton * telButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    telButton.frame=CGRectMake(100.0, 250.0, 120.0, 35.0);
+    telButton.frame=CGRectMake(90.0, 250.0, 140.0, 40.0);
     [telButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [telButton setBackgroundImage:telImage forState:UIControlStateNormal];
     //[telButton setTitle:@"4006-960-666" forState:UIControlStateNormal];

@@ -11,6 +11,7 @@
 #import "AppDelegate.h"
 #import "SBJson.h"
 #import "MainViewController.h"
+#import "JSONKit.h"
 @interface OrdersPreviewTwoViewController ()
 
 @end
@@ -90,7 +91,8 @@
 }
 -(void)parseStringJson:(NSString *)str
 {
-    NSDictionary * jsonParser =[str JSONValue];
+//    NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     if ([returenNews isEqualToString:@"s"]) {
         

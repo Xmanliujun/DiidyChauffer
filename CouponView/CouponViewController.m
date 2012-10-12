@@ -14,6 +14,7 @@
 #import "AppDelegate.h"
 #import "CouponTableCell.h"
 #import "ActivityViewController.h"
+#import "JSONKit.h"
 @interface CouponViewController ()
 
 @end
@@ -31,7 +32,6 @@
 -(void)viewActivity:(UIButton*)sender
 {
     
-    NSLog(@"%d",sender.tag);
     ActivityViewController * active = [[ActivityViewController alloc] init];
     if (sender.tag==1) {
         active.diidyContent = HUNDREDYUAN;
@@ -102,7 +102,8 @@
     if(cell==nil)
     {
         cell = [[[CouponTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID] autorelease];
-        cell.backgroundColor = [UIColor whiteColor];      
+        //cell.backgroundColor = [UIColor grayColor];
+        cell.contentView.backgroundColor = [UIColor darkGrayColor];
     }
   
     DIIdyModel *diidy = [dataArry objectAtIndex:indexPath.row];
@@ -127,7 +128,8 @@
 -(void)parseStringJson:(NSString *)str
 {
     
-    NSArray* jsonParser =[str JSONValue];
+   // NSArray* jsonParser =[str JSONValue];
+    NSArray* jsonParser =[str objectFromJSONString];
     if (dataArry) {
         [dataArry removeAllObjects];
     }else{
@@ -157,9 +159,9 @@
         }
         
         UITableView * couponTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
-        couponTableView.contentInset = UIEdgeInsetsMake(YINSET, 0, 0, 0);
-        //couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-        couponTableView.backgroundColor = [UIColor whiteColor];
+        couponTableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+        couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+        //couponTableView.backgroundColor = [UIColor whiteColor];
         [couponTableView setSeparatorColor:[UIColor blackColor]];
         couponTableView.separatorStyle = UITableViewCellEditingStyleNone;
         couponTableView.delegate = self;

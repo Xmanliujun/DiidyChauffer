@@ -121,16 +121,17 @@
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg2.png"]];
     [startAddrSearchBar insertSubview:imageView atIndex:1];
     [imageView release];
-    
     [self.view addSubview:startAddrSearchBar]; 
     
-    locationDomo = [[LocationDemoViewController alloc] init];
-    locationDomo.possible = self.possible;
-    if (self.possible) {
-        locationDomo.possibleLoca = self.possibleLocation;
-    }
+    locationDomo = [[LocationDemoViewController alloc] initWithPossible:self.possible withLocation:self.possibleLocation];
+    locationDomo.view.frame =CGRectMake(0.0f, 40.0f, 320.0f, 330.0f);
+//    locationDomo.possible = self.possible;
+//    if (!self.possible) {
+//       
+//        locationDomo.possibleLoca = self.possibleLocation;
+//    }
     locationDomo.LocationDelegate = self;
-    locationDomo.view.frame =CGRectMake(0.0f, 40.0f, 320.0f, 420.0f);
+    
     [self.view addSubview:locationDomo.view];
     
 }

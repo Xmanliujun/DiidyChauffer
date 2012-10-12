@@ -40,6 +40,7 @@
 @property(nonatomic,assign)CLLocationCoordinate2D possibleLoca;
 @property(nonatomic,assign)BOOL possible;
 //-(void)backToTheOriginalPosition;
+- (id) initWithPossible:(BOOL)possibleM withLocation:(CLLocationCoordinate2D )Latitudelong;
 
 @end
 

@@ -21,6 +21,7 @@
 #import "DriverViewController.h"
 #import "OrdersPreviewTwoViewController.h"
 #import "MoreViewController.h"
+#import "JSONKit.h"
 
 @implementation LandingViewController
 @synthesize couponArray;
@@ -126,21 +127,31 @@
 -(void)startASync:(id)urlString1{
     NSURL *url=[NSURL URLWithString:urlString1];
     NSLog(@"url========%@",url);
-//    NSError *error=nil;
-//    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
-//    
-//    NSLog(@"response data is %@", responseString);
-//    
-//    [self parseStringJson:responseString];
+    NSError *error=nil;
+    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+    
+    NSLog(@"response data is %@", responseString);
+    if ([responseString length]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+    }else{
+        
+        [self parseStringJson:responseString];
+    }
 //       NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName]; 
 //        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 //        NSURL * url = [NSURL URLWithString:baseUrl];
-        
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        NSLog(@"%@",url);
-        [request setDelegate:self];
-        [request setTag:500];
-        [request startAsynchronous];
+    
+//        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+//        NSLog(@"%@",url);
+//        [request setDelegate:self];
+//        [request setTag:500];
+//        [request startAsynchronous];
 }
 -(void)myTask{
     //形成异步加载
@@ -193,7 +204,8 @@
 {   
    int total = 0;
    [dataArry removeAllObjects];
-   NSArray* jsonParser =[str JSONValue];
+   //NSArray* jsonParser =[str JSONValue];
+    NSArray* jsonParser =[str objectFromJSONString];
     
     for (int i = 0; i<[jsonParser count]; i++) {
             DIIdyModel * diidy = [[DIIdyModel alloc] init];
@@ -230,9 +242,8 @@
 }
 -(void)parseStringJson:(NSString *)str
 {
-   
-    
-    NSDictionary * jsonParser =[str JSONValue];
+   //NSDictionary * jsonParser =[str JSONValue];
+    NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
    // ShareApp.logInState = returenNews;
     
@@ -332,12 +343,12 @@
 	self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
     
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    dataArry = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"top.png"]];
     topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
-    
-    dataArry = [[NSMutableArray alloc] initWithCapacity:0];
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
     returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);

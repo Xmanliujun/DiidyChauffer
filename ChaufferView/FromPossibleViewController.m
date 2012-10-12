@@ -148,7 +148,7 @@
     
     OnLineAboutViewController * online = [[[OnLineAboutViewController alloc] init] autorelease];
     // online.title = @"在线约";
-    online.possible = YES;
+    online.possible = NO;
     online.possibleLocation = ptCenter;
     UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
     

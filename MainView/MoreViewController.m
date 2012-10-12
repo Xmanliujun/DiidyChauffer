@@ -15,6 +15,7 @@
 #import "CONST.h"
 #import "MainViewController.h"
 #import "AppDelegate.h"
+#import <QuartzCore/QuartzCore.h>
 @interface MoreViewController ()
 
 @end
@@ -61,13 +62,33 @@
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellID];
     if(cell ==nil)
     {
-        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-        cell.backgroundColor = [UIColor whiteColor];
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID] autorelease];
+       cell.selectionStyle = UITableViewCellSelectionStyleGray;
+        
+        UIImageView * moreImageview = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"right_orange.png"]];
+        moreImageview.frame = CGRectMake(270.0f, 11.0f, 16.0f, 22.0f);
+        [cell.contentView addSubview:moreImageview];
+       // cell.contentView.backgroundColor = [UIColor darkGrayColor];
+//        UIView *tempView = [[[UIView alloc] init] autorelease];
+//        //tempView.backgroundColor = [UIColor darkGrayColor];
+////        tempView.layer.cornerRadius = 5.0f;
+////        tempView.layer.masksToBounds = YES;
+////        tempView.opaque = NO;
+//
+//        [cell setBackgroundView:tempView];
+//        cell.textLabel.backgroundColor = [UIColor clearColor];
+        [cell setBackgroundColor:[UIColor darkGrayColor]];
+       // cell.contentView.backgroundColor = [UIColor darkGrayColor];
     
     }
-    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+  //  cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.textColor = [UIColor orangeColor];
+    
     if(indexPath.section==0){
         cell.textLabel.text = [moreNameArray objectAtIndex:indexPath.row];
+       
     }else {
         cell.textLabel.text = [moreNameArray objectAtIndex:indexPath.row+indexPath.section];
 
@@ -182,11 +203,13 @@
     self.moreNameArray = [NSArray  arrayWithObjects:@"密码修改",@"意见反馈",@"关于嘀嘀",@"新手引导",@"注销", nil];
     
     UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
-    moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    moreTableView.backgroundColor = [UIColor clearColor];
     moreTableView.backgroundView=nil;
-    [moreTableView setSeparatorColor:[UIColor blackColor]];
+    [moreTableView setSeparatorColor:[UIColor darkGrayColor]];
     moreTableView.delegate = self;
     moreTableView.dataSource = self;
+    moreTableView.scrollEnabled = NO;
+    moreTableView.showsVerticalScrollIndicator = NO;
     [self.view addSubview:moreTableView];
     [moreTableView release];
     

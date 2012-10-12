@@ -26,8 +26,7 @@
 #pragma mark-getAddResut
 - (void)onGetAddrResult:(BMKAddrInfo*)result errorCode:(int)error
 {
-    NSLog(@"diaoyong  ");
-    NSLog(@"%d",error);
+  
     
     if ([addressinformationArray count]!=0) {
         [addressinformationArray removeAllObjects];
@@ -101,6 +100,8 @@
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
         
+        cell.backgroundColor = [UIColor darkGrayColor];
+        
         UIImageView * startImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"start.png"]];
         startImageView.tag = 80;
         startImageView.frame = CGRectMake(10, 0, 30, 44);
@@ -112,7 +113,8 @@
        // nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
         
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
-        nameLable.textColor = [UIColor blackColor];
+        nameLable.backgroundColor = [UIColor darkGrayColor];
+        nameLable.textColor = [UIColor whiteColor];
         nameLable.tag = 81;
         [cell.contentView addSubview:nameLable];
         [nameLable release];
@@ -121,10 +123,13 @@
         addressLable.numberOfLines = 0;
         //addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
         addressLable.font = [UIFont fontWithName:@"Arial" size:12];
-        addressLable.textColor = [UIColor grayColor];
+        addressLable.backgroundColor = [UIColor darkGrayColor];
+        addressLable.textColor = [UIColor whiteColor];
         addressLable.tag = 82;
         [cell.contentView addSubview:addressLable];
         [addressLable release];
+        
+        cell.contentView.backgroundColor = [UIColor darkGrayColor];
     }
    
     

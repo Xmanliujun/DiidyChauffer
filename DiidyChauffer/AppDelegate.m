@@ -13,8 +13,6 @@
 #import "MainViewController.h"
 #import "NoviceGuidanceViewController.h"
 #import "Reachability.h"
-
-
 #import "QFDatabase.h"
 #import "FMDatabase.h"
 #import "FMDatabasePool.h"
@@ -132,7 +130,7 @@
     [self creatDatabase];
     _mapManager = [[BMKMapManager alloc]init];
     // 如果要关注网络及授权验证事件，请设定generalDelegate参数
-	BOOL ret = [_mapManager start:@"96F593C80D691D61026489D7624FA74B5D18C089" generalDelegate:self];
+	BOOL ret = [_mapManager start:@"0620AE5E420F347628B96739E458B4293E377EAE" generalDelegate:self];
     
 	if (!ret) {
 		NSLog(@"manager start failed!");
