@@ -9,5 +9,12 @@
 #import <UIKit/UIKit.h>
 
 @interface PriceViewController : UIViewController
+<UIActionSheetDelegate>
+{
+    UIImageView *priceImageView;
 
+    UIButton* returnButton;
+    NSMutableArray * dataArry;
+    UIImageView * topImageView;
+}
 @end
