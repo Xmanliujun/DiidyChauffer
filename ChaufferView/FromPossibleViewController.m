@@ -126,7 +126,8 @@
    
     BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
     CLLocationCoordinate2D ptCenter = bmn.pt;
-//    NSString * cityName =bmn.name;
+    NSString * cityName =bmn.name;
+  
 //    NSString*address = bmn.address;
 //    NSString * lt = [NSString stringWithFormat:@"%f",ptCenter.latitude];
 //    NSString * lo = [NSString stringWithFormat:@"%f",ptCenter.longitude];
@@ -150,6 +151,7 @@
     // online.title = @"在线约";
     online.possible = NO;
     online.possibleLocation = ptCenter;
+    online.cityName = cityName;
     UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
     
     MathViewController *math = [[[MathViewController alloc] init] autorelease];
@@ -180,12 +182,13 @@
     self.navigationItem.hidesBackButton = YES;
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];

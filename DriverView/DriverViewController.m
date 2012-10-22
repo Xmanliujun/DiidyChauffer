@@ -18,6 +18,7 @@
 
 @implementation DriverViewController
 //@synthesize urlordering,urlpositionDriver;
+@synthesize OrderStatus_request,DriverStatus_request,seeDrive_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -26,120 +27,69 @@
     }
     return self;
 }
--(void)startASync:(id)urlString1{
-    NSURL *url=[NSURL URLWithString:urlString1];
-    NSLog(@"url========%@",url);
-    NSError *error=nil;
-    NSString *responseString=[[NSString  alloc] initWithContentsOfURL:url  encoding:NSUTF8StringEncoding error:&error];
-    
-    NSLog(@"response data is %@", responseString);
-    if ([responseString length]==0) {
-        
-    }else{
-       
-        [self parseStringJson:responseString];
-    }
-    [responseString release]; responseString = nil;
-}
-
--(void)myTask{
-    //形成异步加载
-    NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-   
-    [self startASync:baseUrl];
-}
-
-//-(void)getExecutionOrderStatus{
-//    
-//    HUDB=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
-//    [self.navigationController.view addSubview:HUDB];
-//   
-//    HUDB.delegate=self;
-//    HUDB.labelText=@"正在定位我的司机...";
-//   // HUD.detailsLabelText=@"正在加载...";
-//    HUDB.square=YES;
-//    //此处进入多线程处理
-//    [HUDB showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
-//}
 
 -(void)getExecutionOrderStatus
 {
-    NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    requestOrderStatus = [ASIHTTPRequest requestWithURL:url];
-    [requestOrderStatus setTag:100];
-    [requestOrderStatus setDelegate:self];
-    [requestOrderStatus startAsynchronous];
-
-
-}
--(void)startASyncB:(id)urlString1{
-    NSURL *url=[NSURL URLWithString:urlString1];
-    NSLog(@"url========%@",url);
-    NSError *error=nil;
-    //NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
-    NSString *responseString=[[NSString  alloc] initWithContentsOfURL:url  encoding:NSUTF8StringEncoding error:&error];
-
-    NSLog(@"response data is %@", responseString);
-    
-    if ([responseString length]==0) {
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"获取信息失败"
-                                                       message:@"请检查网络是否连接"
-                                                      delegate:nil
-                                             cancelButtonTitle:@"OK"
-                                             otherButtonTitles:nil ];
-        [alert show];
-        [alert release];
-    }else{
-        [self parseStatusStringJson:responseString];
-    }
-
-    [responseString release];responseString = nil;
-   // [self parseStringJson:responseString];
-}
-
--(void)myTaskStatus
-{
-    NSString * baseUrlb = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
-    baseUrlb = [baseUrlb stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-   
-    [self startASyncB:baseUrlb];
-
-}
--(void)getDriverStatus
-{
     HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
-   [self.navigationController.view addSubview:HUD];
+    [self.navigationController.view addSubview:HUD];
     HUD.delegate=self;
     HUD.labelText=@"正在定位我的司机...";
     // HUD.detailsLabelText=@"正在加载...";
     HUD.square=YES;
-    //此处进入多线程处理
-    [HUD showWhileExecuting:@selector(myTaskStatus) onTarget:self withObject:nil animated:YES];
-//    NSString * baseUrl = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
-//    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//    NSURL * url = [NSURL URLWithString:baseUrl];
-//    requestDriveStatus = [ASIHTTPRequest requestWithURL:url];
-//    [requestDriveStatus setTag:101];
-//    [requestDriveStatus setDelegate:self];
-//    [requestDriveStatus startAsynchronous];
+    [HUD show:YES];
 
+    
+    NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
+    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    HTTPRequest *request = [[HTTPRequest alloc] init];
+    request.forwordFlag = 100;
+    self.OrderStatus_request = request;
+    self.OrderStatus_request.m_delegate = self;
+    self.OrderStatus_request.hasTimeOut = YES;
+    [request release];
+    
+    [self.OrderStatus_request requestByUrlByGet:baseUrl];
+
+
+}
+
+-(void)getDriverStatus
+{
+    
+    NSString * baseUrlb = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
+    baseUrlb = [baseUrlb stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+   
+    HTTPRequest *request = [[HTTPRequest alloc] init];
+    request.forwordFlag = 101;
+    self.OrderStatus_request = request;
+    self.OrderStatus_request.m_delegate = self;
+    self.OrderStatus_request.hasTimeOut = YES;
+    [request release];
+    
+    [self.OrderStatus_request requestByUrlByGet:baseUrlb];
 }
 
 
 -(void)parseStatusStringJson:(NSString*)str
-{ 
+{
     
-    //NSArray* jsonParser =[[str JSONValue] retain];
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+
     NSArray* jsonParser =[str objectFromJSONString];
 
     
     if ([jsonParser count]==5) {
+        
         centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
 
     }else {
+        
         NSDictionary * jsonParserDict = [jsonParser objectAtIndex:0];
         
         NSString* status = [jsonParserDict objectForKey:@"status"];
@@ -161,10 +111,13 @@
                 [driveMap initWithTitle:driver withSubtitle:mobile withLatitude:Latitude  withLongtitude:Longtitude];
                 
             }else {
+                
                 [driveMap  initWithTitle:@"带队司机" withSubtitle:mobile withLatitude:Latitude withLongtitude:Longtitude];
+                
             }
             
         }else {
+            
             driverStatus = NO;
             centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
         }
@@ -176,20 +129,19 @@
 -(void)parseStringJson:(NSString *)str
 {
     
-    NSString * status;
-   // NSArray* jsonParser =[[str JSONValue] retain];
-     NSArray* jsonParser =[str objectFromJSONString];
-    NSLog(@"收拾收拾%@",jsonParser);
-    for(int i = 0;i<[jsonParser count];i++){
-        NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
+        NSString * status;
+        NSArray* jsonParser =[str objectFromJSONString];
+    
+        for(int i = 0;i<[jsonParser count];i++){
+            NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
                 
-        NSString* currentStatus = [diidyDict objectForKey:@"status"];
-        if([currentStatus floatValue]>=1.0&&[currentStatus floatValue]<=4.0){
-            status = @"已受理";
-        }else if ([currentStatus floatValue]==5.0) {
-            status = @"完成";
-        }else {
-           status = @"已取消";
+            NSString* currentStatus = [diidyDict objectForKey:@"status"];
+            if([currentStatus floatValue]>=1.0&&[currentStatus floatValue]<=4.0){
+                status = @"已受理";
+            }else if ([currentStatus floatValue]==5.0) {
+                status = @"完成";
+            }else {
+                status = @"已取消";
         }
 
     }
@@ -202,26 +154,70 @@
         driverStatus = NO;
         centerLable.text = @"您目前尚未预约代驾司机";
     }
+    
 }
 
--(void)requestFinished:(ASIHTTPRequest *)request
-{
+
+
+-(void)requFinish:(NSString *)requestString order:(int)nOrder{
+
+    if ([requestString length]==0) {
         
-    if(request.tag ==100){
-        [self parseStringJson:[request responseString]];
-    }else if(request.tag ==101) {
-        [self parseStatusStringJson:[request responseString]];
-    }else {
-        [self parseStatusStringJson:[request responseString]];
-
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+        
+    }else{
+        if(nOrder ==100){
+            
+            [self parseStringJson:requestString];
+            
+        }else if(nOrder ==101) {
+            [self parseStatusStringJson:requestString];
+        }else {
+            [self parseStatusStringJson:requestString];
+            
+        }
     }
+
+
+
 }
--(void)requestFailed:(ASIHTTPRequest *)request
+-(void)closeConnection
 {
-
-    NSLog(@"7654321");
-
+    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
+
+-(void)requesttimeout
+{
+  [self closeConnection];
+}
+
+
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [HUD removeFromSuperview];
+    [HUD release];
+     HUD = nil;
+}
+
+
 #pragma Button Call
 -(void)returnStartView:(id)sender
 {
@@ -230,15 +226,20 @@
 }
 -(void)seeDrivers:(id)sender
 {
-   // [driveMap initWithTitle:nil withSubtitle:nil withLatitude:0 withLongtitude:0];
+
     if (driverStatus) {
         NSString * baseUrlk = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
         baseUrlk = [baseUrlk stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL * url = [NSURL URLWithString:baseUrlk];
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        [request setTag:110];
-        [request setDelegate:self];
-        [request startAsynchronous];
+        
+        HTTPRequest *request = [[HTTPRequest alloc] init];
+        request.forwordFlag = 110;
+        self.seeDrive_request= request;
+        self.seeDrive_request.m_delegate = self;
+        self.seeDrive_request.hasTimeOut = YES;
+        [request release];
+        
+        [self.OrderStatus_request requestByUrlByGet:baseUrlk];
+
     }
     
 }
@@ -259,13 +260,13 @@
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     [topImageView release];
     
     UIButton*rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    rigthbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    rigthbutton.frame=CGRectMake(260.0, 7.0, 50.0, 30.0);
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
     [rigthbutton setTitle:@"主页" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
@@ -273,7 +274,7 @@
     
     UILabel *topCenterLable = [[UILabel alloc] initWithFrame:CGRectMake(120.0, 0.0, 100.0, 44.0)];
     topCenterLable.text = @"看司机";
-    topCenterLable.textColor = [UIColor orangeColor];
+    topCenterLable.textColor = [UIColor whiteColor];
     topCenterLable.backgroundColor = [UIColor clearColor];
     topCenterLable.textAlignment = NSTextAlignmentCenter;
     topCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
@@ -281,12 +282,12 @@
     [topCenterLable release];
     
     driveMap =[[DriveLocationViewController alloc] init];
-    driveMap.view.frame = CGRectMake(0.0f, 40.0f, 320.0f, 340.0f);
+    driveMap.view.frame = CGRectMake(0.0f, 5.0f, 320.0f, 360.0f);
     [self.view addSubview:driveMap.view];
     
     UIButton * seeDriversButton = [UIButton buttonWithType:UIButtonTypeCustom];
     seeDriversButton.titleLabel.font =[UIFont fontWithName:@"Arial" size:14.0f];
-    seeDriversButton.frame=CGRectMake(100.0f,380.f, 120.0f, 32.0f);
+    seeDriversButton.frame=CGRectMake(100.0f,375.f, 120.0f, 32.0f);
     [seeDriversButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [seeDriversButton  setBackgroundImage:[UIImage imageNamed:@"u56_normal.png.png"] forState:UIControlStateNormal];
     [seeDriversButton setTitle:@"看司机" forState:UIControlStateNormal];
@@ -294,8 +295,9 @@
     [self.view addSubview:seeDriversButton];
     
     UIButton *startButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    startButton.frame=CGRectMake(270.0f,383.f, 31.0f, 30.0f);
-    [startButton  setBackgroundImage:[UIImage imageNamed:@"u62_normal.png"] forState:UIControlStateNormal];
+    startButton.frame=CGRectMake(270.0f,375.0f, 31.0f, 30.0f);
+    [startButton  setBackgroundImage:[UIImage imageNamed:@"my_location_h.png"] forState:UIControlStateNormal];
+    [startButton  setBackgroundImage:[UIImage imageNamed:@"my_location_l.png"] forState:UIControlStateHighlighted];
     [startButton  addTarget:self action:@selector(returnStartView:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:startButton];
     
@@ -305,16 +307,20 @@
     centerLable.textAlignment = UITextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:14.0];
     [self.view addSubview:centerLable];
-//    UIImageView * promptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u16_dnormal.png"]];
-//    promptImageView.frame = CGRectMake(0, 0, 320, 40);
-//    [promptImageView addSubview:centerLable];
-//    [self.view addSubview:promptImageView];
-//    [promptImageView release];
+    UIImageView * promptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"transparent.png"]];
+    promptImageView.frame = CGRectMake(0, 0, 320, 40);
+    [promptImageView addSubview:centerLable];
+    [self.view addSubview:promptImageView];
+    [promptImageView release];
     
     [self getExecutionOrderStatus];
 }
 
+-(void)viewWillDisappear:(BOOL)animated{
 
+    [self.OrderStatus_request closeConnection];
+
+}
 -(void)dealloc
 {
    

@@ -7,14 +7,17 @@
 //
 
 #import <UIKit/UIKit.h>
-
+#import <MessageUI/MessageUI.h>
+#import "ASIHTTPRequest.h"
+#import "DownLoadDelegate.h"
+#import "AboutDiiDyViewController.h"
 @interface MainViewController : UIViewController
-<UIActionSheetDelegate>
+<UIActionSheetDelegate,MFMessageComposeViewControllerDelegate,UIAlertViewDelegate,ASIHTTPRequestDelegate,DownLoadDelegate>
 {   
     BOOL price;
     BOOL server;
     UIImageView *priceImageView;
-   
+    AboutDiiDyViewController * aboutDiidy;
 }
-
+@property(nonatomic,assign)BOOL version;
 @end

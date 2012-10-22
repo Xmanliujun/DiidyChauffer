@@ -7,10 +7,11 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ASIHTTPRequest.h"
+
 #import "MBProgressHUD.h"
+#import "HTTPRequest.h"
 @interface LandingViewController : UIViewController
-<UITextFieldDelegate,UIAlertViewDelegate,ASIHTTPRequestDelegate,MBProgressHUDDelegate>
+<UITextFieldDelegate,UIAlertViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate>
 {
     UITextField* passWordText;
     UITextField* inputNumberText;
@@ -22,4 +23,8 @@
     
 }
 @property(nonatomic,retain)NSArray * couponArray;
+@property(nonatomic, retain)HTTPRequest *land_request;
+@property(nonatomic, retain)HTTPRequest *CouponInformation_request;
+
+
 @end

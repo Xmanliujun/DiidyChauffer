@@ -32,7 +32,7 @@
                            cancelButtonTitle:@"取消"
                            destructiveButtonTitle:@"400 696 0666"
                            otherButtonTitles:nil] autorelease];
-    [menu showInView:self.view];
+    [menu showInView:[UIApplication sharedApplication].keyWindow];
 
 
 
@@ -40,7 +40,10 @@
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    
+    
     if(buttonIndex==0){
+        
         UIWebView*callWebview =[[UIWebView alloc] init];
         NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
         [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
@@ -70,7 +73,7 @@
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     [topImageView release];
     
@@ -86,10 +89,10 @@
     UIImage * rigthImage =[UIImage imageNamed:@"33.png"];
     UIButton *rigthBarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthBarbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
-    [rigthBarbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthBarbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     [rigthBarbutton setTitle:@"主页" forState:UIControlStateNormal];
-    rigthBarbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    rigthBarbutton.frame=CGRectMake(260.0, 7.0, 50.0, 30.0);
     [rigthBarbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     
     UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthBarbutton];
@@ -100,7 +103,7 @@
     UIImage * telImage = [UIImage imageNamed:@"call_btn_d.png"];
     UIButton * telButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    telButton.frame=CGRectMake(90.0, 250.0, 140.0, 40.0);
+    telButton.frame=CGRectMake(80.0, 270.0, 160.0, 40.0);
     [telButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [telButton setBackgroundImage:telImage forState:UIControlStateNormal];
     //[telButton setTitle:@"4006-960-666" forState:UIControlStateNormal];

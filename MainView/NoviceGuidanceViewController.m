@@ -41,7 +41,8 @@
         ShareApp.window.rootViewController = mainView;
         [mainView release];
     }else {
-        [self.navigationController popViewControllerAnimated:YES];
+        //[self.navigationController popViewControllerAnimated:YES];
+        [self dismissModalViewControllerAnimated:NO];
     }
    
 }
@@ -59,11 +60,11 @@
     UIImageView * secondImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"w02.png"]];
     secondImageView .frame = CGRectMake(320.0f, 0.0f, 320.0f, 480.0f);
     
-    UIImageView * threeImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"w03.png"]];
-    threeImageView.frame = CGRectMake(640.0f, 0.0f, 320.0f, 480.0f);
+//    UIImageView * threeImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"w03.png"]];
+//    threeImageView.frame = CGRectMake(640.0f, 0.0f, 320.0f, 480.0f);
     
     UIImageView * fourImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"w04.png"]];
-    fourImageView .frame = CGRectMake(960.0f, 0.0f, 320.0f, 480.0f);
+    fourImageView .frame = CGRectMake(640.0f, 0.0f, 320.0f, 480.0f);
     
     
     UIButton * diidyButton=[UIButton buttonWithType:UIButtonTypeCustom];
@@ -76,14 +77,14 @@
     }
     
     diidyButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    diidyButton.frame=CGRectMake(1090.0f, 320.0f, 70.0f, 35.0f);
+    diidyButton.frame=CGRectMake(770.0f, 320.0f, 70.0f, 35.0f);
     
     [diidyButton addTarget:self action:@selector(goMainView:) forControlEvents:UIControlEventTouchUpInside];
     
     
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 480.0f);
-    scrollView.contentSize = CGSizeMake(320.0f*4,80.0f);
+    scrollView.contentSize = CGSizeMake(320.0f*3,80.0f);
     scrollView.backgroundColor = [UIColor grayColor];
     scrollView.showsVerticalScrollIndicator = NO;
     scrollView.showsHorizontalScrollIndicator = NO;
@@ -92,7 +93,7 @@
     scrollView.scrollEnabled = YES;
     [scrollView addSubview:firstImageView];
     [scrollView addSubview:secondImageView];
-    [scrollView addSubview:threeImageView];
+   // [scrollView addSubview:threeImageView];
     [scrollView addSubview:fourImageView];
     [scrollView addSubview:diidyButton];
     [self.view addSubview:scrollView];
@@ -100,13 +101,13 @@
     [scrollView release];
     [firstImageView release];
     [secondImageView release];
-    [threeImageView release];
+  //  [threeImageView release];
     [fourImageView release];
     
     couponPage= [[UIPageControl alloc] init];
     
     couponPage.frame = CGRectMake(150.0f, 400.0f, 30.0f, 20.0f);
-    couponPage.numberOfPages = 4;
+    couponPage.numberOfPages = 3;
     couponPage.currentPage = 0;
     [self.view addSubview:couponPage];
 }
@@ -115,25 +116,7 @@
 {
     [super viewDidLoad];
 	self.navigationItem.hidesBackButton = YES;
-    
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
-    [self.navigationController.navigationBar addSubview:topImageView];
-    
-    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);
-    [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
-    [returnButton addTarget:self action:@selector(returnORMoreView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.navigationController.navigationBar addSubview:returnButton];
-    
-    centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
-    centerLable.font = [UIFont systemFontOfSize:17.0f];
-    centerLable.textColor = [UIColor whiteColor];
-    centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = NSTextAlignmentCenter;
-    centerLable.text =@"新 手 指 导";
-    [self.navigationController.navigationBar addSubview:centerLable];
+    //[self.navigationController setNavigationBarHidden:YES];
    
     [self creatScrollView];
     
@@ -141,7 +124,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
-  
+    [self.navigationController setNavigationBarHidden:NO];
     
     if ([self.noviceGuidan isEqualToString:@"main"]) {
         

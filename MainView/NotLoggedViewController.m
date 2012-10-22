@@ -68,7 +68,8 @@
     }else {
         NoviceGuidanceViewController * noviceGudice= [[NoviceGuidanceViewController alloc] init];
         noviceGudice.noviceGuidan = @"novice";
-        [self.navigationController pushViewController:noviceGudice animated:YES];
+       // [self.navigationController pushViewController:noviceGudice animated:YES];
+        [self presentModalViewController:noviceGudice animated:NO];
         [noviceGudice release];
 
     }
@@ -118,11 +119,11 @@
 {
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
     rigthbutton.tag = 200;
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     [rigthbutton setTitle:@"登陆" forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
@@ -136,9 +137,11 @@
     [self.navigationController.navigationBar addSubview:centerLable];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.tag = 201;
-    returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);
+    returnButton.frame=CGRectMake(7.0f,7.0f,50.0f,30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -152,7 +155,7 @@
     self.moreNameArray = [NSArray  arrayWithObjects:@"意见反馈",@"关于嘀嘀",@"新手引导", nil];
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     [self creatNavigationBar];    

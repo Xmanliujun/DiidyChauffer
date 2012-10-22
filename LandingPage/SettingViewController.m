@@ -15,12 +15,13 @@
 #import "CouponViewController.h"
 #import "ManageMentViewController.h"
 #import "JSONKit.h"
+#import "Reachability.h"
 @interface SettingViewController ()
 
 @end
 
 @implementation SettingViewController
-@synthesize mobilNumber,optype;
+@synthesize mobilNumber,optype,again_request,comRequest_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -59,45 +60,59 @@
   
 }
 
-
--(void)pushCompleteView:(id)sender
-{
+-(void)startASync{
+   
     if([_judge isEqualToString:@"TRUE"]){
-    
+        
         if([passWordText.text length]!=0){
-    
+            
             if([passWordText.text isEqualToString:confirmText.text]){
                 
                 NSString * baseUrl = [NSString stringWithFormat:SETUP,verificationText.text,[passWordText.text MD5Hash],[confirmText.text MD5Hash],mobilNumber,optype,ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName];
                 baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                NSURL * url = [NSURL URLWithString:baseUrl];
-                ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-                [request setDelegate:self];
-                [request setTag:100];
-                [request startAsynchronous];
+                
+                HTTPRequest *request = [[HTTPRequest alloc] init];
+                request.forwordFlag = 100;
+                self.comRequest_request = request;
+                self.comRequest_request.m_delegate = self;
+                self.comRequest_request.hasTimeOut = YES;
+                [request release];
+                
+                [self.comRequest_request requestByUrlByGet: baseUrl];
                 
             }else {
                 
-                UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                if (HUD){
+                    [HUD removeFromSuperview];
+                    [HUD release];
+                    HUD = nil;
+                }
+                UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                                message:@"您输入的两次密码不一致哦，再试试看"
                                                               delegate:nil
-                                                     cancelButtonTitle:@"OK" 
+                                                     cancelButtonTitle:@"OK"
                                                      otherButtonTitles:nil];
                 [alert show];
                 [alert release];
                 
                 
             }
-
+            
         }else {
             
-            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+            if (HUD){
+                [HUD removeFromSuperview];
+                [HUD release];
+                HUD = nil;
+            }
+
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                            message:@"密码不能为空"
                                                           delegate:nil
-                                                 cancelButtonTitle:@"OK" 
+                                                 cancelButtonTitle:@"OK"
                                                  otherButtonTitles:nil];
-
-    
+            
+            
             [alert show];
             [alert release];
         }
@@ -107,32 +122,50 @@
             
             if([passWordText.text isEqualToString:confirmText.text]){
                 
-                NSString * baseUrl = [NSString stringWithFormat:SETUP,verificationText.text,[passWordText.text MD5Hash],[confirmText.text MD5Hash],mobilNumber,optype,ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName];  
+                NSString * baseUrl = [NSString stringWithFormat:SETUP,verificationText.text,[passWordText.text MD5Hash],[confirmText.text MD5Hash],mobilNumber,optype,ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName];
                 baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-                NSURL * url = [NSURL URLWithString:baseUrl];
                 
-                ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-                [request setDelegate:self];
-                [request setTag:101];
-                [request startAsynchronous];
+                HTTPRequest *request = [[HTTPRequest alloc] init];
+                request.forwordFlag = 101;
+                self.comRequest_request = request;
+                self.comRequest_request.m_delegate = self;
+                self.comRequest_request.hasTimeOut = YES;
+                [request release];
+                
+                [self.comRequest_request requestByUrlByGet: baseUrl];
+
                 
             }else {
-                UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                
+                if (HUD){
+                    [HUD removeFromSuperview];
+                    [HUD release];
+                    HUD = nil;
+                }
+
+                UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                                message:@"您输入的两次密码不一致哦，再试试看"
                                                               delegate:nil
-                                                     cancelButtonTitle:@"OK" 
+                                                     cancelButtonTitle:@"OK"
                                                      otherButtonTitles:nil];
                 [alert show];
                 [alert release];
                 
-
+                
             }
             
         }else {
-            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+            
+            if (HUD){
+                [HUD removeFromSuperview];
+                [HUD release];
+                HUD = nil;
+            }
+
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                            message:@"密码不能为空"
                                                           delegate:nil
-                                                 cancelButtonTitle:@"OK" 
+                                                 cancelButtonTitle:@"OK"
                                                  otherButtonTitles:nil];
             
             
@@ -141,20 +174,95 @@
         }
         
     }
+
+}
+
+
+
+
+-(void)parseAgainStringJson:(NSString*)againStr
+{
+
+    NSDictionary * jsonAgainParser =[againStr objectFromJSONString];
+    NSString * returnAgainString = [jsonAgainParser objectForKey:@"r"];
+    if ([returnAgainString isEqualToString:@"s"]) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"获取验证码成功!"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil];
+        
+        
+        [alert show];
+        [alert release];
+    }else if ([returnAgainString isEqualToString:@"f"])
+    {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"获取验证码失败!"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil];
+        
+        
+        [alert show];
+        [alert release];
+    
+    }else if ([returnAgainString isEqualToString:@"no register"])
+    {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"您还未注册,请先注册!"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil];
+        
+        
+        [alert show];
+        [alert release];
+    
+    }
+
+
+
 }
 -(void)parseStringJson:(NSString *)str
 {
-   // NSDictionary * jsonParser =[str JSONValue];
+   
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
     NSDictionary * jsonParser =[str objectFromJSONString];
     returenNews =[[jsonParser objectForKey:@"r"] retain];
+    NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"test.plist"];
+    NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
+    [plugin1 setObject:returenNews forKey:@"status"];
+    [plugin1 setObject:self.mobilNumber forKey:@"telephone"];
+    
+    [dictplist setObject:plugin1 forKey:@"statusDict"];
+    
+    [dictplist writeToFile:plistPath atomically:YES];
+    [plugin1 release];
+    [dictplist release];
+   
     if([_judge isEqualToString:@"TRUE"]){
-       if([returenNews isEqualToString:@"s"]){
+       
+        if([returenNews isEqualToString:@"s"]){
+          
             if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
+               
                 CouponViewController * cou = [[[CouponViewController alloc] init] autorelease];
                 [self.navigationController pushViewController:cou animated:YES];
+                
             }else {
+                
                 ManageMentViewController * manage = [[[ManageMentViewController alloc] init] autorelease];
                 [self.navigationController pushViewController:manage animated:YES];
+                
             }
         }else {
             
@@ -170,6 +278,7 @@
         }
     }else {
         if([returenNews isEqualToString:@"s"]){
+          
             
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                            message:@"您已成功修改密码"
@@ -216,9 +325,12 @@
 
 
 }
--(void)requestFinished:(ASIHTTPRequest *)request
+#pragma mark-HTTP
+
+-(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
-    if ([[request responseString] length]==0) {
+    
+    if ([requestString length]==0) {
         if([_judge isEqualToString:@"TRUE"]){
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"注册失败"
                                                            message:@"请检查网络是否连接"
@@ -235,36 +347,85 @@
                                                  otherButtonTitles:nil ];
             [alert show];
             [alert release];
-        
-        
+            
+            
         }
         
-       
-    }else{
         
-        [self parseStringJson:[request responseString]];
+    }else{
+        if (nOrder==102) {
+            [self parseAgainStringJson:requestString];
+        }else{
+            
+            [self parseStringJson:requestString];
+        }
     }
-}
--(void)getSMSCodeAgain:(id)sender
-{
-    [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(startASetNumber:) userInfo:nil repeats:YES];
-    currentTime = 60;
-    regainbutton.userInteractionEnabled = NO;
     
-    NSString * baseUrl = [NSString stringWithFormat:REGAIN,mobilNumber]; 
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setDelegate:self];
-    [request setTag:102];
-    [request startAsynchronous];
-
+    
+    
 }
+
+-(void)requesttimeout
+{
+    
+    [self closeConnection];
+}
+-(void)closeConnection
+{
+    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [HUD removeFromSuperview];
+    [HUD release];
+    HUD = nil;
+}
+#pragma mark-button
+
+-(void)pushCompleteView:(id)sender
+{
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"联网失败,请稍后再试"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }else{
+
+        HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+        [self.navigationController.view addSubview:HUD];
+        HUD.delegate=self;
+        //HUD.labelText=baseStatus;
+        HUD.detailsLabelText=@"正在加载...";
+        HUD.square=YES;
+        [HUD show:YES];
+    
+        [self startASync];
+    }
+    
+}
+
+
 
 -(void)returRegisteredView:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
-
+    
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
@@ -273,8 +434,42 @@
     [confirmText resignFirstResponder];
     [passWordText resignFirstResponder];
     return YES;
-
+    
 }
+
+-(void)getSMSCodeAgain:(id)sender
+{
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"联网失败,请稍后再试"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        
+    }else{
+
+        [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(startASetNumber:) userInfo:nil repeats:YES];
+        currentTime = 60;
+        regainbutton.userInteractionEnabled = NO;
+    
+        NSString * baseUrl = [NSString stringWithFormat:REGAIN,mobilNumber]; 
+        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+
+        HTTPRequest *request = [[HTTPRequest alloc] init];
+        request.forwordFlag = 102;
+        self.again_request = request;
+        self.again_request.m_delegate = self;
+        self.again_request.hasTimeOut = YES;
+        [request release];
+    
+        [self.again_request requestByUrlByGet: baseUrl];
+    }
+}
+
 #pragma mark - System Approach
 - (void)viewDidLoad
 {
@@ -286,12 +481,13 @@
     currentTime = 60;
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];    
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returRegisteredView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];

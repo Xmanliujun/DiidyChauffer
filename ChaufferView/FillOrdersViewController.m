@@ -16,6 +16,7 @@
 #import "SBJson.h"
 #import "DIIdyModel.h"
 #import "JSONKit.h"
+#import "Reachability.h"
 @interface FillOrdersViewController ()
 
 @end
@@ -48,13 +49,33 @@
 #pragma mark-HttpDown
 -(void)downLoadTheCouponData
 {
-    NSString * baseUrl = [NSString stringWithFormat:COUPON,ShareApp.mobilNumber];
-    NSLog(@"%@",baseUrl);
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setDelegate:self];
-    [request startSynchronous];
+    
+    
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"联网失败,无法获得优惠劵"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        
+    }else{
+
+        NSLog(@"%@",ShareApp.mobilNumber);
+        NSString * baseUrl = [NSString stringWithFormat:COUPON,ShareApp.mobilNumber];
+        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        HTTPRequest *request = [[HTTPRequest alloc] init];
+    
+        self.getCoupon_request = request;
+        self.getCoupon_request.m_delegate = self;
+        self.getCoupon_request.hasTimeOut = YES;
+        [request release];
+    
+        [self.getCoupon_request requestByUrlByGet: baseUrl];
+    }
 }
 
 -(void)parseStringJson:(NSString *)str
@@ -62,7 +83,6 @@
     total = 0;
     [dataArry removeAllObjects];
 
-//    NSArray* jsonParser =[str JSONValue];
     NSArray* jsonParser =[str objectFromJSONString];
     NSLog(@"%d",[jsonParser count]);
     for (int i = 0; i<[jsonParser count]; i++) {
@@ -85,13 +105,34 @@
     }
         
 }
-
--(void)requestFinished:(ASIHTTPRequest *)request
+-(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
-    
-    [self parseStringJson:[request responseString]];
-}
 
+    if ([requestString length]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+    }else{
+        
+        [self parseStringJson:requestString];
+    }
+
+}
+-(void)requesttimeout
+{
+
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+
+
+}
 #pragma mark-textFiled
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
@@ -102,17 +143,21 @@
     self.backGroundView.frame = CGRectMake(0, -30, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
         [UIView commitAnimations];
     }else if (textField.tag ==40) {
+        
         [UIView beginAnimations:@"animation" context:nil];
         [UIView setAnimationDuration:0.3];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         self.backGroundView.frame = CGRectMake(0, -100, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
         [UIView commitAnimations];
+        
     }else {
+        
         [UIView beginAnimations:@"animation" context:nil];
         [UIView setAnimationDuration:0.3];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         self.backGroundView.frame = CGRectMake(0, -120, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
         [UIView commitAnimations];
+        
     }
        return YES;
 
@@ -225,6 +270,7 @@
     double diff = date2 -date1;
     
     if (diff<60*30-20) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                        message:@"出发时间需要在当前时间30分以后"
                                                       delegate:nil 
@@ -232,8 +278,10 @@
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        
     }else {
         if (!self.landed) {
+            
             LandingViewController * landedController = [[LandingViewController alloc] init];
             UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:landedController];
             NSLog(@"%@",self.departureMinuteLable.text);
@@ -241,6 +289,7 @@
             [self presentModalViewController:landNa animated:YES];
             [landedController release];
             [landNa release];
+            
         }else {
             
             OrdersPreviewViewController * orderController = [[OrdersPreviewViewController alloc] init];
@@ -316,7 +365,7 @@
         NSIndexPath* diidyMbdelPath = [self.couponaArray objectAtIndex:i];
         DIIdyModel *diidyModel = [dataArry objectAtIndex:diidyMbdelPath.section];
         
-        couString = [couString stringByAppendingString:diidyModel.name];
+        [couString appendString:diidyModel.name];
         couString = [NSMutableString stringWithFormat:@"%@,",couString];
     }
 
@@ -328,12 +377,13 @@
 -(void)setTheNavigationBar
 {
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -373,18 +423,23 @@
     self.departureLable.text = departure;
     self.departureLable.numberOfLines = 0;
     
-    dataArry = [[NSMutableArray alloc] initWithCapacity:0];
-    [self downLoadTheCouponData];
-    [self setTheNavigationBar];
+    if (ShareApp.mobilNumber.length!=0) {
+        
+        self.telNumberField.text = ShareApp.mobilNumber;
+    }
     
+    dataArry = [[NSMutableArray alloc] initWithCapacity:0];
+    
+    [self setTheNavigationBar];
+
+    [self downLoadTheCouponData];
+       
     timeArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ProvincesAndCities.plist" ofType:nil]];
     minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
     peopleArray = [[timeArray objectAtIndex:1]objectForKey:@"Cities"];
 
-   // NSDate * senddate=[NSDate date];
     
     NSDate *today = [[NSDate alloc] init]; 
-    NSLog(@"tody  %@",today);
     
     NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]; 
     

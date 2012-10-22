@@ -22,9 +22,11 @@
 #import "OrdersPreviewTwoViewController.h"
 #import "MoreViewController.h"
 #import "JSONKit.h"
+#import "Reachability.h"
 
 @implementation LandingViewController
 @synthesize couponArray;
+@synthesize CouponInformation_request,land_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -110,6 +112,7 @@
     [registered release];
     
 }
+
 -(void)forgotPassword:(id)sender
 {
     RegisteredViewController * registered = [[RegisteredViewController alloc] init];
@@ -121,81 +124,116 @@
 }
 -(void)returnMainView:(id)sender
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissModalViewControllerAnimated:NO];
     
 }
--(void)startASync:(id)urlString1{
-    NSURL *url=[NSURL URLWithString:urlString1];
-    NSLog(@"url========%@",url);
-    NSError *error=nil;
-    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+
+-(void)closeConnection
+{
     
-    NSLog(@"response data is %@", responseString);
-    if ([responseString length]==0) {
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
-                                                       message:@"请检查网络是否连接"
-                                                      delegate:nil
-                                             cancelButtonTitle:@"OK"
-                                             otherButtonTitles:nil ];
-        [alert show];
-        [alert release];
-    }else{
-        
-        [self parseStringJson:responseString];
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
     }
-//       NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName]; 
-//        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//        NSURL * url = [NSURL URLWithString:baseUrl];
     
-//        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-//        NSLog(@"%@",url);
-//        [request setDelegate:self];
-//        [request setTag:500];
-//        [request startAsynchronous];
-}
--(void)myTask{
-    //形成异步加载
-    NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName]; 
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSLog(@"%@",baseUrl);
-    [self startASync:baseUrl];
+       
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
     
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
+
+-(void)requesttimeout
+{
+    [self closeConnection];
+
+}
+
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [HUD removeFromSuperview];
+    [HUD release];
+    HUD = nil;
+}
+
 -(void)clientLandedPage:(id)sender
 {
     
     [inputNumberText resignFirstResponder];
     [passWordText resignFirstResponder];
-//    NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName]; 
-//    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-//    NSURL * url = [NSURL URLWithString:baseUrl];
-//    
-//    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-//    NSLog(@"%@",url);
-//    [request setDelegate:self];
-//    [request setTag:500];
-//    [request startAsynchronous];
-    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
-    [self.navigationController.view addSubview:HUD];
-    HUD.delegate=self;
-    HUD.labelText=@"正在登陆...";
-    //HUD.detailsLabelText=@"正在加载...";
-    HUD.square=YES;
-    //此处进入多线程处理
-    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
     
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"联网失败,请稍后再试"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }else{
+
+    
+        if(inputNumberText.text==NULL||[inputNumberText.text length]==0)
+        {
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"请输入手机号"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+    
+        }else if (passWordText.text==NULL||[passWordText.text length]==0)
+        {
+    
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"请输入密码"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+    
+        }else{
+            
+            HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+            [self.navigationController.view addSubview:HUD];
+            HUD.delegate=self;
+            HUD.labelText=@"正在登陆...";
+            //HUD.detailsLabelText=@"正在加载...";
+            HUD.square=YES;
+            [HUD show:YES];
+    
+            NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName];
+            baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            HTTPRequest *request = [[HTTPRequest alloc] init];
+            request.forwordFlag = 500;
+            self.land_request = request;
+            self.land_request.m_delegate = self;
+            self.land_request.hasTimeOut = YES;
+            [request release];
+    
+            [self.land_request requestByUrlByGet: baseUrl];
+    
+        }
+    }
 }
 
 -(void)getCouponInformation{
 
     NSString * baseUrl = [NSString stringWithFormat:COUPON,inputNumberText.text];
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-   // [request setTimeOutSeconds:15.0];
-    [request setDelegate:self];
-    [request setTag:505];
-    [request startAsynchronous];
+    
+    HTTPRequest *request = [[HTTPRequest alloc] init];
+    request.forwordFlag=505;
+    self.CouponInformation_request = request;
+    self.CouponInformation_request.m_delegate = self;
+    self.CouponInformation_request.hasTimeOut = YES;
+    [request release];
+    [self.CouponInformation_request requestByUrlByGet: baseUrl];
         
 }
 
@@ -204,7 +242,6 @@
 {   
    int total = 0;
    [dataArry removeAllObjects];
-   //NSArray* jsonParser =[str JSONValue];
     NSArray* jsonParser =[str objectFromJSONString];
     
     for (int i = 0; i<[jsonParser count]; i++) {
@@ -242,24 +279,27 @@
 }
 -(void)parseStringJson:(NSString *)str
 {
-   //NSDictionary * jsonParser =[str JSONValue];
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+
+    
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
    // ShareApp.logInState = returenNews;
     
     NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);  
-    //获取完整路径
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"test.plist"];
     NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
-    //定义第一个插件的属性
     NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
     [plugin1 setObject:returenNews forKey:@"status"];
     [plugin1 setObject:inputNumberText.text forKey:@"telephone"];
-    //设置属性值
+    
     [dictplist setObject:plugin1 forKey:@"statusDict"];
     
-    //写入文件
     [dictplist writeToFile:plistPath atomically:YES];
     [plugin1 release];
     [dictplist release];
@@ -269,35 +309,43 @@
     {
         returnButton.hidden = YES;
         if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
+            
             CouponViewController * cou = [[CouponViewController alloc] init];
             ShareApp.mobilNumber = inputNumberText.text;
             [self.navigationController pushViewController:cou animated:YES];
             [cou release];
+            
         }else if([ShareApp.pageManageMent isEqualToString:@"manage"]) {
+            
             ManageMentViewController * manage = [[ManageMentViewController alloc] init];
             ShareApp.mobilNumber = inputNumberText.text;
             NSLog(@"%@",inputNumberText.text);
             [self.navigationController pushViewController:manage animated:YES];
             [manage release];
+            
         }else if ([ShareApp.pageManageMent isEqualToString:@"chauffer"]) {
+            
             [self getCouponInformation];
             ShareApp.mobilNumber = inputNumberText.text;
+            
         }else if([ShareApp.pageManageMent isEqualToString:@"Driver"]){
+            
             DriverViewController *drive = [[DriverViewController alloc] init];
             ShareApp.mobilNumber = inputNumberText.text;
             [self.navigationController pushViewController:drive animated:YES];
             [drive release];
+            
         }else if([ShareApp.pageManageMent isEqualToString:@"notLog"]){
+            
             MoreViewController * more =[[MoreViewController alloc] init];
             more.whereLand = @"Land";
-           // UINavigationController * moreNav=[[UINavigationController alloc] initWithRootViewController:more];
             [self.navigationController pushViewController:more animated:YES];
             [more release];
-           // [moreNav release];
             ShareApp.mobilNumber = inputNumberText.text;
-           // [self dismissModalViewControllerAnimated:NO];
+            
         }
     }else if ([returenNews isEqualToString:@"f"]) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败" 
                                                        message:@"请检查网络是否连接"
                                                       delegate:self 
@@ -305,36 +353,60 @@
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        
     }else if ([returenNews isEqualToString:@"pwd error"]) {
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"密码错误" 
+       
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"密码错误"
                                                        message:@"请重新输入密码"
                                                       delegate:self 
                                              cancelButtonTitle:@"OK" 
                                              otherButtonTitles:nil];
         [alert show];
         [alert release];
+        
     }else {
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"未注册" 
+       
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"未注册"
                                                        message:@"请先注册账号"
                                                       delegate:self 
                                              cancelButtonTitle:@"OK" 
                                              otherButtonTitles:nil];
         [alert show];
         [alert release];
+        
     }
     
 }
 
 
--(void)requestFinished:(ASIHTTPRequest *)request
+-(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
-    
-    if(request.tag ==500){
-        [self parseStringJson:[request responseString]];
-    }else {
-        [self parseCouponStringJson:[request responseString]];
+    if ([requestString length]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+        
+    }else{
+        
+        if(nOrder ==500){
+            
+            [self parseStringJson:requestString];
+            
+        }else {
+            
+            [self parseCouponStringJson:requestString];
+        }
+        
+        
+        
     }
 }
+
 #pragma mark - System Approach
 - (void)viewDidLoad
 {
@@ -345,13 +417,14 @@
     
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
     
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"top.png"]];
-    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -395,7 +468,6 @@
 
 -(void)viewDidDisappear:(BOOL)animated
 {
-   // LandImageView.hidden = YES;
     topImageView.hidden = YES;
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -417,7 +489,7 @@
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
+    
 }
 
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

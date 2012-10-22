@@ -18,6 +18,9 @@
 	select_image = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"NavBar_01_s.png"]];
 	tab_bar_bg = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"tools_bar_bg.png"]];
 	tab_text = [[NSMutableArray alloc] initWithObjects:@"电话约",@"在线约",@"算算看",nil];
+    
+    seltArry = [NSArray arrayWithObjects:@"tabbar2.png",@"tabbar1.png",@"tabbar3.png",nil];
+    tableArry  = [NSArray arrayWithObjects:@"tabbar2-1.png",@"tabbar1-1.png",@"tabbar3-1.png", nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -53,11 +56,15 @@
 	tab_btn = [[NSMutableArray alloc] initWithCapacity:0];
 	for (int i = 0; i < tab_num; i++)
 	{
+        UIImage *tableImage =  [UIImage imageNamed:[tableArry objectAtIndex:i]];
+        UIImage * selectImage =[UIImage imageNamed:[seltArry objectAtIndex:i]];
 		btn = [UIButton buttonWithType:UIButtonTypeCustom];
-		[btn setFrame:CGRectMake(i*106, 430, 106, 50)];
-		[btn setBackgroundImage:backgroud_image.image forState:UIControlStateNormal];
-		[btn setBackgroundImage:select_image.image forState:UIControlStateSelected];
-		[btn setTitle:[tab_text objectAtIndex:i] forState:UIControlStateNormal];
+		[btn setFrame:CGRectMake(i*107, 430, 107, 50)];
+//		[btn setBackgroundImage:backgroud_image.image forState:UIControlStateNormal];
+//		[btn setBackgroundImage:select_image.image forState:UIControlStateSelected];
+//		[btn setTitle:[tab_text objectAtIndex:i] forState:UIControlStateNormal];
+        [btn setBackgroundImage:tableImage forState:UIControlStateNormal];
+        [btn setBackgroundImage:selectImage forState:UIControlStateSelected];
 		[btn.titleLabel setFont:[UIFont boldSystemFontOfSize:15.0]];
 		if (i == 1)
 		{

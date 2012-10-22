@@ -8,14 +8,20 @@
 
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
+#import "HTTPRequest.h"
+#import "MBProgressHUD.h"
 @interface FeedBackViewController : UIViewController
-<ASIHTTPRequestDelegate>
+<ASIHTTPRequestDelegate,HTTPRequestDelegate,MBProgressHUDDelegate>
 {
     UITextView *feedBackText;
     UIImageView*topImageView;
     UIButton*returnButton;
     UIButton*rigthbutton;
     UILabel*centerLable;
+    
+    MBProgressHUD *HUD;
+
 }
 @property(nonatomic,retain)NSString*judge;
+@property(nonatomic, retain)HTTPRequest *feedBack_request;
 @end

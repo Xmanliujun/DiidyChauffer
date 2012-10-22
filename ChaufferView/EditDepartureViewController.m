@@ -209,12 +209,13 @@
 {
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -229,10 +230,10 @@
    
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rigthbutton setTitle:@"确定" forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
     [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
     

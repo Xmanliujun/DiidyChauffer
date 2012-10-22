@@ -13,12 +13,13 @@
 #import "SBJson.h"
 #import "MoreViewController.h"
 #import "JSONKit.h"
+#import "Reachability.h"
 @interface ChangePasswordViewController ()
 
 @end
 
 @implementation ChangePasswordViewController
-
+@synthesize changePassword_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -37,31 +38,84 @@
 
 -(void)saveNewPassWord:(id)sender
 {
-    if ([newPassWordText.text isEqualToString:confirmPassWordText.text]&&![newPassWordText.text isEqualToString:@""]) {
-        NSString * baseUrl = [NSString stringWithFormat:CHANGEPASSWORD,ShareApp.mobilNumber,[oldPasswordText.text MD5Hash],[newPassWordText.text MD5Hash]]; 
-        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL * url = [NSURL URLWithString:baseUrl];
-        
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        NSLog(@"%@",url);
-        [request setDelegate:self];
-        [request startSynchronous];
-    }else {
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+    
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"联网失败,请稍后再试"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }else{
+
+        if (newPassWordText.text==NULL||[newPassWordText.text length]==0||confirmPassWordText.text==NULL||[confirmPassWordText.text length]==0) {
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                           message:@"密码不能为空"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"确认"
+                                                 otherButtonTitles:nil ];
+            [alert show];
+            [alert release];
+        }else{
+            if ([newPassWordText.text isEqualToString:confirmPassWordText.text]) {
+            
+                if (oldPasswordText.text==NULL||[oldPasswordText.text length]==0) {
+                
+                    UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                               message:@"旧密码不能为空"
+                                                              delegate:nil
+                                                     cancelButtonTitle:@"确认"
+                                                     otherButtonTitles:nil ];
+                    [alert show];
+                    [alert release];
+                
+                }else{
+                
+                    NSString * baseUrl = [NSString stringWithFormat:CHANGEPASSWORD,ShareApp.mobilNumber,[oldPasswordText.text MD5Hash],[newPassWordText.text MD5Hash]]; 
+                    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            
+                    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+                    [self.navigationController.view addSubview:HUD];
+                    HUD.delegate=self;
+                    HUD.labelText=@"正在修改...";
+                    //HUD.detailsLabelText=@"正在加载...";
+                    HUD.square=YES;
+                    [HUD show:YES];
+
+                    HTTPRequest *request = [[HTTPRequest alloc] init];
+                    request.forwordFlag = 500;
+                    self.changePassword_request = request;
+                    self.changePassword_request.m_delegate = self;
+                    self.changePassword_request.hasTimeOut = YES;
+                    [request release];
+                    [self.changePassword_request requestByUrlByGet: baseUrl];
+                }
+
+            }else {
+                UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                            message:@"您输入的两次密码不一致哦，再试试看"
                                                           delegate:nil 
                                                  cancelButtonTitle:@"确认" 
                                                  otherButtonTitles:nil ];
-            [alert show];
-            [alert release];
+                [alert show];
+                [alert release];
 
-       }
-    
+            }
+        }
+    }
 }
 #pragma mark-Http
 -(void)parseStringJson:(NSString *)str
 {
-//  NSDictionary * jsonParser =[str JSONValue];
+   
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     
@@ -94,12 +148,61 @@
     }
 }
 
--(void)requestFinished:(ASIHTTPRequest *)request
+
+
+-(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
-  
-    [self parseStringJson:[request responseString]];
+    
+    if ([requestString length]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+        
+    }else{
+        
+        [self parseStringJson:requestString];
+              
+    }
 
 }
+
+-(void)closeConnection
+{
+    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+-(void)requesttimeout
+{
+    [self closeConnection];
+    
+}
+
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [HUD removeFromSuperview];
+    [HUD release];
+    HUD = nil;
+}
+
+
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     MoreViewController * more = [[MoreViewController alloc] init];
@@ -116,22 +219,23 @@
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returMoreViewView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    [rigthbutton setTitle:@"保存" forState:UIControlStateNormal];
-    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
+    [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    [rigthbutton setTitle:@"完成" forState:UIControlStateNormal];
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
     [rigthbutton addTarget:self action:@selector(saveNewPassWord:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
     

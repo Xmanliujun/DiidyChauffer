@@ -7,9 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ASIHTTPRequest.h"
+#import "MBProgressHUD.h"
+#import "HTTPRequest.h"
 @interface SettingViewController : UIViewController
-<UITextFieldDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate>
+<UITextFieldDelegate,UIAlertViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate>
 {
     int currentTime;
     UITextField * verificationText;
@@ -24,11 +25,15 @@
     NSString * returenNews;
     UIButton*returnButton;
     UIImageView*topImageView;
+    
+   
+    MBProgressHUD *HUD;
+   
 }
 
 @property(nonatomic,retain)NSString * mobilNumber;
 @property(nonatomic,retain)NSString * optype;
+@property(nonatomic, retain)HTTPRequest *comRequest_request;
+@property(nonatomic, retain)HTTPRequest *again_request;
 -(id)initWithRegisteredOrForgot:(NSString*)judge;
-
-
 @end

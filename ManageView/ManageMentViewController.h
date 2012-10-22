@@ -1,15 +1,10 @@
-//
-//  ManageMentViewController.h
-//  DiidyProject
-//
-//  Created by diidy on 12-8-21.
-//  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
-//
+
 
 #import <UIKit/UIKit.h>
 #import "MBProgressHUD.h"
+#import "HTTPRequest.h"
 @interface ManageMentViewController : UIViewController
-<UITableViewDataSource,UITableViewDelegate,MBProgressHUDDelegate>
+<UITableViewDataSource,UITableViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate>
 {
     UIButton* returnButton;
    
@@ -23,7 +18,11 @@
     
     MBProgressHUD *HUD;
     NSString * baseUrl;
+    UIButton * rigthbutton;
+    
+   
 
 }
-
+@property (nonatomic, retain) MBProgressHUD *HUD;
+@property(nonatomic, retain)HTTPRequest *m_request;
 @end

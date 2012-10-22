@@ -9,8 +9,9 @@
 #import <UIKit/UIKit.h>
 #import "CouponDelegate.h"
 #import "BMapKit.h"
+#import "HTTPRequest.h"
 @interface FillOrdersViewController : UIViewController
-<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,CouponDelegate>
+<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,CouponDelegate,HTTPRequestDelegate>
 {
    
     
@@ -53,4 +54,6 @@
 -(IBAction)selectNumberPeople:(id)sender;
 -(IBAction)useCoupon:(id)sender;
 -(id)initWithDeparture:(NSString*)departureString CLLocation:(CLLocationCoordinate2D)centers;
+
+@property(nonatomic, retain)HTTPRequest *getCoupon_request;
 @end

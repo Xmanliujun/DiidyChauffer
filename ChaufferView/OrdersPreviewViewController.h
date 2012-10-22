@@ -8,16 +8,18 @@
 
 #import <UIKit/UIKit.h>
 #import "DIIdyModel.h"
-#import "ASIHTTPRequest.h"
 #import "VerticallyAlignedLabel.h"
+#import "HTTPRequest.h"
+#import "MBProgressHUD.h"
 @interface OrdersPreviewViewController : UIViewController
-<UIAlertViewDelegate,ASIHTTPRequestDelegate>
+<UIAlertViewDelegate,HTTPRequestDelegate,MBProgressHUDDelegate>
 {
     NSMutableArray * couponArray;
     UIButton*returnButton;
     UIButton*rigthbutton;
     UIImageView*topImageView;
     UILabel* centerLable;
+    MBProgressHUD *HUD;
 }
 @property(nonatomic,retain)NSArray * orderArray;//存放填写的内容
 @property(nonatomic,retain)NSArray * useCouponArray;//存放选择的优惠劵
@@ -30,4 +32,5 @@
 @property(nonatomic,retain)IBOutlet UILabel *mobilNumberLable;//手机号码
 @property(nonatomic,retain)IBOutlet UILabel *remarkLable;//备注
 @property(nonatomic,retain)IBOutlet VerticallyAlignedLabel *couponLable;//优惠劵
+@property(nonatomic, retain)HTTPRequest *submit_request;
 @end

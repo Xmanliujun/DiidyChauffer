@@ -19,9 +19,9 @@
         [self setSelectionStyle:UITableViewCellEditingStyleNone];
         self.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
         
-        presentationLable = [[UILabel alloc] initWithFrame:CGRectMake(200, 0, 100, 60)];
+        presentationLable = [[UILabel alloc] initWithFrame:CGRectMake(230, 0, 100, 60)];
         presentationLable.backgroundColor = [UIColor clearColor];
-        presentationLable.text = @"赠送给朋友 >>";
+        presentationLable.text = @"赠送给朋友 >";
         presentationLable.font = [UIFont fontWithName:@"Arial" size:14];
         presentationLable.textColor = [UIColor orangeColor];
         [self.contentView addSubview:presentationLable];

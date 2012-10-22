@@ -14,6 +14,7 @@
 #import "MainViewController.h"
 #import "AppDelegate.h"
 #import "JSONKit.h"
+#import "Reachability.h"
 @interface OrdersPreviewViewController ()
 
 @end
@@ -23,6 +24,7 @@
 
 @synthesize departureLable,departureTimeLable,numberOfPeopleLable,destinationLable,contactLable,mobilNumberLable,remarkLable,couponLable;
 @synthesize orderArray,useCouponArray,selectArray;
+@synthesize submit_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -56,77 +58,111 @@
     if (buttonIndex==0) {
        
     }else {
-        
-        
-        if ([self.departureTimeLable.text isEqualToString:@""]) {
-            self.departureTimeLable.text = @"无";
-        }
-
-        if ([self.departureLable.text isEqualToString:@""]) {
-            self.departureLable.text =@"无";
-        }
-        if ([self.numberOfPeopleLable.text isEqualToString:@""]) {
-            self.numberOfPeopleLable.text = @"无";
-        }
-        if ([self.contactLable.text isEqualToString:@""]) {
-            self.contactLable.text = @"无";
-        }
-        if ([self.destinationLable.text isEqualToString:@""]) {
-            self.destinationLable.text = @"无";
-        }
-        if ([self.mobilNumberLable.text isEqualToString:@""]) {
-            self.mobilNumberLable.text = @"无";
-        }
-        if ([self.contactLable.text isEqualToString:@""]) {
-            self.contactLable.text = @"无";
-        }
-        
-         NSMutableString * couString = [[[NSMutableString alloc]initWithCapacity:0] autorelease];
-        
-         for (int i =0; i<[self.useCouponArray count]; i++) {
+    
+        Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+        if ([r currentReachabilityStatus]==0) {
             
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                           message:@"联网失败,请稍后再试"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"确定"
+                                                 otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+            
+        }else{
+
+            if (self.departureTimeLable.text==NULL||[self.departureTimeLable.text length]==0) {
+                self.departureTimeLable.text = @"无";
+            }
+
+            if ([self.departureLable.text isEqualToString:@""]) {
+                self.departureLable.text =@"无";
+            }
+            if ([self.numberOfPeopleLable.text isEqualToString:@""]) {
+                self.numberOfPeopleLable.text = @"无";
+            }
+            if ([self.contactLable.text isEqualToString:@""]) {
+                self.contactLable.text = @"无";
+            }
+            if ([self.destinationLable.text isEqualToString:@""]) {
+                self.destinationLable.text = @"无";
+            }
+            if ([self.mobilNumberLable.text isEqualToString:@""]) {
+                self.mobilNumberLable.text = @"无";
+            }
+            if ([self.contactLable.text isEqualToString:@""]) {
+                self.contactLable.text = @"无";
+            }
+        
+            NSMutableString * couString = [[[NSMutableString alloc]initWithCapacity:0] autorelease];
+        
+            for (int i =0; i<[self.useCouponArray count]; i++) {
             
             NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:i];
             DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section];
         
-            couString = [couString stringByAppendingString:diidyModel.name];
+            [couString appendString:diidyModel.name];
             couString = [NSMutableString stringWithFormat:@"%@,",couString];
-        }
+            }
         
-        if ([self.useCouponArray count]==0) {
-            couString =[NSMutableString stringWithFormat:@"%@",@"无"];
-        }
-        NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,self.departureTimeLable.text,self.departureLable.text,self.numberOfPeopleLable.text,self.destinationLable.text,self.mobilNumberLable.text,self.contactLable.text,couString,ShareApp.mobilNumber];
-        NSLog(@"%@",baseUrl);
-        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL * url = [NSURL URLWithString:baseUrl];
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        [request setTimeOutSeconds:15.0];
-        [request setDelegate:self];
-        [request setTag:505];
-        [request startAsynchronous];
-    }
+            if ([self.useCouponArray count]==0) {
+                couString =[NSMutableString stringWithFormat:@"%@",@"无"];
+            }
+            NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,self.departureTimeLable.text,self.departureLable.text,self.numberOfPeopleLable.text,self.destinationLable.text,self.mobilNumberLable.text,self.contactLable.text,couString,ShareApp.mobilNumber];
+            NSLog(@"%@",baseUrl);
+            baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
+        
+            HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+            [self.navigationController.view addSubview:HUD];
+            HUD.delegate=self;
+            HUD.labelText=@"正在提交...";
+            //HUD.detailsLabelText=@"正在加载...";
+            HUD.square=YES;
+            [HUD show:YES];
+        
+            HTTPRequest *request = [[HTTPRequest alloc] init];
+            request.forwordFlag = 500;
+            self.submit_request = request;
+            self.submit_request.m_delegate = self;
+            self.submit_request.hasTimeOut = YES;
+            [request release];
+            [self.submit_request requestByUrlByGet: baseUrl];
+        }
+    }
 }
 
 
 -(void)parseStringJson:(NSString *)str
 {
-//   NSDictionary * jsonParser =[str JSONValue];
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+
+    
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     if ([returenNews isEqualToString:@"s"]) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"提交成功"
+                                                      delegate:nil
+                                             cancelButtonTitle:nil
+                                             otherButtonTitles:@"确认",nil];
+        [alert show];
+        [alert release];
+        
         
         MainViewController * main = [[MainViewController alloc] init];
         ShareApp.window.rootViewController = main;
         [main release];
 
-        
-        
     }else {
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                        message:@"提交失败请重试"                                                 
-                                                      delegate:self 
+                                                      delegate:nil
                                              cancelButtonTitle:nil 
                                              otherButtonTitles:@"确认",nil];
         [alert show];
@@ -135,10 +171,51 @@
        
 }
 
-
--(void)requestFinished:(ASIHTTPRequest *)request
+-(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
-    [self parseStringJson:[request responseString]];
+    
+    if ([requestString length]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+    }else{
+
+        [self parseStringJson:requestString];
+    }
+    
+}
+
+-(void)closeConnection
+{
+    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+-(void)requesttimeout
+{
+    [self closeConnection];
+    
+}
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [HUD removeFromSuperview];
+    [HUD release];
+    HUD = nil;
 }
 
 #pragma mark - System Approach
@@ -151,47 +228,50 @@
     couponArray = [[NSMutableArray alloc] initWithCapacity:0];
     
     NSMutableString *couString = [[NSMutableString alloc] initWithCapacity:0];
-    couString = [couString stringByAppendingString:@"选择了："];
+    [couString appendString:@"选择了："];
     if ([useCouponArray count]>=2) {
         for (int i=0; i<[useCouponArray count]-1; i++) {
             NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:i];
             DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section];
-            couString = [couString stringByAppendingFormat:@"%@,",diidyModel.name];
+             [couString appendFormat:@"%@,",diidyModel.name];
         }
 
     }
     if ([useCouponArray count]>=1) {
         NSIndexPath* lastdiidyPath = [useCouponArray objectAtIndex:[useCouponArray count]-1];
         DIIdyModel * lastDiidy = [selectArray objectAtIndex:lastdiidyPath.section];
-        couString = [couString stringByAppendingFormat:@"%@",lastDiidy.name];
-       
+        [couString appendFormat:@"%@",lastDiidy.name];
         self.couponLable.text = couString;
         
     }
    
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
+    self.departureLable.numberOfLines = 0;
     self.departureLable.text =[self.orderArray objectAtIndex:0];//出发地
     self.departureTimeLable.text = [self.orderArray objectAtIndex:1];//出发时间
     self.numberOfPeopleLable.text =[self.orderArray objectAtIndex:2];//人数
     self.destinationLable.text = [self.orderArray objectAtIndex:3];//目的地
     self.contactLable.text = [self.orderArray objectAtIndex:4];//联系人
     self.mobilNumberLable.text = [self.orderArray objectAtIndex:5];//手机号码
+   
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button3.png"] forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
+    [rigthbutton setTitle:@"提交订单" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(submitOrders:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
     

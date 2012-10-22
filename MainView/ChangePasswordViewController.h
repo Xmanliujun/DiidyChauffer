@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "ASIHTTPRequest.h"
+#import "HTTPRequest.h"
+#import "MBProgressHUD.h"
 @interface ChangePasswordViewController : UIViewController
-<UITextFieldDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate>
+<UITextFieldDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate,HTTPRequestDelegate,MBProgressHUDDelegate>
 {
     UITextField * oldPasswordText;
     UITextField *newPassWordText;
@@ -19,5 +21,8 @@
     UIImageView* topImageView;
     UIButton* returnButton;
     UILabel* centerLable;
+    MBProgressHUD *HUD;
+
 }
+@property(nonatomic, retain)HTTPRequest *changePassword_request;
 @end

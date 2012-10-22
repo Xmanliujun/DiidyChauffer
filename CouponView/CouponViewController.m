@@ -20,6 +20,7 @@
 @end
 
 @implementation CouponViewController
+@synthesize order_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -56,7 +57,7 @@
 
 -(void)returnMainView:(id)sender
 {
-    [self dismissModalViewControllerAnimated:YES];
+    [self dismissModalViewControllerAnimated:NO];
     
 }
 
@@ -127,7 +128,12 @@
 #pragma DownLoad Parsing
 -(void)parseStringJson:(NSString *)str
 {
-    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+
    // NSArray* jsonParser =[str JSONValue];
     NSArray* jsonParser =[str objectFromJSONString];
     if (dataArry) {
@@ -174,18 +180,43 @@
     }
     
 }
-
--(void)requestFinished:(ASIHTTPRequest *)request
+-(void)requesttimeout
 {
-    
-    [self parseStringJson:[request responseString]];
-  
+    [self closeConnection];
+
 }
+
+-(void)requFinish:(NSString *)requestString order:(int)nOrder{
+    
+    if ([requestString length]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+        
+    }else{
+        
+        [self parseStringJson:requestString];
+        
+    }
+}
+
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [HUD removeFromSuperview];
+    [HUD release];
+    HUD = nil;
+}
+
 #pragma Self Call
 -(void)setTheNavigationBar
 {
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
@@ -197,29 +228,20 @@
     [self.navigationController.navigationBar addSubview:centerLable];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
 
 }
 
--(void)downLoadTheCouponData
-{
-    NSString * baseUrl = [NSString stringWithFormat:COUPON,ShareApp.mobilNumber];
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setDelegate:self];
-    [request startAsynchronous];
-}
 
 -(void)creatScrollView
 {
     
-    
-    UIImageView * zeroImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coupon_1.jpg"]];
+    UIImageView * zeroImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coupon_0.jpg"]];
     zeroImageView .frame = CGRectMake(0, 0, 320, 90);
     
     
@@ -272,25 +294,25 @@
     couponPage.currentPage = 0;
     [self.view addSubview:couponPage];
 }
--(void)startASync:(id)urlString1{
-    NSURL *url=[NSURL URLWithString:urlString1];
-    NSLog(@"url========%@",url);
-    NSError *error=nil;
-    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+
+-(void)closeConnection
+{
     
-    NSLog(@"response data is %@", responseString);
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+
     
-    [self parseStringJson:responseString];
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
--(void)myTask{
-    //形成异步加载
-     NSString * baseUrl = [NSString stringWithFormat:COUPON,ShareApp.mobilNumber];
-     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    [self startASync:baseUrl];
-   
-    
-}
+
 
 -(void)showWithDetails{
     
@@ -298,18 +320,34 @@
     [self.navigationController.view addSubview:HUD];
     HUD.delegate=self;
     HUD.labelText=@"Loading";
-    HUD.detailsLabelText=@"正在加载...";
+    HUD.detailsLabelText=@"获取优惠劵信息...";
     HUD.square=YES;
+    [HUD show:YES];
     //此处进入多线程处理
-    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+ 
+    NSString * baseUrl = [NSString stringWithFormat:COUPON,ShareApp.mobilNumber];
+    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+    HTTPRequest *request = [[HTTPRequest alloc] init];
+    self.order_request = request;
+    self.order_request.m_delegate = self;
+    self.order_request.hasTimeOut = YES;
+    [request release];
+    
+    [self.order_request requestByUrlByGet: baseUrl];
 }
-
+-(void)regainData:(NSNotification *) notify {
+    
+    [self showWithDetails];
+   
+}
 
 #pragma mark - System Approach
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(regainData:) name:@"ChangeTheme" object:nil];
+    self.view.backgroundColor = [UIColor darkGrayColor];
     self.navigationItem.hidesBackButton = YES;
     [self setTheNavigationBar];
      
@@ -324,15 +362,15 @@
     messgeLable.textColor = [UIColor orangeColor];
     [self.view addSubview:messgeLable];
    
-   // [self downLoadTheCouponData];
     [self creatScrollView];
-    
+    [self showWithDetails];
+
     couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
+    
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
-    [self showWithDetails];
     centerLable.hidden = NO;
     topImageView.hidden = NO;
     returnButton.hidden = NO;

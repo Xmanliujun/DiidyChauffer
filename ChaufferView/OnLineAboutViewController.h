@@ -18,5 +18,6 @@
     
 }
 @property(nonatomic,assign)  CLLocationCoordinate2D   possibleLocation;
+@property(nonatomic,retain)NSString*cityName;
 @property(nonatomic,assign)BOOL possible;
 @end

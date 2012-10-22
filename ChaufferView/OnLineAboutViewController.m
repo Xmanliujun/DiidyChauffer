@@ -19,7 +19,7 @@
 @end
 
 @implementation OnLineAboutViewController
-@synthesize possibleLocation,possible;
+@synthesize possibleLocation,possible,cityName;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -55,6 +55,7 @@
 -(void)returnMainView:(id)sender
 {
     MainViewController * main = [[MainViewController alloc] init];
+    main.version = NO;
     [ShareApp.window setRootViewController:main];
     [main release];
 }
@@ -62,6 +63,12 @@
 {
 
 }
+-(void)returnStartView:(id)sender
+{
+    [locationDomo backToTheOriginalPosition];
+    
+}
+
 - (BOOL)searchBarShouldBeginEditing:(UISearchBar *)searchBar
 {
     SearchDepartureViewController * search =[[SearchDepartureViewController alloc] init];
@@ -84,7 +91,7 @@
     self.tabBarController.tabBar.hidden = YES;
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
   
     UILabel *centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 160, 44)];
@@ -99,10 +106,10 @@
     UIImage * rigthImage =[UIImage imageNamed:@"33.png"];
     UIButton *rigthBarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthBarbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
-    [rigthBarbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthBarbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     [rigthBarbutton setTitle:@"主页" forState:UIControlStateNormal];
-    rigthBarbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    rigthBarbutton.frame=CGRectMake(260.0, 7.0, 50.0, 30.0);
     [rigthBarbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     
     UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthBarbutton];
@@ -110,20 +117,23 @@
     [nextItem release];
     
     startAddrSearchBar = [[UISearchBar alloc] initWithFrame:CGRectMake(0, 0, 320, 41)];  
-    startAddrSearchBar.delegate = self;  
+    startAddrSearchBar.delegate = self;
+    startAddrSearchBar.showsBookmarkButton = NO;
     startAddrSearchBar.barStyle = UIBarStyleDefault;  
-    startAddrSearchBar.showsSearchResultsButton = YES;
+   // startAddrSearchBar.showsSearchResultsButton = YES;
     startAddrSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;  
     startAddrSearchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;  
     startAddrSearchBar.placeholder = @"您也可以在此搜索出发地....";  
-    startAddrSearchBar.keyboardType =  UIKeyboardTypeDefault;  
+    startAddrSearchBar.keyboardType =  UIKeyboardTypeDefault;
     
+
     UIImageView *imageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg2.png"]];
+    imageView.frame = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, 320, 45);
     [startAddrSearchBar insertSubview:imageView atIndex:1];
     [imageView release];
     [self.view addSubview:startAddrSearchBar]; 
     
-    locationDomo = [[LocationDemoViewController alloc] initWithPossible:self.possible withLocation:self.possibleLocation];
+    locationDomo = [[LocationDemoViewController alloc] initWithPossible:self.possible withLocation:self.possibleLocation withCityName:self.cityName];
     locationDomo.view.frame =CGRectMake(0.0f, 40.0f, 320.0f, 330.0f);
 //    locationDomo.possible = self.possible;
 //    if (!self.possible) {
@@ -131,8 +141,14 @@
 //        locationDomo.possibleLoca = self.possibleLocation;
 //    }
     locationDomo.LocationDelegate = self;
-    
     [self.view addSubview:locationDomo.view];
+    
+    UIButton *startButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    startButton.frame=CGRectMake(270.0f,330.0f, 31.0f, 30.0f);
+    [startButton  setBackgroundImage:[UIImage imageNamed:@"my_location_h.png"] forState:UIControlStateNormal];
+    [startButton  setBackgroundImage:[UIImage imageNamed:@"my_location_l.png"] forState:UIControlStateHighlighted];
+    [startButton  addTarget:self action:@selector(returnStartView:) forControlEvents:UIControlEventTouchUpInside];
+    [self.view addSubview:startButton];
     
 }
 -(BOOL) respondsToSelector:(SEL)aSelector {  
@@ -142,6 +158,7 @@
 
 -(void)dealloc
 {
+    [cityName release];
     [locationDomo release];
     [topImageView release];
     [startAddrSearchBar release]; 

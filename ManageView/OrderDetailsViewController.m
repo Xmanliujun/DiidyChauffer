@@ -49,18 +49,19 @@
 -(void)setTheNavigationBar
 {
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnManageMentView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
-    centerLable.text = @"订 单 列 表";
+    centerLable.text = @"订 单 详 情";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
     centerLable.textAlignment = UITextAlignmentCenter;
@@ -101,21 +102,28 @@
     // Do any additional setup after loading the view from its nib.
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
+    
     self.departureLable.numberOfLines = 0;
+    
     [self setTheNavigationBar];
    
     if([self.diidyModel.status isEqualToString:@"已受理"]){
-        self.leftDepartureTimeLable.text = @"出发时间";
-        UIImage * changeOrderImage =[UIImage imageNamed:@"orderchange_down.png" ];
+    
+        self.leftDepartureTimeLable.text = @"出发时间:";
+        UIImage * changeOrderImage =[UIImage imageNamed:@"u14_normal.png" ];
         UIButton*changeOrderButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        changeOrderButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+        [changeOrderButton setTitle:@"变更或取消订单拨打400电话" forState:UIControlStateNormal];
+        changeOrderButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
         [changeOrderButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-        changeOrderButton.frame=CGRectMake(60.0, 365.0,changeOrderImage.size.width-118.0, changeOrderImage.size.height-25.0);
+//        changeOrderButton.frame=CGRectMake(60.0, 365.0,changeOrderImage.size.width-118.0, changeOrderImage.size.height-25.0);
+        changeOrderButton.frame=CGRectMake(0.0, 365.0,320, changeOrderImage.size.height);
         [changeOrderButton setBackgroundImage:changeOrderImage forState:UIControlStateNormal];
         [changeOrderButton addTarget:self action:@selector(changeOrCancelTheOrder:) forControlEvents:UIControlEventTouchUpInside];
-        [self.view addSubview:changeOrderButton];    
+        [self.view addSubview:changeOrderButton];
+        
     }else if ([self.diidyModel.status isEqualToString:@"完成"]) {
-        self.leftDepartureTimeLable.text = @"开始时间";
+        
+        self.leftDepartureTimeLable.text = @"开始时间:";
         UIImage * billingDetailImage =[UIImage imageNamed:@"u148_normal.png" ];
         UIButton*billingDetailButton = [UIButton buttonWithType:UIButtonTypeCustom];
         billingDetailButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14];
@@ -126,8 +134,11 @@
         [billingDetailButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
         [billingDetailButton addTarget:self action:@selector(billingDetailView:) forControlEvents:UIControlEventTouchUpInside];
         [self.view addSubview:billingDetailButton];
+        
     }else {
+        
         self.leftDepartureTimeLable.text = @"出发时间";
+        
     }
     
        [self getOrderDetails];

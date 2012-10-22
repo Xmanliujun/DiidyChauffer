@@ -26,7 +26,7 @@
 -(void)setTheNavigationBar
 {
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
@@ -38,8 +38,9 @@
     [self.navigationController.navigationBar addSubview:centerLable];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnCouponView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -51,7 +52,7 @@
     activeLable.numberOfLines = 0;
     activeLable.text=self.diidyContent;
     activeLable.font = [UIFont fontWithName:@"Arial" size:14];
-    activeLable.textColor = [UIColor whiteColor];
+    activeLable.textColor = [UIColor blackColor];
     activeLable.verticalAlignment = VerticalAlignmentTop;
     activeLable.backgroundColor = [UIColor clearColor];
     [self.view addSubview:activeLable];

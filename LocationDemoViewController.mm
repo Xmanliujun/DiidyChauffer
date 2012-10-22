@@ -6,6 +6,7 @@
 //
 
 #import "LocationDemoViewController.h"
+#import <QuartzCore/QuartzCore.h>
 
 #define NAV_BAR_HEIGHT          44.0
 #define NAV_BAR_BLANK_BUTTON    60.0
@@ -17,7 +18,7 @@
 #define WIDTH_GLASSMENU_MAX     300
 @implementation LocationDemoViewController
 @synthesize readonly,mapAnnon,LocationDelegate,path;
-@synthesize possible,possibleLoca;
+@synthesize possible,possibleLoca,nowCityName;
 
 - (void)setCurrentLocation{
     
@@ -29,6 +30,23 @@
     [_mapView setRegion:region animated:YES];
 }
 
+-(void)backToTheOriginalPosition
+{
+    BMKCoordinateSpan span;
+	
+    span.latitudeDelta = 0.01f; //zoom level
+    span.longitudeDelta = 0.01f; //zoom level
+    
+    NSLog(@"%f",location.latitude);
+    NSLog(@"%f",location.longitude);
+    
+    BMKCoordinateRegion region;
+    region.span = span;
+    region.center = location;
+   // _mapView.showsUserLocation=YES;
+    [_mapView setRegion:region animated:YES];
+    
+}
 
 -(void)cantLocateAlert:(NSString *)errorMsg{
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示信息" 
@@ -44,14 +62,26 @@
 {
     
     if (!self.possible) {
-        NSLog(@"1");
-       
+        
+        NSLog(@"fanzhuan  %f %f",result.geoPt.latitude,result.geoPt.longitude);
+        for (int i= 0; i<[result.poiList count];i++) {
+            BMKPoiInfo *m = [result.poiList objectAtIndex:i];
+            NSLog(@"m   %@",m.name);
+        }
+        
         UpdateUserLocation = YES;
-        if ([result.poiList count]!=0) {
-            BMKPoiInfo * info= [result.poiList objectAtIndex:0];
-            [self glassMenuWithContent:info.name];
+        if (firstMenue) {
+            [self glassMenuWithContent:self.nowCityName];
+            firstMenue = NO;
+
         }else{
-            [self glassMenuWithContent:result.strAddr];
+        
+            if ([result.poiList count]!=0) {
+                BMKPoiInfo * info= [result.poiList objectAtIndex:0];
+                [self glassMenuWithContent:info.name];
+            }else{
+                [self glassMenuWithContent:result.strAddr];
+            }
         }
 
     }else{
@@ -69,18 +99,13 @@
                        firstMenue = NO;
                }
                UpdateUserLocation = YES;
-               BMKPointAnnotation* item = [[BMKPointAnnotation alloc]init];
-               item.coordinate = center;
-               item.subtitle = @"我的位置";
-               if ([result.poiList count]!=0) {
-                   BMKPoiInfo * info= [result.poiList objectAtIndex:0];
-                   item.title = info.name;
-               }else{
-                   item.title = result.strAddr;
-               }
+               item = [[MapPointAnnotion alloc]init];
+             
+               item.coordinate = result.geoPt;
+               item.title =@"我的位置";
+               item.subtitle= result.strAddr;
                [_mapView addAnnotation:item];
-               [item release];
-            } else {
+               [item release];            } else {
                 if ([result.poiList count]!=0) {
                     BMKPoiInfo * info= [result.poiList objectAtIndex:0];
                     [self glassMenuWithContent:info.name];
@@ -96,10 +121,10 @@
 - (void)mapView:(BMKMapView *)mapView didUpdateUserLocation:(BMKUserLocation *)userLocation
 {
     
+    NSLog(@"1111111");
 	if (userLocation != nil) {
         if (self.possible) {
-            UpdateUserLocation = YES;
-            locationPeson = YES;
+           
             _mapView.showsUserLocation=NO;
             
             CLLocationCoordinate2D center;
@@ -126,15 +151,21 @@
                 [self searchAddress:userLocation.location.coordinate];
                 firstCreat = NO;
             }            
+        }else
+        {
+            NSLog(@"222222");
+            CLLocationCoordinate2D center;
+            center.latitude = userLocation.location.coordinate.latitude;
+            center.longitude = userLocation.location.coordinate.longitude;
+            location = center;
+            
+            _mapView.showsUserLocation=NO;
+            UpdateUserLocation = YES;
+            locationPeson = YES;
+            
         }
-    }else
-    {
-        _mapView.showsUserLocation=NO;
-        UpdateUserLocation = YES;
-        locationPeson = YES;
-    
-    }
-        
+
+    }        
 }
 
 - (void)mapView:(BMKMapView *)mapView didFailToLocateUserWithError:(NSError *)error
@@ -164,11 +195,14 @@
 
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
 {
+    
+   
 	if ([annotation isKindOfClass:[BMKPointAnnotation class]]) {
 		BMKPinAnnotationView *newAnnotation = [[[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"myAnnotation"]autorelease];  
-        newAnnotation.frame = CGRectMake(0, 0, 30, 30);
+        //newAnnotation.frame = CGRectMake(0, 0, 30, 30);
+        newAnnotation.draggable = NO;
 		newAnnotation.pinColor = BMKPinAnnotationColorRed;   
-		newAnnotation.animatesDrop = YES;
+		newAnnotation.animatesDrop = NO;
 		newAnnotation.draggable = YES;
         return newAnnotation;   
 	}
@@ -177,7 +211,12 @@
 - (void)mapViewDidStopLocatingUser:(BMKMapView *)mapView{
     
     UpdateUserLocation = NO;
+//    BMKUserLocation *userLocation = mapView.userLocation;
+//    userLocation.title = @"我的位置";
+//    [_mapView addAnnotation:userLocation];
 }
+
+
 - (void)mapView:(BMKMapView *)mapView regionWillChangeAnimated:(BOOL)animated
 {
 
@@ -191,23 +230,18 @@
     }
 }
 - (void)mapView:(BMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
-    NSLog(@"2");
-    CLLocationCoordinate2D center;
-    center.latitude = mapView.centerCoordinate.latitude;
-    center.longitude = mapView.centerCoordinate.longitude;
-    location = center;
+
+    
     if (!UpdateUserLocation)return;
     if(!firstLoaded) return;
     else [self createMarker];
      
-    if(location.latitude == 0 && location.longitude == 0) return;
+    if(mapView.centerCoordinate.latitude == 0 && mapView.centerCoordinate.longitude == 0) return;
    
     [self searchAddress:mapView.centerCoordinate];
     
     locationPeson = NO;
 }
-
-
 
 #pragma mark-customize
 -(void)createMarker{
@@ -219,8 +253,8 @@
                                                                f.origin.y + f.size.height/2, 
                                                                32, 36)];
         _markerView.backgroundColor = [UIColor clearColor];
-        _markerTip = [[UIImageView alloc] initWithFrame:CGRectMake(-16, -16, 26, 25)];
-        [_markerTip setImage:[UIImage imageNamed:@"btn_map_current1.png"]];
+        _markerTip = [[UIImageView alloc] initWithFrame:CGRectMake(-16, -16, 30, 30)];
+        [_markerTip setImage:[UIImage imageNamed:@"btn_map_curr.png"]];
         [_markerView addSubview:_markerTip];
         [_markerTip release];
         
@@ -265,6 +299,15 @@
     newinmage.frame =CGRectMake(0, 0, 200, 60);
     newinmage.userInteractionEnabled = YES;
    
+    
+    UIButton *newButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    newButton.frame = CGRectMake(5,5,190,40);
+    newButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:18];
+    [newButton setTitle:@"                                >" forState:UIControlStateNormal];
+    [newButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    [newButton addTarget:self action:@selector(noSelectTheCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
+     [newinmage addSubview:newButton];
+    
     textLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 5, _glassMenuView.frame.size.width - 50, 60)];
     textLabel.backgroundColor = [UIColor clearColor];
     textLabel.numberOfLines = 0;
@@ -369,6 +412,14 @@
 
 
 #pragma   mark - Button And NSNotification
+
+-(void)noSelectTheCurrentLocation:(id)sender
+{
+
+    [LocationDelegate selectTheCurrentLocationOnLine:@"未读取到位置信息，请手动编辑修改!" CLLocation:location];
+
+}
+
 -(void)selectTheCurrentLocation:(id)sender
 {
     [LocationDelegate selectTheCurrentLocationOnLine:textLabel.text CLLocation:location];
@@ -412,11 +463,12 @@
 //        locationPeson = NO;
     
 }
-- (id) initWithPossible:(BOOL)possibleM withLocation:(CLLocationCoordinate2D )Latitudelong
+- (id) initWithPossible:(BOOL)possibleM withLocation:(CLLocationCoordinate2D )Latitudelong withCityName:(NSString *)cityNa
 {
     if ([super init]) {
         self.possibleLoca = Latitudelong;
         self.possible = possibleM;
+        self.nowCityName = cityNa;
     }
     return  self;
 
@@ -431,11 +483,13 @@
     UpdateUserLocation =NO;
     firstCreat = YES;
     firstMenue = YES;
+    UpdateUserLocation = YES;
+    locationPeson = YES;
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(selectedCityName:) name:@"SELECTCITY" object:nil];
     
     _mapView = [[BMKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 360)];
     _mapView.delegate = self;
-	
+	_mapView.exclusiveTouch = YES;
 	_mapView.showsUserLocation = YES;
     [_mapView setZoomEnabled: YES];
     [_mapView setScrollEnabled:YES];
@@ -446,17 +500,18 @@
     
     if (!self.possible) {
         BMKCoordinateSpan span;
-        span.latitudeDelta = 0.01f; //zoom level
-        span.longitudeDelta = 0.01f; //zoom level
+        span.latitudeDelta = 0.1f; //zoom level
+        span.longitudeDelta = 0.1f; //zoom level
         
         BMKCoordinateRegion region;
         region.span = span;
         region.center =self.possibleLoca;
+        NSLog(@"yuanlai  %f %f",self.possibleLoca.latitude,self.possibleLoca.longitude);
         [_mapView setRegion:region animated:YES];
         [self createMarker];
         [self searchAddress:self.possibleLoca];
     }
-
+    
 }
 
 -(void)viewDidDisappear:(BOOL)animated
@@ -465,7 +520,7 @@
 
 }
 - (void)dealloc {
-    
+    [nowCityName release];
     [_search release];
     [_markerView release];
     [_mapView release];

@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ASIHTTPRequest.h"
 #import "MBProgressHUD.h"
+#import "HTTPRequest.h"
 @interface RegisteredViewController : UIViewController
-<ASIHTTPRequestDelegate,UIAlertViewDelegate,MBProgressHUDDelegate>
+<UIAlertViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate>
 {
     UILabel * contentLable;
     UILabel * promptLable;
@@ -25,5 +25,10 @@
     MBProgressHUD *HUD;
     NSString * baseUrl;
     NSString * baseStatus;
-}@property(nonatomic,retain)NSString *registerIsTrue;
+    
+   
+}
+@property(nonatomic,retain)NSString *registerIsTrue;
+@property(nonatomic, retain)HTTPRequest *registAndPassword_request;
+
 @end

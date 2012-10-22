@@ -16,12 +16,13 @@
 #import "QFDatabase.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+
 @interface ManageMentViewController ()
 
 @end
 
 @implementation ManageMentViewController
-
+@synthesize HUD,m_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -34,12 +35,13 @@
 -(void)setTheNavigationBar
 {
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -51,6 +53,15 @@
     centerLable.textAlignment = UITextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:centerLable];
+    
+    rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
+    [rigthbutton setTitle:@"刷新" forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    [rigthbutton addTarget:self action:@selector(refreshStep:) forControlEvents:UIControlEventTouchUpInside];
+    [self.navigationController.navigationBar addSubview:rigthbutton];
 }
 
 -(void)creatNOOrdersView
@@ -97,49 +108,94 @@
     [orderTableView release];
     
 }
--(void)startASync:(id)urlString1{
-    NSURL *url=[NSURL URLWithString:urlString1];
-    NSLog(@"url========%@",url);
-    NSError *error=nil;
-    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+#pragma mark-button
+-(void)returnMainView:(id)sender
+{
+    [self dismissModalViewControllerAnimated:NO];
     
-    NSLog(@"response data is %@", responseString);
-    
-    [self parseStringJson:responseString];
 }
+-(void)refreshStep:(id)sender
+{
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    
+    if ([r currentReachabilityStatus]==0) {
+        
+    }else{
+        [self goToTheDownLoadPage];
+    }
+    
 
--(void)myTask{
-    //形成异步加载
-   
-    [self startASync:baseUrl];
+    
+}
+#pragma mark-HTTPDown
+
+-(void)requFinish:(NSString *)requestString order:(int)nOrder{
+    
+    if ([requestString length]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+        
+    }else{
+        
+        [self  parseStringJson:requestString];
+        
+    }
     
     
 }
 
 -(void)showWithDetails{
     
-    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+    self.HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:HUD];
     HUD.delegate=self;
     HUD.labelText=@"Loading";
-    HUD.detailsLabelText=@"正在加载...";
+    HUD.detailsLabelText=@"获取订单信息...";
     HUD.square=YES;
-    //此处进入多线程处理
-    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
+    [HUD show:YES];
+    
+    
+    HTTPRequest *request = [[HTTPRequest alloc] init];
+    self.m_request = request;
+    self.m_request.m_delegate = self;
+    self.m_request.hasTimeOut = YES;
+    [request release];
+    
+    [self.m_request requestByUrlByGet: baseUrl];
 }
-
+-(void)requesttimeout
+{
+    
+    [self closeConnection];
+    
+}
 
 -(void)goToTheDownLoadPage
 {
     NSArray * sqlitArray = [ShareApp.mDatabase readDataWithFMDB];
-   // NSString * baseUrl;
+    
+    if (listOrderArray) {
+        [listOrderArray removeAllObjects];
+    }else
+    {
+        listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
+        
+    }
+    
     if (sqlitArray.count!=0) {
         sqlitBool = YES;
         DIIdyModel*diiModel = [sqlitArray objectAtIndex:0];
+        NSLog(@"time  %@",diiModel.startTime);
         if (![diiModel.startTime isEqualToString:@""]) {
             baseUrl = [NSString stringWithFormat:ORDERNUMBERSTARTTIME,ShareApp.mobilNumber,diiModel.startTime];
         }else {
-             baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
+            baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
         }
         
         if (![diiModel.orderID isEqualToString:@""]) {
@@ -164,71 +220,64 @@
         sqlitBool = NO;
         baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
     }
-   
+    
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-  
+    
     if ([r currentReachabilityStatus]==0) {
         
     }else{
         [self showWithDetails];
     }
-//    NSURL * url = [NSURL URLWithString:baseUrl];
-//    NSURLRequest * urlRequest = [NSURLRequest requestWithURL:url];  
-//    urlConnecction = [[NSURLConnection alloc] initWithRequest:urlRequest delegate:self];  
-//    //为了安全，捕捉不存在的连接  
-//    if(urlConnecction != nil)  {
-//        receivedData =[[NSMutableData data] retain];
-//        return;
-//    }
-          
+    
 }
-#pragma mark-HTTPDown
--(void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response{  
-    
-    [receivedData setLength:0];
-    
-}  
 
--(void)connection:(NSURLConnection *)connection didReceiveData:(NSData *)data{  
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [self.HUD removeFromSuperview];
+    [self.HUD release];
+    self.HUD = nil;
     
-    [receivedData appendData:data];
-    
-    
-}  
--(void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error{  
-    
-    [urlConnecction release]; 
-    [receivedData release];
-    NSLog(@"Connection failed! Error - %@ %@", 
-          [error localizedDescription], 
-          [[error userInfo] objectForKey:NSURLErrorFailingURLStringErrorKey]); 
-    
-}  
--(void)connectionDidFinishLoading:(NSURLConnection *)connection{  
-    
-   NSString *result = [[[NSString alloc] initWithData:receivedData encoding:NSUTF8StringEncoding] autorelease];
-    NSLog(@"%@",result);
-    [self parseStringJson:result];
-    [urlConnecction release]; 
-    [receivedData release];
+}
 
-}  
+-(void)closeConnection
+{
+    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+      
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
 
 -(void)parseStringJson:(NSString *)str
 {
-//    NSArray* jsonParser =[str JSONValue];
+    
+    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+
     NSArray* jsonParser =[str objectFromJSONString];
-    NSLog(@"coun  %d",[jsonParser count]);
-    int i;
+    int a;
     if (sqlitBool) {
-        i=1;
+        a=1;
     }else {
-        i=0;
+        a=0;
     }
     
-    for(;i<[jsonParser count];i++){
-      
+    for(int i=0 ;i<[jsonParser count]-a;i++){
+        NSLog(@"ss");
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
         diidy.orderID = [diidyDict objectForKey:@"orderid"];
@@ -249,25 +298,27 @@
             diidy.status = @"已取消";
         }
         [ShareApp.mDatabase insertItemWithFMDB:diidy];
-
-        [listOrderArray addObject:diidy];
+        if (a==0) {
+            
+            [listOrderArray addObject:diidy];
+            
+        }else{
+            
+            [listOrderArray insertObject:diidy atIndex:0];
+        }
         [diidy release];
         
     }
        if(([jsonParser count])==0)
-    {
-        [self creatNOOrdersView];
+       {
+         [self creatNOOrdersView];
     }else {
-        [self creatHaveOrderView];
+         [self creatHaveOrderView];
         
     }
 }
 
--(void)returnMainView:(id)sender
-{
-    [self dismissModalViewControllerAnimated:YES];
-    
-}
+
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
@@ -297,7 +348,7 @@
     DIIdyModel * diidy = [listOrderArray objectAtIndex:indexPath.row];
     
     if ([diidy.status isEqualToString:@"已受理"]) {
-        cell.statusLable.textColor = [UIColor redColor];
+        cell.statusLable.textColor = [UIColor orangeColor];
         cell.statusLable.text = [NSString stringWithFormat:@"%@>",diidy.status];
     }else if([diidy.status isEqualToString:@"完成"]){
         cell.statusLable.textColor = [UIColor greenColor];
@@ -330,7 +381,8 @@
     [super viewDidLoad];
     self.navigationController.navigationBar.tintColor = [UIColor grayColor];
     self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+//    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.view.backgroundColor = [UIColor darkGrayColor];
    
     sqlitBool = YES;
     listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -345,9 +397,11 @@
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     centerLable.hidden = YES;
+    rigthbutton.hidden = YES;
 }
 -(void)viewWillAppear:(BOOL)animated
 {
+    rigthbutton.hidden = NO;
     topImageView.hidden = NO;
     returnButton.hidden = NO;
     centerLable.hidden = NO;
@@ -357,7 +411,6 @@
     [centerLable release];
     [listOrderArray release];
     [topImageView release];
-    
     [super dealloc];
     
 }

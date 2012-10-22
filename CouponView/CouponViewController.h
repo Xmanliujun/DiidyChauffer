@@ -7,10 +7,10 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ASIHTTPRequest.h"
 #import "MBProgressHUD.h"
+#import "HTTPRequest.h"
 @interface CouponViewController : UIViewController
-<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,ASIHTTPRequestDelegate,MBProgressHUDDelegate>
+<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate>
 {
    // UIImageView* leftImage;
     UIPageControl * couponPage;
@@ -23,6 +23,7 @@
     int page;
     NSTimer *couponTimer;
     MBProgressHUD *HUD;
+   
 }
-
+@property(nonatomic, retain)HTTPRequest *order_request;
 @end

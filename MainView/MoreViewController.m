@@ -68,6 +68,7 @@
         UIImageView * moreImageview = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"right_orange.png"]];
         moreImageview.frame = CGRectMake(270.0f, 11.0f, 16.0f, 22.0f);
         [cell.contentView addSubview:moreImageview];
+        [cell setBackgroundColor:[UIColor whiteColor]];
        // cell.contentView.backgroundColor = [UIColor darkGrayColor];
 //        UIView *tempView = [[[UIView alloc] init] autorelease];
 //        //tempView.backgroundColor = [UIColor darkGrayColor];
@@ -77,11 +78,11 @@
 //
 //        [cell setBackgroundView:tempView];
 //        cell.textLabel.backgroundColor = [UIColor clearColor];
-        [cell setBackgroundColor:[UIColor darkGrayColor]];
+       
        // cell.contentView.backgroundColor = [UIColor darkGrayColor];
     
     }
-  //  cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+
     cell.detailTextLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor orangeColor];
@@ -114,7 +115,8 @@
     }else if (indexPath.section==1&&indexPath.row==2) {
         NoviceGuidanceViewController * noviceGudice= [[NoviceGuidanceViewController alloc] init];
         noviceGudice.noviceGuidan = @"more";
-        [self.navigationController pushViewController:noviceGudice animated:YES];
+         [self presentModalViewController:noviceGudice animated:NO];
+        //[self.navigationController pushViewController:noviceGudice animated:YES];
         [noviceGudice release];
     }else if (indexPath.section==1&&indexPath.row ==3) {
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"确定要注销登陆吗？" 
@@ -182,12 +184,13 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(onRequestCompelte:) name:MORE_QUEST object:nil];
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0f,5.0f,55.0f,35.0f);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0f,7.0f,50.0f,30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -229,6 +232,7 @@
     centerLable.hidden = NO;
 
 }
+
 -(void)dealloc
 {
     [centerLable release];

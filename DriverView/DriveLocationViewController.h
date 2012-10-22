@@ -12,14 +12,15 @@
 #import "DrivePosition.h"
 #import "MapAnnotion.h"
 #import "CouponDelegate.h"
+#import "MapPointAnnotion.h"
 @interface DriveLocationViewController : UIViewController<BMKMapViewDelegate,BMKSearchDelegate>
 {
     BMKMapView* _mapView;
     BMKSearch* _search;
     MapAnnotion * mapAnnon;
     DrivePosition * drivePositin;
-    BMKPointAnnotation* item;
-    BMKPointAnnotation* driveAnnotation;
+    MapPointAnnotion* item;
+    MapPointAnnotion* driveAnnotation;
     BOOL locationPeson;
     BOOL readonly;
     BOOL firstLoaded;

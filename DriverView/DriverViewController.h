@@ -7,20 +7,22 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "ASIHTTPRequest.h"
+
 #import "DriveLocationViewController.h"
 #import "MBProgressHUD.h"
+#import "HTTPRequest.h"
 @interface DriverViewController : UIViewController
-<ASIHTTPRequestDelegate,MBProgressHUDDelegate>
+<MBProgressHUDDelegate,HTTPRequestDelegate>
 {
     UILabel* centerLable;
     BOOL driverStatus;
-    ASIHTTPRequest *requestDriveStatus;
-    ASIHTTPRequest *requestOrderStatus;
     DriveLocationViewController* driveMap;
     MBProgressHUD *HUD;
     MBProgressHUD *HUDB;
 }
 //@property (nonatomic, copy) NSString *urlordering;
 //@property (nonatomic, copy) NSString *urlpositionDriver;
+@property(nonatomic, retain)HTTPRequest *OrderStatus_request;
+@property(nonatomic, retain)HTTPRequest *DriverStatus_request;
+@property(nonatomic, retain)HTTPRequest *seeDrive_request;
 @end

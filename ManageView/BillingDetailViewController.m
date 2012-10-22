@@ -10,13 +10,14 @@
 #import "SBJson.h"
 #import "CONST.h"
 #import "JSONKit.h"
+#import "Reachability.h"
 @interface BillingDetailViewController ()
 
 @end
 
 @implementation BillingDetailViewController
 @synthesize enioyCardLable,giftCardLable,discountLable,diidyWalletLable,couponLable,feesReceivableLable,implementationFeesLable;
-@synthesize orderID;
+@synthesize orderID,bill_request,HUD;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -29,20 +30,54 @@
 #pragma HTTPdownLoad
 -(void)downLoadTheOrderDetail
 {
-    NSString * baseUrl = [NSString stringWithFormat:BILLINGDETAIL,orderID];
-    NSLog(@"%@",baseUrl);
-    baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    NSURL * url = [NSURL URLWithString:baseUrl];
-    billRequest = [ASIHTTPRequest requestWithURL:url];
-    [billRequest setDelegate:self];
-    [billRequest setTag:102];
-    [billRequest startAsynchronous];
+    
+    
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"联网失败,请稍后再试"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        
+    }else{
+
+        NSString * baseUrl = [NSString stringWithFormat:BILLINGDETAIL,orderID];
+        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    
+        HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+        [self.navigationController.view addSubview:HUD];
+        HUD.delegate=self;
+        HUD.labelText=@"Loading";
+        HUD.detailsLabelText=@"获取结算信息...";
+        HUD.square=YES;
+        [HUD show:YES];
+    
+    
+        HTTPRequest *request = [[HTTPRequest alloc] init];
+        self.bill_request = request;
+        self.bill_request.m_delegate = self;
+        self.bill_request.hasTimeOut = YES;
+        [request release];
+    
+        [self.bill_request requestByUrlByGet: baseUrl];
+    }
+    
 }
 
 -(void)parseStringJson:(NSString *)str
 {
-    
-   // NSDictionary * jsonParser =[str JSONValue];
+   
+    if (self.HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+
+  
     NSDictionary * jsonParser =[str objectFromJSONString];
     self.couponLable.text = [jsonParser objectForKey:@"account_coupon"];
     self.enioyCardLable.text =  [jsonParser objectForKey:@"account_discount"];
@@ -55,20 +90,69 @@
           
 }
 
--(void)requestFinished:(ASIHTTPRequest *)request
+
+-(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
-    billRequest = nil;
-    [self parseStringJson:[request responseString]];
+    if ([requestString length]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+        
+    }else{
+        
+         [self parseStringJson:requestString];
+    }
+
+
+
 }
+-(void)closeConnection
+{
+    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+-(void)requesttimeout
+{
+    
+    [self closeConnection];
+    
+}
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [self.HUD removeFromSuperview];
+    [self.HUD release];
+    self.HUD = nil;
+    
+}
+
+#pragma mark-setBar
 -(void)setTheNavigationBar
 {
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnOrderDetailView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -81,6 +165,7 @@
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:centerLable];
 }
+
 -(void)returnOrderDetailView:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
@@ -95,13 +180,7 @@
     [self setTheNavigationBar]; 
     [self downLoadTheOrderDetail];
 }
--(void)viewWillDisappear:(BOOL)animated
-{
-    if (billRequest) {
-        [billRequest clearDelegatesAndCancel];
-        [billRequest release];
-    }
-}
+
 -(void)viewDidDisappear:(BOOL)animated
 {
     topImageView.hidden = YES;

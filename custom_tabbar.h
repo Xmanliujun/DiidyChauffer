@@ -21,6 +21,9 @@
 	
 	NSMutableArray *tab_btn;
 	UIButton *btn;
+    
+    NSArray *tableArry;
+    NSArray * seltArry;
 }
 
 - (void) init_tab;

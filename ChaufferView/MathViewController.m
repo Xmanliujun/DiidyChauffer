@@ -130,7 +130,7 @@
     int tempMinute = departureMinuteINT;
     int tempHour = departureTimeINT;
     
-    if(tempHour >= 6 && tempHour < 18){
+    if(tempHour >= 8 && tempHour < 18){
         
         if(tempTimeLong / 60 == 0){
             price += price1;
@@ -149,7 +149,7 @@
             
             
             while(flag){
-                if(tempHour >= 6 &&tempHour < 18){
+                if(tempHour >= 8 &&tempHour < 18){
                     tempTimeLong -= 60;
                     tempHour++;
                     if(tempHour == 24){
@@ -173,7 +173,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if(tempHour >=21 && tempHour < 24){
+                }else if(tempHour >=21 && tempHour < 23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -187,7 +187,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if(tempHour >= 0 && tempHour < 6){
+                }else if((tempHour >= 0 && tempHour < 8)||tempHour>=23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -227,7 +227,7 @@
             
             while(flag){
                 
-                if(tempHour >= 6 && tempHour < 18){
+                if(tempHour >= 8 && tempHour < 18){
                     tempTimeLong -= 60;
                     tempHour++;
                     if(tempHour == 24){
@@ -251,7 +251,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if(tempHour >=21 && tempHour < 24){
+                }else if(tempHour >=21 && tempHour < 23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -265,7 +265,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if(tempHour >= 0 && tempHour < 6){
+                }else if((tempHour >= 0 && tempHour < 8)||tempHour>=23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -283,7 +283,7 @@
             }
         }
         
-    }else if(tempHour >=21 && tempHour < 24){
+    }else if(tempHour >=21 && tempHour < 23){
         
         if(tempTimeLong / 30 == 0){
             price += price3;
@@ -305,7 +305,7 @@
             
             while(flag){
                 
-                if(tempHour >= 6 && tempHour < 18){
+                if(tempHour >= 8 && tempHour < 18){
                     tempTimeLong -= 60;
                     tempHour++;
                     if(tempHour == 24){
@@ -329,7 +329,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if(tempHour >=21 && tempHour < 24){
+                }else if(tempHour >=21 && tempHour < 23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -343,7 +343,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if(tempHour >= 0 && tempHour < 6){
+                }else if((tempHour >= 0 && tempHour < 8)||tempHour>=23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -361,7 +361,7 @@
             }
         }
         
-    }else if(tempHour >= 0 && tempHour < 6){
+    }else if((tempHour >= 0 && tempHour < 8)||tempHour>=23){
         
         if(tempTimeLong / 30 == 0){
             price += price4;
@@ -383,7 +383,7 @@
             
             while(flag){
                 
-                if(tempHour >= 6 && tempHour < 18){
+                if(tempHour >= 8 && tempHour < 18){
                     tempTimeLong -= 60;
                     tempHour++;
                     if(tempHour == 24){
@@ -407,7 +407,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if(tempHour >=21 && tempHour < 24){
+                }else if(tempHour >=21 && tempHour < 23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -421,7 +421,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if(tempHour >= 0 && tempHour < 6){
+                }else if((tempHour >= 0 && tempHour < 6)||tempHour>=23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -708,7 +708,7 @@
     minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     [topImageView release];
     
@@ -724,10 +724,10 @@
     UIImage * rigthImage =[UIImage imageNamed:@"33.png"];
     UIButton *rigthBarbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthBarbutton setBackgroundImage:rigthImage forState:UIControlStateNormal];
-    [rigthBarbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthBarbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
+    rigthBarbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     [rigthBarbutton setTitle:@"主页" forState:UIControlStateNormal];
-    rigthBarbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    rigthBarbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
     [rigthBarbutton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     
     UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthBarbutton];
@@ -763,8 +763,9 @@
     self.time.text = [NSString stringWithFormat:@"出发时间:  %@点%@分",[timesArray objectAtIndex:0],[timesArray objectAtIndex:1]];
     
     UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
-    rigthbutton.frame=CGRectMake(280.0,0.0, 42.0, 42.0);
+    //[rigthbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
+    rigthbutton.frame=CGRectMake(270.0,0.0, 42.0, 42.0);
+    [rigthbutton setTitle:@"完成" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(selectOK:) forControlEvents:UIControlEventTouchUpInside];
     
     UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];

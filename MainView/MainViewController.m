@@ -18,16 +18,17 @@
 #import "OnLineAboutViewController.h"
 #import "MathViewController.h"
 #import "NotLoggedViewController.h"
-
-
+#import<MessageUI/MFMailComposeViewController.h>
+#import "CONST.h"
 #import "custom_tabbar.h"
-
+#import "PriceViewController.h"
+#import "Reachability.h"
 @interface MainViewController ()
 
 @end
 
 @implementation MainViewController
-
+@synthesize version;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -68,7 +69,9 @@
         footImageView.frame = CGRectMake(0.0f, 400.0f, 240.0f, 40.0f);
         [UIView commitAnimations];
         server= NO;
+        
     }else {
+        
         price = YES;
         [UIView beginAnimations:@"animation" context:nil];
         [UIView setAnimationDuration:1.0];
@@ -79,6 +82,7 @@
         footImageView.frame = CGRectMake(-240.0f, 400.0f, 240.0f, 40.0f);
         [UIView commitAnimations];
         server=YES;
+        
     }
     
     
@@ -87,127 +91,219 @@
 {
     if(sender.tag ==200)
     {
-        [self pushPriceDescription];
+        sender.selected = !sender.selected;
+       // [self pushPriceDescription];
+        
+        PriceViewController * priceview = [[PriceViewController alloc] init];
+        UINavigationController * prcieNa=[[UINavigationController alloc] initWithRootViewController:priceview];
+        [self presentModalViewController:prcieNa animated:NO];
+        [priceview release];
+        [prcieNa release];
+        
        
     }else if(sender.tag==201){
         
+        UIActionSheet *menu = [[[UIActionSheet alloc]
+                                initWithTitle:@"分享"
+                                delegate:self
+                                cancelButtonTitle:@"取消"
+                                destructiveButtonTitle:@"通过短信"
+                                otherButtonTitles:nil] autorelease];
+        [menu showInView:[UIApplication sharedApplication].keyWindow];
+
     }else {
         
         
         if([ShareApp.logInState isEqualToString:@"s"]){
+            
             MoreViewController * more =[[MoreViewController alloc] init];
             more.whereLand = @"MainLand";
             UINavigationController * moreNav=[[UINavigationController alloc] initWithRootViewController:more];
-            [self presentModalViewController:moreNav animated:YES];
+            [self presentModalViewController:moreNav animated:NO];
             [more release];
             [moreNav release];
+            
         }else {
+            
             NotLoggedViewController * notLog = [[NotLoggedViewController alloc] init];
             UINavigationController * notLogNav=[[UINavigationController alloc] initWithRootViewController:notLog];
-            [self presentModalViewController:notLogNav animated:YES];
+            [self presentModalViewController:notLogNav animated:NO];
             [notLog release];
             [notLogNav release];
+            
         }
     }
     
     
     
 }
+
+-(void)displaySMSComposerSheet
+{
+    MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
+    picker.messageComposeDelegate =self;
+    NSString *smsBody =[NSString stringWithFormat:@"我分享了文件给您，地址是"];
+    picker.body=smsBody;
+    [self  presentModalViewController:picker animated:NO];
+    [picker release];
+}
+
+
+-(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
+{
+//    if (result==0) {
+//        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送取消" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+//        [alert show];
+//        [alert release];
+//    }else if (result==1)
+//    {
+//        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+//        [alert show];
+//        [alert release];
+//    
+//    }else if (result==2){
+//    
+//        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送失败" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+//        [alert show];
+//        [alert release];
+//   }
+    [self dismissModalViewControllerAnimated:NO];
+}
+
+- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+    if(buttonIndex==0){
+        Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
+        
+        if (messageClass != nil) {
+            // Check whether the current device is configured for sending SMS messages
+            if ([messageClass canSendText]) {
+                [self displaySMSComposerSheet];
+            }
+            else {
+                UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@""message:@"设备不支持短信功能" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+                [alert show];
+                [alert release];
+                
+            }
+        }
+        else {
+        }
+    
+    }else {
+        // [actionSheet release];
+    }
+    
+}
+
 -(void)goNextView:(UIButton *)sender
 {
-    if ([ShareApp.reachable isEqualToString:@"没有网络连接"]) {
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
-                                                       message: @"当前网络不可用"
+                                                       message:@"联网失败,请稍后再试"
                                                       delegate:nil
                                              cancelButtonTitle:@"确定"
                                              otherButtonTitles:nil];
         [alert show];
         [alert release];
-
+        
     }else{
-      if(sender.tag ==100){
-        TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
-        ShareApp.pageManageMent = @"chauffer";
-        
-        UINavigationController * na = [[[UINavigationController alloc] initWithRootViewController:chau] autorelease];
-       // UITabBarItem * tabBar = [[UITabBarItem alloc]init];
-      //  UITabBarItem * tabBar = [[UITabBarItem alloc]initWithTitle:@"首页" image:[UIImage imageNamed:@"navigationbar_home.png"] tag:1];
 
-        //tabBar.title = @"retur";
-        // tabBar.badgeValue = @"News";
-       // na.tabBarItem = tabBar;
+        if(sender.tag ==100){
+          
+            TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
+            ShareApp.pageManageMent = @"chauffer";
         
-        OnLineAboutViewController * online = [[[OnLineAboutViewController alloc] init] autorelease];
-       // online.title = @"在线约";
-        online.possible = YES;
-        UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
+            UINavigationController * na = [[[UINavigationController alloc] initWithRootViewController:chau] autorelease];
+            // UITabBarItem * tabBar = [[UITabBarItem alloc]init];
+            //  UITabBarItem * tabBar = [[UITabBarItem alloc]initWithTitle:@"首页" image:[UIImage imageNamed:@"navigationbar_home.png"] tag:1];
+
+            //tabBar.title = @"retur";
+            // tabBar.badgeValue = @"News";
+            // na.tabBarItem = tabBar;
         
-        MathViewController *math = [[[MathViewController alloc] init] autorelease];
-       // math.title = @"算算看";
-        UINavigationController * mathNa = [[[UINavigationController alloc] initWithRootViewController:math] autorelease];
-       // mathNa.tabBarController.tabBar.tintColor = [UIColor redColor];
+            OnLineAboutViewController * online = [[[OnLineAboutViewController alloc] init] autorelease];
+            // online.title = @"在线约";
+            online.possible = YES;
+            UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
+        
+            MathViewController *math = [[[MathViewController alloc] init] autorelease];
+            // math.title = @"算算看";
+            UINavigationController * mathNa = [[[UINavigationController alloc] initWithRootViewController:math] autorelease];
+            // mathNa.tabBarController.tabBar.tintColor = [UIColor redColor];
         
         
-        NSArray *viewControllerArray = [[[NSArray alloc] initWithObjects:na,onlineNa, mathNa, nil] autorelease];
+            NSArray *viewControllerArray = [[[NSArray alloc] initWithObjects:na,onlineNa, mathNa, nil] autorelease];
         
-        custom_tabbar * tabController  = [[custom_tabbar alloc] init];
+            custom_tabbar * tabController  = [[custom_tabbar alloc] init];
        
-        tabController.viewControllers = viewControllerArray;
-        tabController.selectedIndex = 1;
-        [ShareApp.window setRootViewController:tabController];
+            tabController.viewControllers = viewControllerArray;
+            tabController.selectedIndex = 1;
+            [ShareApp.window setRootViewController:tabController];
 
+        }else if (sender.tag ==110) {
         
-    }else if (sender.tag ==110) {
-        if([ShareApp.logInState isEqualToString:@"s"]){
+            if([ShareApp.logInState isEqualToString:@"s"]){
             
-            ManageMentViewController * mange = [[ManageMentViewController alloc] init];
-            UINavigationController * mangeNa =[[UINavigationController alloc] initWithRootViewController:mange];
-            [self presentModalViewController:mangeNa animated:YES];
-            [mange release];
-            [mangeNa release];
-        }else {
-            LandingViewController * land = [[LandingViewController alloc] init];
-            UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
-            ShareApp.pageManageMent = @"manage";
-            [self presentModalViewController:landNa animated:YES];
-            [land release];
-            [landNa release];
-        }
-    }else if(sender.tag ==111){
+                ManageMentViewController * mange = [[ManageMentViewController alloc] init];
+                UINavigationController * mangeNa =[[UINavigationController alloc] initWithRootViewController:mange];
+                [self presentModalViewController:mangeNa animated:NO];
+                [mange release];
+                [mangeNa release];
+            
+            }else {
+            
+                LandingViewController * land = [[LandingViewController alloc] init];
+                UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
+                ShareApp.pageManageMent = @"manage";
+                [self presentModalViewController:landNa animated:NO];
+                [land release];
+                [landNa release];
+            
+            }
+        }else if(sender.tag ==111){
         
-        if([ShareApp.logInState isEqualToString:@"s"]){
-            CouponViewController * coupon = [[CouponViewController alloc] init];
-            UINavigationController * couponNa = [[UINavigationController alloc] initWithRootViewController:coupon];
-            [self presentModalViewController:couponNa animated:YES];
-            [coupon release];
-            [couponNa release];
+            if([ShareApp.logInState isEqualToString:@"s"]){
+                CouponViewController * coupon = [[CouponViewController alloc] init];
+                UINavigationController * couponNa = [[UINavigationController alloc] initWithRootViewController:coupon];
+                [self presentModalViewController:couponNa animated:NO];
+                [coupon release];
+                [couponNa release];
+            
+            }else {
+            
+                LandingViewController * land = [[LandingViewController alloc] init];
+                UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
+                ShareApp.pageManageMent = @"coupon";
+                [self presentModalViewController:landNa animated:NO];
+                [landNa release];
+                [land release];
+            
+            }
         }else {
-            LandingViewController * land = [[LandingViewController alloc] init];
-            UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
-            ShareApp.pageManageMent = @"coupon";
-            [self presentModalViewController:landNa animated:YES];
-            [landNa release];
-            [land release];
-        }
-    }else {
        
-        if([ShareApp.logInState isEqualToString:@"s"]){
+            if([ShareApp.logInState isEqualToString:@"s"]){
 
-            DriverViewController * driver = [[DriverViewController alloc] init];
-            UINavigationController * driverNa = [[UINavigationController alloc] initWithRootViewController:driver];
-            [self presentModalViewController:driverNa animated:NO];
-            [driverNa release];
-            [driver release];
-        }else {
-            LandingViewController * land = [[LandingViewController alloc] init];
-            UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
-            ShareApp.pageManageMent = @"Driver";
-            [self presentModalViewController:landNa animated:YES];
-            [landNa release];
-            [land release];
+                DriverViewController * driver = [[DriverViewController alloc] init];
+                UINavigationController * driverNa = [[UINavigationController alloc] initWithRootViewController:driver];
+                [self presentModalViewController:driverNa animated:NO];
+                [driverNa release];
+                [driver release];
+            
+            }else {
+            
+                LandingViewController * land = [[LandingViewController alloc] init];
+                UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
+                ShareApp.pageManageMent = @"Driver";
+                [self presentModalViewController:landNa animated:NO];
+                [landNa release];
+                [land release];
 
+            }
         }
-    }
     }
 }
 
@@ -226,21 +322,7 @@
     
 }
 
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if(buttonIndex==0){
-        UIWebView*callWebview =[[UIWebView alloc] init];
-        NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
-        [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
-        //记得添加到view上
-        [self.view addSubview:callWebview]; 
-        [callWebview release];
-        
-    }else {
-      
-    }
-    
-}
+
 
 
 #pragma mark-Self Call
@@ -273,7 +355,7 @@
             UIButton*  mainButton = [UIButton buttonWithType:UIButtonTypeCustom];
             mainButton.alpha = 0.7;
             mainButton.tag = 100.0+j+i*10.0;
-            mainButton.frame=CGRectMake(30.0f+j*140.0f,90.0f+i*140.0f, 120.0f,120.0f);
+            mainButton.frame=CGRectMake(30.0f+j*140.0f,(80.0f+i*140.0f), 120.0f,120.0f);
             [mainButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
             [mainButton setImage:mainImage forState:UIControlStateNormal];
             [mainButton setImage:secondImage forState:UIControlStateHighlighted];
@@ -285,6 +367,7 @@
     NSArray * bottonImageArray = [NSArray arrayWithObjects:@"1-1.png",@"2-1.png",@"3-1.png",nil];
     NSArray * bSecondArray = [NSArray  arrayWithObjects:@"1-2.png",@"2-2.png",@"3-2.png", nil];
     
+    
     for(int i= 0;i<3;i++){
         
         UIImage * bottonImage = [UIImage imageNamed:[bottonImageArray objectAtIndex:i]];
@@ -295,7 +378,11 @@
         promptingButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
         promptingButton.frame=CGRectMake(40.0f+i*80.0f,390.0f,80.0f, 40.0f);
         [promptingButton setImage:bottonImage forState:UIControlStateNormal];
-        [promptingButton setImage:secondBottonImage forState:UIControlStateHighlighted];
+        if (i==0) {
+             [promptingButton setImage:secondBottonImage forState:UIControlStateHighlighted];
+        }else{
+             [promptingButton setImage:secondBottonImage forState:UIControlStateHighlighted];
+        }
         [promptingButton setTitle:[promptingArray objectAtIndex:i]forState:UIControlStateNormal];
         [promptingButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [promptingButton addTarget:self action:@selector(promptingView:) forControlEvents:UIControlEventTouchUpInside];
@@ -323,6 +410,44 @@
         
     }
 }
+-(void)checkForNewVersion{
+
+    aboutDiidy = [[AboutDiiDyViewController alloc] init];
+    [aboutDiidy checkNewVersion];
+    aboutDiidy.delegate = self;
+}
+-(void)completeDownLoadVerson:(int)returenNews withVerson:(NSString *)newVerson
+{
+    NSLog(@"%d",returenNews);
+    
+    if (returenNews==0) {
+        
+    }else{
+        NSString * nerVer = [NSString stringWithFormat:@"检测到%@新版本",newVerson];
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:nerVer
+                                                      delegate:self
+                                             cancelButtonTitle:@"取消"
+                                             otherButtonTitles:@"更新新版本",nil ];
+        [alert show];
+        [alert release];
+        
+    }
+
+}
+
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex==1) {
+           NSString *webLink = @"itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=4574";
+           [[UIApplication sharedApplication] openURL:[NSURL URLWithString:webLink]];
+    }else
+    {
+       
+    
+    }
+
+}
 
 #pragma mark - System Approach
 - (void)viewDidLoad
@@ -330,17 +455,19 @@
     [super viewDidLoad];
     server = YES;
     price = YES;
-    
+   
     UIImageView *mainImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_bg.png"]];
     mainImageView.frame = self.view.bounds;
     [self.view addSubview:mainImageView];
     [mainImageView release];
     [self creatMainView];
     [self creatPriceView];
-    
-    
    
-
+    if (self.version) {
+        
+         [self checkForNewVersion];
+    }
+   
 }
 -(void)viewWillAppear:(BOOL)animated
 {
@@ -353,11 +480,19 @@
     NSString * status = [dictStat objectForKey:@"status"];
     ShareApp.logInState = status;
     ShareApp.mobilNumber = [dictStat objectForKey:@"telephone"];
+    
+    [self.navigationController setNavigationBarHidden:YES];
+}
+
+-(void)viewWillDisappear:(BOOL)animated
+{
+    [aboutDiidy cancelConnection];
+
 }
 - (void)viewDidUnload
 {
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
+    
 }
 -(void)dealloc
 {  

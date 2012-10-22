@@ -9,5 +9,7 @@
 #import <Foundation/Foundation.h>
 
 @protocol DownLoadDelegate <NSObject>
+@optional
 -(void)completeDownLoad:(NSString*)returenNews;
+-(void)completeDownLoadVerson:(int)returenNews withVerson:(NSString*)newVerson;
 @end

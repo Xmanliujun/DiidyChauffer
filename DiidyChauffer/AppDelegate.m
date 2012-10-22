@@ -85,14 +85,12 @@
             
     }
     
-    
 }
 -(void)ShowHelpNavigation
 {
-   
-    
     NSUserDefaults *userDefaults = [NSUserDefaults standardUserDefaults];
     NSString *firstUseApp = [userDefaults objectForKey:@"FirstUseApp"] ;
+   
     if(firstUseApp == nil)
     {
         [userDefaults setValue:@"1" forKey:@"FirstUseApp"];     
@@ -128,6 +126,7 @@
     // Override point for customization after application launch.
     [self umengTrack];
     [self creatDatabase];
+    
     _mapManager = [[BMKMapManager alloc]init];
     // 如果要关注网络及授权验证事件，请设定generalDelegate参数
 	BOOL ret = [_mapManager start:@"0620AE5E420F347628B96739E458B4293E377EAE" generalDelegate:self];
@@ -150,10 +149,15 @@
     else
     {
         MainViewController * main = [[MainViewController alloc] init];
-        self.window.rootViewController = main;
+        main.version = YES;
+        UINavigationController*mainNa = [[[UINavigationController alloc] initWithRootViewController:main] autorelease];
+        [mainNa setNavigationBarHidden:YES];
+        self.window.rootViewController = mainNa;
+        [self.window addSubview:main.view];
         [main release];
         
     }
+    
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
     return YES;

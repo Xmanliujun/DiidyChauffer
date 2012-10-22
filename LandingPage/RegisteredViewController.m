@@ -13,12 +13,13 @@
 #import "SBJson.h"
 #import "Landing_DownLoadView.h"
 #import "JSONKit.h"
+#import "Reachability.h"
 @interface RegisteredViewController ()
 
 @end
 
 @implementation RegisteredViewController
-@synthesize registerIsTrue;
+@synthesize registerIsTrue,registAndPassword_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -42,9 +43,15 @@
     [set release];
     
 }
+#pragma mark-HTTP
 -(void)parseStringJson:(NSString *)str
 {
-//    NSDictionary * jsonParser =[str JSONValue];
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     if([registerIsTrue isEqualToString:@"TRUE"]){ 
@@ -114,36 +121,10 @@
 
    }
 }
--(void)requestFinished:(ASIHTTPRequest *)request
+-(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
-    
-    [self parseStringJson:[request responseString]];
-    
-    
-}
--(void)determineStep:(id)sender
-{
-    veriFicationImageView.hidden = YES;
-    SettingViewController * set = [[SettingViewController alloc] initWithRegisteredOrForgot:registerIsTrue];
-    set.mobilNumber = inputNumberText.text;
-    if([registerIsTrue isEqualToString:@"TRUE"]){
-        set.optype = @"register";
-    }else {
-        set.optype = @"password";
-    }
-    [self.navigationController pushViewController:set animated:YES];
-    [set release];
-}
 
-
--(void)startASync:(id)urlString1{
-    NSURL *url=[NSURL URLWithString:urlString1];
-    NSLog(@"url========%@",url);
-    NSError *error=nil;
-    NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
-    
-    NSLog(@"response data is %@", responseString);
-    if ([responseString length]==0) {
+    if ([requestString length]==0) {
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"注册失败"
                                                        message:@"请检查网络是否连接"
                                                       delegate:nil
@@ -152,16 +133,119 @@
         [alert show];
         [alert release];
     }else{
-        [self parseStringJson:responseString];
+        [self parseStringJson:requestString];
+    }
+
+
+}
+-(void)requesttimeout
+{
+
+    [self closeConnection];
+
+}
+-(void)closeConnection
+{
+    
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [HUD removeFromSuperview];
+    [HUD release];
+     HUD = nil;
+}
+#pragma mark-button
+-(void)determineStep:(id)sender
+{
+    veriFicationImageView.hidden = YES;
+    SettingViewController * set = [[SettingViewController alloc] initWithRegisteredOrForgot:registerIsTrue];
+    set.mobilNumber = inputNumberText.text;
+    
+    if([registerIsTrue isEqualToString:@"TRUE"]){
+        
+        set.optype = @"register";
+        
+    }else {
+        
+        set.optype = @"password";
+        
+    }
+    
+    [self.navigationController pushViewController:set animated:YES];
+    [set release];
+}
+
+-(void)nextStep:(id)sender
+{
+    ShareApp.mobilNumber = inputNumberText.text;
+    [inputNumberText resignFirstResponder];
+    
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"联网失败,请稍后再试"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }else{
+
+        if (inputNumberText.text !=NULL) {
+        
+            if([registerIsTrue isEqualToString:@"TRUE"]){
+            
+                NSLog(@"注册账号");
+                baseUrl = [NSString stringWithFormat:REGISTER,inputNumberText.text];
+                baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                baseStatus = @"用户注册...";
+                [self showWithDetails];
+            
+            
+            }else {
+            
+                NSLog(@"修改密码");
+                baseUrl = [NSString stringWithFormat:PASSWORD,inputNumberText.text];
+                baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                baseStatus = @"找回密码...";
+                [self showWithDetails];
+            
+            }
+        
+        }else {
+        
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"请输入手机号"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+        
+        }
     }
 }
 
--(void)myTask{
-    //形成异步加载
-   
-    [self startASync:baseUrl];
+
+-(void)returnLandingView:(id)sender
+{
+    [self.navigationController popViewControllerAnimated:YES];
     
 }
+
 
 -(void)showWithDetails{
     
@@ -171,61 +255,17 @@
     HUD.labelText=baseStatus;
     //HUD.detailsLabelText=@"正在加载...";
     HUD.square=YES;
-    //此处进入多线程处理
-    [HUD showWhileExecuting:@selector(myTask) onTarget:self withObject:nil animated:YES];
-}
-
--(void)nextStep:(id)sender
-{
-    ShareApp.mobilNumber = inputNumberText.text;
-    [inputNumberText resignFirstResponder];
-    if (inputNumberText.text !=NULL) {
-        
-        if([registerIsTrue isEqualToString:@"TRUE"]){
-            NSLog(@"注册账号");
-            baseUrl = [NSString stringWithFormat:REGISTER,inputNumberText.text];
-            baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            baseStatus = @"用户注册...";
-            [self showWithDetails];
-//            NSURL * url = [NSURL URLWithString:baseUrl];
-//            ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-//            NSLog(@"url=%@",url);
-//            [request setDelegate:self];
-//            [request setTag:101];
-//            [request startAsynchronous];
-            
-        }else {
-            NSLog(@"修改密码");
-            baseUrl = [NSString stringWithFormat:PASSWORD,inputNumberText.text];
-            baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            baseStatus = @"找回密码...";
-            [self showWithDetails];
-//            NSURL * url = [NSURL URLWithString:baseUrl];
-//            ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-//            NSLog(@"url=%@",url);
-//            [request setDelegate:self];
-//            [request setTag:100];
-//            [request startAsynchronous];
-        }
-        
-    }else {
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
-                                                       message:@"请输入手机号"
-                                                      delegate:nil 
-                                             cancelButtonTitle:@"OK" 
-                                             otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    }
+    [HUD show:YES];
     
+    HTTPRequest *request = [[HTTPRequest alloc] init];
+    self.registAndPassword_request = request;
+    self.registAndPassword_request.m_delegate = self;
+    self.registAndPassword_request.hasTimeOut = YES;
+    [request release];
+    
+    [self.registAndPassword_request requestByUrlByGet: baseUrl];
 }
 
-
--(void)returnLandingView:(id)sender
-{
-    [self.navigationController popViewControllerAnimated:YES];
-
-}
 
 -(void)creatVeriFicationCodeView
 {
@@ -240,12 +280,12 @@
     promptLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 260.0f, 40.0f)];
     promptLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
     promptLable.backgroundColor = [UIColor clearColor];
-    promptLable.textAlignment = UITextAlignmentCenter;
+    promptLable.textAlignment = NSTextAlignmentCenter;
     
     contentLable = [[UILabel alloc] initWithFrame:CGRectMake(2.0f, 30.0f, 260.0f, 40.0f)];
     contentLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
     contentLable.backgroundColor = [UIColor clearColor];
-    contentLable.textAlignment = UITextAlignmentCenter;
+    contentLable.textAlignment =   NSTextAlignmentCenter;
     
     UIImage * veriFicationImage = [UIImage imageNamed:@"u63_normal.png"];
     veriFicationImageView = [[UIImageView alloc] initWithImage:veriFicationImage];
@@ -266,15 +306,16 @@
 {
     [super viewDidLoad];
     self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg.png"]];
+    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnLandingView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -290,7 +331,7 @@
     telNumberLable.text = @"手机号码";
     telNumberLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
     telNumberLable.backgroundColor = [UIColor clearColor];
-    telNumberLable.textAlignment = UITextAlignmentCenter;
+    telNumberLable.textAlignment = NSTextAlignmentCenter;
     
     UIImage* telNumberImage = [UIImage imageNamed:@"u30_normal.png"];
     UIImageView * telNumberImageView = [[UIImageView alloc] initWithImage:telNumberImage];

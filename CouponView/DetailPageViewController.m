@@ -96,7 +96,7 @@
 -(void)setTheNavigationBar
 {
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     detailCenterLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
@@ -108,8 +108,9 @@
     [self.navigationController.navigationBar addSubview:detailCenterLable];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnDetailPageView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -203,28 +204,15 @@
 -(void)parseStringJson:(NSString *)str
 {
     
-//    NSDictionary * jsonParser =[str JSONValue];
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     
     if([returenNews isEqualToString:@"s"]){
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:@"成功",@"status",nil];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"ChangeTheme" object:self userInfo:dict];
+
       [self.navigationController popViewControllerAnimated:YES];
-//    Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
-//    if (messageClass != nil) {
-//        if ([messageClass canSendText]) {
-//            [self displaySMSComposerSheet];
-//            }
-//        else {
-//            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"设备没有短信功能" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
-//            [alert show];
-//            [alert release];
-//            }
-//        }
-//    else {
-//        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"iOS版本过低,iOS4.0以上才支持程序内发送短信" delegate:self cancelButtonTitle:@"关闭" otherButtonTitles:nil];
-//        [alert show];
-//        [alert release];
-//        }
 
     }else {
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送失败，请重试" delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil];
@@ -232,7 +220,6 @@
         [alert release];
     }
     
-    //[self.navigationController popViewControllerAnimated:YES];
 }
 
 -(void)requestFinished:(ASIHTTPRequest *)request

@@ -11,12 +11,13 @@
 #import "CONST.h"
 #import "SBJson.h"
 #import "JSONKit.h"
+#import "Reachability.h"
 @interface FeedBackViewController ()
 
 @end
 
 @implementation FeedBackViewController
-@synthesize judge;
+@synthesize judge,feedBack_request;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -29,48 +30,129 @@
 {
 
     if (sender.tag==201) {
-        [self.navigationController popViewControllerAnimated:YES];
-    }else {
-        NSString * baseUrl = [NSString stringWithFormat:FEEDBACK,ShareApp.mobilNumber,feedBackText.text]; 
-        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL * url = [NSURL URLWithString:baseUrl];
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        NSLog(@"%@",url);
-        [request setDelegate:self];
-        [request startAsynchronous];
+        
         [self.navigationController popViewControllerAnimated:YES];
         
+    }else {
+        
+        Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+        if ([r currentReachabilityStatus]==0) {
+            
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                           message:@"联网失败,请稍后再试"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"确定"
+                                                 otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+            
+        }else{
+
+            NSString * baseUrl = [NSString stringWithFormat:FEEDBACK,ShareApp.mobilNumber,feedBackText.text]; 
+            baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            
+            HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+            [self.navigationController.view addSubview:HUD];
+            HUD.delegate=self;
+            HUD.labelText=@"正在提交...";
+            //HUD.detailsLabelText=@"正在加载...";
+            HUD.square=YES;
+            [HUD show:YES];
+            
+            HTTPRequest *request = [[HTTPRequest alloc] init];
+            request.forwordFlag = 10;
+            self.feedBack_request = request;
+            self.feedBack_request.m_delegate = self;
+            self.feedBack_request.hasTimeOut = YES;
+            [request release];
+            
+            [self.feedBack_request requestByUrlByGet: baseUrl];
+        }
     }
 
 }
 
 -(void)parseStringJson:(NSString *)str
 {
-   // NSDictionary * jsonParser =[str JSONValue];
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+    
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
-     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:returenNews,@"return", nil];
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:returenNews,@"return", nil];
     if ([self.judge isEqualToString:@"more"]) {
+        
          [[NSNotificationCenter defaultCenter] postNotificationName:MORE_QUEST object:self userInfo:dict];
+        
     }else {
+        
         [[NSNotificationCenter defaultCenter] postNotificationName:REQUEST_COMPLETE object:self userInfo:dict];
     }
        
 }
 
--(void)requestFinished:(ASIHTTPRequest *)request
+
+-(void)requFinish:(NSString *)requestString order:(int)nOrder
+{
+    if ([requestString length]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+        
+    }else{
+        
+         [self parseStringJson:requestString];
+    }
+}
+
+-(void)closeConnection
 {
     
-    [self parseStringJson:[request responseString]];
+    if (HUD){
+        [HUD removeFromSuperview];
+        [HUD release];
+        HUD = nil;
+    }
+    
+    
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+    [alertView show];
+    [alertView release];
+    
+    [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+}
+
+-(void)requesttimeout
+{
+    [self closeConnection];
     
 }
+
+- (void)hudWasHidden:(MBProgressHUD *)hud
+{
+    [HUD removeFromSuperview];
+    [HUD release];
+    HUD = nil;
+}
+
+
+
 -(void)creatNavigationBar
 {
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
     rigthbutton.tag = 200;
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rigthbutton setTitle:@"提交" forState:UIControlStateNormal];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(returnORSubmit:) forControlEvents:UIControlEventTouchUpInside];
@@ -85,9 +167,10 @@
     [self.navigationController.navigationBar addSubview:centerLable];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.tag = 201;
-    returnButton.frame=CGRectMake(5.0f, 5.0f, 55.0f, 35.0f);
+    returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnORSubmit:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -101,7 +184,7 @@
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 44.0f);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     [self creatNavigationBar];

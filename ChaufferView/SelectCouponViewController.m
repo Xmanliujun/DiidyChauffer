@@ -54,9 +54,9 @@
         UILabel * nameLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 270,22 )];
         nameLable.numberOfLines = 0;
         // nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
-        
+        nameLable.backgroundColor = [UIColor clearColor];
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
-        nameLable.textColor = [UIColor blackColor];
+        nameLable.textColor = [UIColor orangeColor];
         nameLable.tag = 81;
         [cell.contentView addSubview:nameLable];
         [nameLable release];
@@ -64,16 +64,17 @@
         UILabel * timeLable = [[UILabel alloc] initWithFrame:CGRectMake(10,22, 270,22)];
         timeLable.numberOfLines = 0;
         //addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
+        timeLable.backgroundColor = [UIColor clearColor];
         timeLable.font = [UIFont fontWithName:@"Arial" size:12];
-        timeLable.textColor = [UIColor grayColor];
+        timeLable.textColor = [UIColor orangeColor];
         timeLable.tag = 82;
         [cell.contentView addSubview:timeLable];
         [timeLable release];
+       // cell.contentView.backgroundColor = [UIColor orangeColor];
 
     }
     
     DIIdyModel * diidyMbdel = [selectCouponAray objectAtIndex:indexPath.section];
-    NSLog(@"dii %@",diidyMbdel.name);
     UILabel *nameLable = (UILabel*)[cell.contentView viewWithTag:81];
     nameLable.text = diidyMbdel.name;
     
@@ -147,18 +148,20 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+  //  self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.view.backgroundColor= [UIColor darkGrayColor];
     self.navigationItem.hidesBackButton = YES;
     
     useSelectCouponArray = [[NSMutableArray alloc] initWithCapacity:0];
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, 0.0, 320.0, 44.0);
+    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    returnButton.frame=CGRectMake(5.0, 5.0, 55.0, 35.0);
+    returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -184,34 +187,35 @@
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthbutton setBackgroundImage:nextd forState:UIControlStateNormal];
-    [rigthbutton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
+    [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rigthbutton setTitle:title forState:UIControlStateNormal];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
+    [rigthbutton setTitle:@"完成" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
     
-    UILabel *promptLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 303.0f, 50.0f)];
-    promptLable.font = [UIFont systemFontOfSize:14];
-    promptLable.textColor = [UIColor blackColor];
-    promptLable.backgroundColor = [UIColor clearColor];
-    promptLable.textAlignment = NSTextAlignmentCenter;
-    promptLable.text = @"选 择 优 惠 劵";
-    
-    UIImage * promptImage = [UIImage imageNamed:@"u689_normal.png"];
-    UIImageView * promptImageView = [[UIImageView alloc] initWithImage:promptImage];
-    promptImageView.frame = CGRectMake(8.0f, 0.0f, promptImage.size.width, promptImage.size.height);
-    [promptImageView addSubview:promptLable];
-    [self.view addSubview:promptImageView];
-    [promptImageView release];
-    [promptLable release];
+//    UILabel *promptLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 303.0f, 50.0f)];
+//    promptLable.font = [UIFont systemFontOfSize:14];
+//    promptLable.textColor = [UIColor blackColor];
+//    promptLable.backgroundColor = [UIColor clearColor];
+//    promptLable.textAlignment = NSTextAlignmentCenter;
+//    promptLable.text = @"选 择 优 惠 劵";
+//    
+//    UIImage * promptImage = [UIImage imageNamed:@"u689_normal.png"];
+//    UIImageView * promptImageView = [[UIImageView alloc] initWithImage:promptImage];
+//    promptImageView.frame = CGRectMake(8.0f, 0.0f, promptImage.size.width, promptImage.size.height);
+//    [promptImageView addSubview:promptLable];
+//    [self.view addSubview:promptImageView];
+//    [promptImageView release];
+//    [promptLable release];
     
     CGRect  rect ;
-    if((140.f+self.rowNumber*44.0f)>370.0f){
-        rect = CGRectMake(0.0f, 52.0f, 320.0f,370.0f);
+    if((140.f+self.rowNumber*44.0f)>416.0f){
+        rect =self.view.bounds;
         
     }else {
-        rect = CGRectMake(0.0f, 52.0f, 320.0f, 134.0f+(rowNumber-2)*44.0f);
+        rect = CGRectMake(0.0f, 0.0f, 320.0f, 134.0f+(rowNumber-2)*44.0f);
     }
     
     
@@ -219,23 +223,23 @@
     [orderTableView setEditing:YES animated:YES];
     orderTableView.separatorColor = [UIColor grayColor];
     orderTableView.autoresizingMask = UIViewAutoresizingFlexibleHeight |UIViewAutoresizingFlexibleWidth;
-    //orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    orderTableView.backgroundColor = [UIColor whiteColor];
+   // orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    orderTableView.backgroundColor = [UIColor darkGrayColor];
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
-    [orderTableView setSeparatorColor:[UIColor grayColor]];
+    [orderTableView setSeparatorColor:[UIColor blackColor]];
     [self.view addSubview:orderTableView];
     [orderTableView release];
     
-    UIImage * skipImage = [UIImage imageNamed:@"u663_normal.png"];
-    UIButton *skipButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    skipButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
-    skipButton.frame=CGRectMake(5.0, 376.0, skipImage.size.width, skipImage.size.height);
-    [skipButton setBackgroundImage:skipImage forState:UIControlStateNormal];
-    [skipButton setTitle:@"跳过,本次订单不适用优惠劵" forState:UIControlStateNormal];
-    [skipButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [skipButton addTarget:self action:@selector(skipCouponView:) forControlEvents:UIControlEventTouchUpInside];
-    [self.view addSubview:skipButton];
+//    UIImage * skipImage = [UIImage imageNamed:@"u663_normal.png"];
+//    UIButton *skipButton = [UIButton buttonWithType:UIButtonTypeCustom];
+//    skipButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+//    skipButton.frame=CGRectMake(5.0, 376.0, skipImage.size.width, skipImage.size.height);
+//    [skipButton setBackgroundImage:skipImage forState:UIControlStateNormal];
+//    [skipButton setTitle:@"跳过,本次订单不适用优惠劵" forState:UIControlStateNormal];
+//    [skipButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+//    [skipButton addTarget:self action:@selector(skipCouponView:) forControlEvents:UIControlEventTouchUpInside];
+//    [self.view addSubview:skipButton];
     
     NSString * peopleNumber = [self.orderPreArray  objectAtIndex:2];
     NSArray *peopleArr = [peopleNumber componentsSeparatedByString:@"人"];
