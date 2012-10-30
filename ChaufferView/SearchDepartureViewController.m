@@ -18,15 +18,15 @@
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
     if (self) {
-        // Custom initialization
+        
     }
     return self;
 }
 #pragma mark-TableView
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
     return [cityArray count];
-    //return 3;
-
+   
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
@@ -66,6 +66,7 @@
     NSArray * name = na.poiInfoList;
   //  NSArray *  city = na.cityList;
     for (int i = 0; i<[name count]; i++) {
+        
         BMKPoiInfo * bmk = [name objectAtIndex:i];
         [cityArray addObject:bmk];
     }
@@ -113,7 +114,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -157,26 +158,20 @@
     [segment addSubview: bgImage];  
     [bgImage release];
     [self.view addSubview:startAddrSearchBar];  
-    //    
-    //    UITableView * possibleTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 50, 320, 100) style:UITableViewStylePlain];
-    //    possibleTableView.separatorColor = [UIColor grayColor];
-    //    possibleTableView.backgroundColor = [UIColor whiteColor];
-    //    possibleTableView.delegate = self;
-    //    possibleTableView.dataSource = self;
-    //    [self.view addSubview: possibleTableView];
-    //    [possibleTableView  release];
-    
+   
 }
 
 
 -(void)viewDidDisappear:(BOOL)animated
 {
+    [super viewDidDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     centerLable.hidden = YES;
 }
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     centerLable.hidden = NO;
     topImageView.hidden = NO;
     returnButton.hidden = NO;

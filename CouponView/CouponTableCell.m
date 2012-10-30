@@ -1,11 +1,3 @@
-//
-//  CouponTableCell.m
-//  DiidyProject
-//
-//  Created by diidy on 12-8-30.
-//  Copyright (c) 2012年 __MyCompanyName__. All rights reserved.
-//
-
 #import "CouponTableCell.h"
 
 @implementation CouponTableCell
@@ -28,23 +20,21 @@
         
         nameLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 160, 30)];
         nameLable.backgroundColor = [UIColor clearColor];
-        nameLable.textColor = [UIColor whiteColor];
+        //nameLable.textColor = [UIColor whiteColor];
+        nameLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
+
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
         [self.contentView addSubview:nameLable];
             
         closeDataLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 30, 140, 30)];
         closeDataLable.backgroundColor = [UIColor clearColor];
-        closeDataLable.textColor = [UIColor whiteColor];
+       // closeDataLable.textColor = [UIColor whiteColor];
+        closeDataLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
         closeDataLable.font = [UIFont fontWithName:@"Arial" size:14];
         [self.contentView addSubview:closeDataLable];
-        
-        UIImageView * lineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u49_line.png"]];
-        lineImageView.frame = CGRectMake(0, 57, 320, 3);
-        [self.contentView addSubview:lineImageView];
-        [lineImageView release];
 
     }
-    return self;
+        return self;
 }
 
 - (void)setSelected:(BOOL)selected animated:(BOOL)animated

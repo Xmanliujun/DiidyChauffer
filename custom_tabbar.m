@@ -20,7 +20,7 @@
 	tab_text = [[NSMutableArray alloc] initWithObjects:@"电话约",@"在线约",@"算算看",nil];
     
     seltArry = [NSArray arrayWithObjects:@"tabbar2.png",@"tabbar1.png",@"tabbar3.png",nil];
-    tableArry  = [NSArray arrayWithObjects:@"tabbar2-1.png",@"tabbar1-1.png",@"tabbar3-1.png", nil];
+    tableArry  = [NSArray arrayWithObjects:@"tabbar21.png",@"tabbar11.png",@"tabbar31.png", nil];
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -60,35 +60,87 @@
         UIImage * selectImage =[UIImage imageNamed:[seltArry objectAtIndex:i]];
 		btn = [UIButton buttonWithType:UIButtonTypeCustom];
 		[btn setFrame:CGRectMake(i*107, 430, 107, 50)];
+        
 //		[btn setBackgroundImage:backgroud_image.image forState:UIControlStateNormal];
 //		[btn setBackgroundImage:select_image.image forState:UIControlStateSelected];
 //		[btn setTitle:[tab_text objectAtIndex:i] forState:UIControlStateNormal];
         [btn setBackgroundImage:tableImage forState:UIControlStateNormal];
         [btn setBackgroundImage:selectImage forState:UIControlStateSelected];
+        
+       
 		[btn.titleLabel setFont:[UIFont boldSystemFontOfSize:15.0]];
 		if (i == 1)
 		{
+            tabLable1 = [[UILabel alloc] initWithFrame:CGRectMake(18.0f, 20.0f, 70.0f, 30.0f)];
+            tabLable1.text = [tab_text objectAtIndex:i];
+            tabLable1.textAlignment = NSTextAlignmentCenter;
+            tabLable1.backgroundColor = [UIColor clearColor];
+            tabLable1.font = [UIFont fontWithName:@"Helvetica" size:15.0f];
+            [btn addSubview:tabLable1];
+            tabLable1.textColor = [UIColor whiteColor];
 			[btn setSelected:YES];
-		}
+		}else if(i==0)
+        {
+            
+            tabLable = [[UILabel alloc] initWithFrame:CGRectMake(18.0f, 20.0f, 70.0f, 30.0f)];
+            tabLable.text = [tab_text objectAtIndex:i];
+            tabLable.textAlignment = NSTextAlignmentCenter;
+            tabLable.backgroundColor = [UIColor clearColor];
+            tabLable.font = [UIFont fontWithName:@"Helvetica" size:15.0f];
+            [btn addSubview:tabLable];
+            [tabLable release];
+            tabLable.textColor = [UIColor orangeColor];
+        
+        }else if (i==2){
+        
+            tabLable2 = [[UILabel alloc] initWithFrame:CGRectMake(18.0f, 20.0f, 70.0f, 30.0f)];
+            tabLable2.text = [tab_text objectAtIndex:i];
+            tabLable2.textAlignment = NSTextAlignmentCenter;
+            tabLable2.backgroundColor = [UIColor clearColor];
+            tabLable2.font = [UIFont fontWithName:@"Helvetica" size:15.0f];
+            [btn addSubview:tabLable2];
+            tabLable2.textColor = [UIColor orangeColor];
+        }
+        
 		[btn setTag:i];
 		[tab_btn addObject:btn];
-		[self.view addSubview:btn];
+    
+        [self.view addSubview:btn];
 		[btn addTarget:self action:@selector(button_clicked_tag:) forControlEvents:UIControlEventTouchUpInside];
 		[btn release];
 	}
 }
 
-- (void)button_clicked_tag:(id)sender
+- (void)button_clicked_tag:(UIButton*)sender
 {
 	int tagNum = [sender tag];
-	[self when_tabbar_is_selected:tagNum];
+    if (tagNum==0) {
+       
+        tabLable1.textColor = [UIColor orangeColor];
+        tabLable.textColor = [UIColor whiteColor];
+        tabLable2.textColor = [UIColor orangeColor];
+    }else if (tagNum==1)
+    {
+        tabLable1.textColor = [UIColor whiteColor];
+        tabLable.textColor = [UIColor orangeColor];
+        tabLable2.textColor = [UIColor orangeColor];
+        
+
+    }else if (tagNum==2)
+    {
+        tabLable1.textColor = [UIColor orangeColor];
+        tabLable.textColor = [UIColor orangeColor];
+        tabLable2.textColor = [UIColor whiteColor];
+    }
+    
+   	[self when_tabbar_is_selected:tagNum];
 }
 
 - (void)when_tabbar_is_selected:(int)tabID
 {
 	switch(tabID)
 	{
-		case 0:
+        case 0:
 			[[tab_btn objectAtIndex:0] setSelected:true];
 			[[tab_btn objectAtIndex:1] setSelected:false];
 			[[tab_btn objectAtIndex:2] setSelected:false];
@@ -114,6 +166,9 @@
 }
 
 - (void)dealloc {
+    [tabLable1 release];
+    [tabLable release];
+    [tabLable2 release];
 	[backgroud_image release];
 	[select_image release];
 	[tab_bar_bg release];

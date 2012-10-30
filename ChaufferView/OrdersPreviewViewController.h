@@ -31,6 +31,11 @@
 @property(nonatomic,retain)IBOutlet UILabel *contactLable;//联系人
 @property(nonatomic,retain)IBOutlet UILabel *mobilNumberLable;//手机号码
 @property(nonatomic,retain)IBOutlet UILabel *remarkLable;//备注
-@property(nonatomic,retain)IBOutlet VerticallyAlignedLabel *couponLable;//优惠劵
+@property(nonatomic,retain) VerticallyAlignedLabel *couponLable;//优惠劵
 @property(nonatomic, retain)HTTPRequest *submit_request;
+
+@property(nonatomic,retain)IBOutlet UIView *orderPreView;
+@property(nonatomic,retain)IBOutlet UIView *inforPreView;
+@property(nonatomic,retain)IBOutlet UIView *couponView;
+
 @end

@@ -10,6 +10,7 @@
 #import "EditDepartureViewController.h"
 #import "SelectCouponViewController.h"
 #import "OrdersPreviewViewController.h"
+#import "OrdersPreviewTwoViewController.h"
 #import "LandingViewController.h"
 #import "CONST.h"
 #import "AppDelegate.h"
@@ -17,6 +18,7 @@
 #import "DIIdyModel.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import <QuartzCore/QuartzCore.h>
 @interface FillOrdersViewController ()
 
 @end
@@ -26,6 +28,7 @@
 @synthesize destinationField,nameField,telNumberField;
 @synthesize couponView,departureMinuteLable,couponLable,landed;
 @synthesize couponaArray;
+@synthesize bookInforView,couponInforView,contactInforView;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -156,6 +159,7 @@
         [UIView setAnimationDuration:0.3];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         self.backGroundView.frame = CGRectMake(0, -120, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
+        viewTest.frame = CGRectMake(0, -120, viewTest.frame.size.width, viewTest.frame.size.height);
         [UIView commitAnimations];
         
     }
@@ -268,7 +272,7 @@
    
     NSTimeInterval date2 = [_date timeIntervalSinceReferenceDate]; 
     double diff = date2 -date1;
-    
+    NSLog(@"fff   %f",diff);
     if (diff<60*30-20) {
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
@@ -286,19 +290,32 @@
             UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:landedController];
             NSLog(@"%@",self.departureMinuteLable.text);
             landedController.couponArray = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
-            [self presentModalViewController:landNa animated:YES];
+            [self presentModalViewController:landNa animated:NO];
             [landedController release];
             [landNa release];
             
         }else {
             
-            OrdersPreviewViewController * orderController = [[OrdersPreviewViewController alloc] init];
-            NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
-            orderController.orderArray = ayy;
-            orderController.useCouponArray = self.couponaArray;
-            orderController.selectArray = dataArry;
-            [self.navigationController pushViewController:orderController animated:YES];
-            [orderController release];
+            if ([self.couponaArray count]==0) {
+                
+                 NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+                
+                OrdersPreviewTwoViewController * orderPre = [[OrdersPreviewTwoViewController alloc] init];
+                orderPre.orderArray = ayy;
+                [self.navigationController pushViewController:orderPre animated:YES];
+                [orderPre release];
+                
+                
+            }else{
+            
+                OrdersPreviewViewController * orderController = [[OrdersPreviewViewController alloc] init];
+                NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+                orderController.orderArray = ayy;
+                orderController.useCouponArray = self.couponaArray;
+                orderController.selectArray = dataArry;
+                [self.navigationController pushViewController:orderController animated:YES];
+                [orderController release];
+            }
         }
 
     }
@@ -307,6 +324,7 @@
        
 }
 -(IBAction)selectDeparture:(id)sender{
+    
     EditDepartureViewController * editDeparture = [[EditDepartureViewController alloc] init];
     editDeparture.DepartureDelegate = self;
     editDeparture.departureName = self.departureLable.text;
@@ -359,17 +377,33 @@
     
     self.couponaArray = couponArray;
      NSMutableString * couString = [[[NSMutableString alloc]initWithCapacity:0]autorelease ];
-    for (int i =0; i<[self.couponaArray count]; i++) {
+    
+    if ([self.couponaArray count]==0) {
+        self.couponLable.text = @"";
+
+    }
+    
+    
+    if ([self.couponaArray count]>=2) {
         
+        for (int i=0; i<[self.couponaArray count]-1; i++) {
+            
+            NSIndexPath* diidyMbdelPath = [self.couponaArray objectAtIndex:i];
+            DIIdyModel *diidyModel = [dataArry objectAtIndex:diidyMbdelPath.section];
+            [couString appendFormat:@"%@,",diidyModel.name];
+            
+        }
         
-        NSIndexPath* diidyMbdelPath = [self.couponaArray objectAtIndex:i];
-        DIIdyModel *diidyModel = [dataArry objectAtIndex:diidyMbdelPath.section];
+    }
+    if ([self.couponaArray count]>=1) {
         
-        [couString appendString:diidyModel.name];
-        couString = [NSMutableString stringWithFormat:@"%@,",couString];
+        NSIndexPath* lastdiidyPath = [self.couponaArray objectAtIndex:[self.couponaArray count]-1];
+        DIIdyModel * lastDiidy = [dataArry objectAtIndex:lastdiidyPath.section];
+        [couString appendFormat:@"%@",lastDiidy.name];
+        self.couponLable.text = couString;
+        
     }
 
-      self.couponLable.text = couString;
 }
 
 #pragma mark - System Approach
@@ -383,14 +417,15 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rigthbutton.frame=CGRectMake(260.0, 5.0, 55.0, 35.0);
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    rigthbutton.frame=CGRectMake(262.0, 7.0, 50.0, 30.0);
+    [rigthbutton setTitle:@"下一步 " forState:UIControlStateNormal];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button4.png"] forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
@@ -407,15 +442,48 @@
     UIDatePicker* control = (UIDatePicker*)sender;  
      _date = [control.date retain];
     NSString * locationString=[dateformatter stringFromDate:_date];
-    NSLog(@"%@",locationString);
     self.departureMinuteLable.text = locationString;
 
-}  
+}
+-(void)creatView
+{
+
+    self.bookInforView.backgroundColor=[UIColor whiteColor];
+    [[self.bookInforView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.bookInforView layer] setShadowRadius:5];
+    [[self.bookInforView layer] setShadowOpacity:1];
+    [[self.bookInforView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.bookInforView layer] setCornerRadius:7];
+    [[self.bookInforView layer] setBorderWidth:1];
+    [[self.bookInforView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.backGroundView sendSubviewToBack:self.bookInforView];
+    
+    self.contactInforView.backgroundColor=[UIColor whiteColor];
+    [[self.contactInforView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.contactInforView layer] setShadowRadius:5];
+    [[self.contactInforView layer] setShadowOpacity:1];
+    [[self.contactInforView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.contactInforView layer] setCornerRadius:7];
+    [[self.contactInforView layer] setBorderWidth:1];
+    [[self.contactInforView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.backGroundView sendSubviewToBack:self.self.contactInforView];
+    
+    self.couponInforView.backgroundColor=[UIColor whiteColor];
+    [[self.couponInforView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.couponInforView layer] setShadowRadius:5];
+    [[self.couponInforView layer] setShadowOpacity:1];
+    [[self.couponInforView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.couponInforView layer] setCornerRadius:7];
+    [[self.couponInforView layer] setBorderWidth:1];
+    [[self.couponInforView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.couponView sendSubviewToBack:self.couponInforView];
+    
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    // Do any additional setup after loading the view from its nib.
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+
     self.destinationField.delegate = self;
     self.nameField.delegate = self;
     self.telNumberField.delegate = self;
@@ -423,6 +491,7 @@
     self.departureLable.text = departure;
     self.departureLable.numberOfLines = 0;
     
+    [self creatView];
     if (ShareApp.mobilNumber.length!=0) {
         
         self.telNumberField.text = ShareApp.mobilNumber;
@@ -501,13 +570,15 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = NO;
     returnButton.hidden =NO;
     rigthbutton.hidden = NO;
     centerLable.hidden = NO;
 }
--(void)viewDidDisappear:(BOOL)animated
+-(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     rigthbutton.hidden = YES;
@@ -516,6 +587,11 @@
 }
 -(void)dealloc
 {
+    [self.getCoupon_request closeConnection];
+    
+    [couponInforView release];
+    [contactInforView release];
+    [bookInforView release];
     [backGroundView release];
     [couponView  release];
     [centerLable release];

@@ -14,6 +14,7 @@
 #import "MoreViewController.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import <QuartzCore/QuartzCore.h>
 @interface ChangePasswordViewController ()
 
 @end
@@ -225,7 +226,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returMoreViewView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -248,13 +249,13 @@
     [self.navigationController.navigationBar addSubview:centerLable];
        
     UIImageView * lineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
-    lineImageView.frame = CGRectMake(4.0f, 40.0f, 290.0f, 3.0f);
+    lineImageView.frame = CGRectMake(2.0f, 40.0f, 290.0f, 3.0f);
     
     UIImageView * secondLineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
-    secondLineImageView.frame = CGRectMake(4.0f, 80.0f, 290.0f, 3.0f);
+    secondLineImageView.frame = CGRectMake(2.0f, 80.0f, 290.0f, 3.0f);
     
     UIImageView * threeLineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u125_line.png"]];
-    threeLineImageView.frame = CGRectMake(80.0f, 4.0f, 3.0f, 115.0f);
+    threeLineImageView.frame = CGRectMake(80.0f, 2.0f, 3.0f, 118.0f);
     
     oldPasswordText = [[UITextField alloc] initWithFrame:CGRectMake(85.0f, 5.0f, 160.0f,35.0f)];
     oldPasswordText.backgroundColor = [UIColor clearColor];
@@ -291,11 +292,17 @@
     confirmPassWordText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     confirmPassWordText.delegate = self;
     
-    UIImage * informationImage = [UIImage imageNamed:@"u90_normal.png"];
-    UIImageView * informationImageView = [[UIImageView alloc] initWithImage:informationImage];
-    informationImageView.frame = CGRectMake(10.0, 20.0, informationImage.size.width, informationImage.size.height);
-    informationImageView.userInteractionEnabled = YES;
-    
+       
+    UIView *changePasswordView =[[UIView alloc] initWithFrame: CGRectMake(10.0, 20.0, 294.0f, 121.0f)];
+    changePasswordView.backgroundColor=[UIColor whiteColor];
+    [[changePasswordView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[changePasswordView layer] setShadowRadius:5];
+    [[changePasswordView layer] setShadowOpacity:1];
+    [[changePasswordView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[changePasswordView layer] setCornerRadius:7];
+    [[changePasswordView layer] setBorderWidth:1];
+    [[changePasswordView layer] setBorderColor:[UIColor grayColor].CGColor];
+        
     
     NSArray * lableBArray = [NSArray arrayWithObjects:@"旧密码",@"新密码",@"确认密码", nil];
     
@@ -307,18 +314,19 @@
         firstLable.backgroundColor = [UIColor clearColor];
         firstLable.textAlignment = UITextAlignmentCenter;
         firstLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
-        [informationImageView addSubview:firstLable];
+        [changePasswordView addSubview:firstLable];
         [firstLable release];
     }
-    [informationImageView addSubview:confirmPassWordText];
-    [informationImageView addSubview:oldPasswordText];
-    [informationImageView addSubview:newPassWordText];    
-    [informationImageView addSubview:threeLineImageView];
-    [informationImageView addSubview:secondLineImageView];
-    [informationImageView addSubview:lineImageView];
-    [self.view addSubview:informationImageView];
+    
+    [changePasswordView addSubview:confirmPassWordText];
+    [changePasswordView addSubview:oldPasswordText];
+    [changePasswordView addSubview:newPassWordText];
+    [changePasswordView addSubview:threeLineImageView];
+    [changePasswordView addSubview:secondLineImageView];
+    [changePasswordView addSubview:lineImageView];
+    [self.view addSubview:changePasswordView];
    
-    [informationImageView release];
+    [changePasswordView release];
     [lineImageView release];
     [secondLineImageView release];
     [threeLineImageView release];
@@ -326,6 +334,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     rigthbutton.hidden = YES;

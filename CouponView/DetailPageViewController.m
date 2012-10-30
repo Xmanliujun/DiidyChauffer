@@ -110,7 +110,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnDetailPageView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -239,27 +239,27 @@
     
     UIImage * lineImage = [UIImage imageNamed:@"u84_line.png"];
     UIImageView * lineImageView =[[UIImageView alloc] initWithImage:lineImage];
-    lineImageView.frame = CGRectMake(15.0, 100.0, lineImage.size.width, lineImage.size.height);
+    lineImageView.frame = CGRectMake(15.0f, 100.0f, lineImage.size.width, lineImage.size.height);
     [self.view addSubview:lineImageView];
     [lineImageView release];
     
-    UIImage * nameImage = [UIImage imageNamed:@"u80_normal.png"];
+    UIImage * nameImage = [UIImage imageNamed:@"coupon_d.png"];
     UIImageView * detailNameImage = [[UIImageView alloc] initWithImage:nameImage];
-    detailNameImage.frame = CGRectMake(10.0, 12.0, nameImage.size.width, nameImage.size.height);
+    detailNameImage.frame = CGRectMake(10.0f, 12.0f,78.0f,77.0f);
     [self.view addSubview:detailNameImage];
     [detailNameImage release];
     
-    UILabel * detailLable = [[UILabel alloc] initWithFrame:CGRectMake(100.0, 12.0, 140.0,75.0)];
+    UILabel * detailLable = [[UILabel alloc] initWithFrame:CGRectMake(100.0f, 12.0f, 140.0f,75.0f)];
     detailLable.backgroundColor = [UIColor clearColor];
     detailLable.textColor = [UIColor orangeColor];
-    detailLable.font = [UIFont fontWithName:@"Arial" size:14.0];
+    detailLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
     detailLable.text = detailCoupon;
     [self.view addSubview:detailLable];
     [detailLable release];
     
     UIButton*  presentionButton = [UIButton buttonWithType:UIButtonTypeCustom];
     presentionButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    presentionButton.frame=CGRectMake(10.0, 120.0, 124.0, 38.0);
+    presentionButton.frame=CGRectMake(10.0f, 120.0f, 124.0f, 38.0f);
     [presentionButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [presentionButton setBackgroundImage:[UIImage imageNamed:@"u102_normal.png"] forState:UIControlStateNormal];
     [presentionButton setTitle:@"赠送" forState:UIControlStateNormal];
@@ -268,7 +268,7 @@
     
     UIButton* telFreeButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telFreeButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    telFreeButton.frame=CGRectMake(180.0, 120.0, 124.0, 38.0);
+    telFreeButton.frame=CGRectMake(180.0f, 120.0f, 124.0f, 38.0f);
     [telFreeButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [telFreeButton setBackgroundImage:[UIImage imageNamed:@"u104_normal.png"] forState:UIControlStateNormal];
     [telFreeButton setTitle:@"400免费咨询电话" forState:UIControlStateNormal];
@@ -277,15 +277,16 @@
     
     UIImage * detailImage =[UIImage imageNamed:@"u88_normal.png"];
     UIImageView* detailImageView = [[UIImageView alloc] initWithImage:detailImage];
-    detailImageView.frame = CGRectMake(10.0, 170.0, detailImage.size.width, detailImage.size.height);
+    detailImageView.frame = CGRectMake(10.0f, 170.0f, detailImage.size.width, detailImage.size.height);
     [self.view addSubview:detailImageView];
     [detailImageView release];
     
     [self creatGiftToFriendView];
 }
 
--(void)viewDidDisappear:(BOOL)animated
+-(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     detailCenterLable.hidden = YES;
     topImageView.hidden = YES;
     returnButton.hidden = YES;

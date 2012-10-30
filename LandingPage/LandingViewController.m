@@ -173,6 +173,7 @@
                                              otherButtonTitles:nil];
         [alert show];
         [alert release];
+        
     }else{
 
     
@@ -206,9 +207,10 @@
             //HUD.detailsLabelText=@"正在加载...";
             HUD.square=YES;
             [HUD show:YES];
-    
+           
             NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName];
             baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+            NSLog(@"%@",baseUrl);
             HTTPRequest *request = [[HTTPRequest alloc] init];
             request.forwordFlag = 500;
             self.land_request = request;
@@ -245,6 +247,7 @@
     NSArray* jsonParser =[str objectFromJSONString];
     
     for (int i = 0; i<[jsonParser count]; i++) {
+        
             DIIdyModel * diidy = [[DIIdyModel alloc] init];
             NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
             diidy.ID = [diidyDict objectForKey:@"id"];
@@ -256,9 +259,11 @@
             total += [diidy.number intValue];
             [dataArry addObject:diidy];
             [diidy release];
+        
         }
     
     if(total!=0){
+        
         SelectCouponViewController * selectCoupon = [[SelectCouponViewController alloc]init];
         selectCoupon.selectCouponAray = dataArry;
         selectCoupon.rowNumber = total;
@@ -288,7 +293,7 @@
     
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
-   // ShareApp.logInState = returenNews;
+    ShareApp.logInState = returenNews;
     
     NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);  
     NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -319,7 +324,6 @@
             
             ManageMentViewController * manage = [[ManageMentViewController alloc] init];
             ShareApp.mobilNumber = inputNumberText.text;
-            NSLog(@"%@",inputNumberText.text);
             [self.navigationController pushViewController:manage animated:YES];
             [manage release];
             
@@ -423,7 +427,7 @@
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
@@ -468,10 +472,12 @@
 
 -(void)viewDidDisappear:(BOOL)animated
 {
+    [super viewDidDisappear:animated];
     topImageView.hidden = YES;
 }
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     returnButton.hidden = NO;
     topImageView.hidden = NO;
     

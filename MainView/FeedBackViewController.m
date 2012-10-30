@@ -12,6 +12,7 @@
 #import "SBJson.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import <QuartzCore/QuartzCore.h>
 @interface FeedBackViewController ()
 
 @end
@@ -170,7 +171,7 @@
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.tag = 201;
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnORSubmit:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -197,10 +198,19 @@
     [self.view addSubview:landingLable];
     [landingLable release];
     
-    UIImageView * textImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u165_normal.png"]];
-    textImageView.frame = CGRectMake(6.0f, 40.f, 308.0f, 120.0f);
-    [self.view addSubview:textImageView];
-    [textImageView release];
+    
+    UIView *feedBackView =[[UIView alloc] initWithFrame: CGRectMake(6.0f, 40.f, 308.0f, 120.0f)];
+
+    feedBackView.backgroundColor=[UIColor whiteColor];
+    [[feedBackView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[feedBackView layer] setShadowRadius:5];
+    [[feedBackView layer] setShadowOpacity:1];
+    [[feedBackView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[feedBackView layer] setCornerRadius:7];
+    [[feedBackView layer] setBorderWidth:1];
+    [[feedBackView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.view addSubview:feedBackView];
+    [feedBackView release];
     
     feedBackText = [[UITextView alloc] initWithFrame:CGRectMake(10.0f, 44.0f, 300.0f, 110.0f)];
     feedBackText.textColor = [UIColor blackColor];
@@ -214,6 +224,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     centerLable.hidden = YES;
     returnButton.hidden = YES;

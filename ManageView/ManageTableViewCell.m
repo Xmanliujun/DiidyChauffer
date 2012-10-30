@@ -22,7 +22,7 @@
             UILabel * firstOrderLable = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 5.0+30.0*i, 60.0, 30)];
             firstOrderLable.backgroundColor = [UIColor clearColor];
             firstOrderLable.text = [orderArray objectAtIndex:i];
-            firstOrderLable.textColor = [UIColor whiteColor];
+            firstOrderLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
             firstOrderLable.font = [UIFont fontWithName:@"Arial" size:13.0];
             [self.contentView addSubview:firstOrderLable];
             [firstOrderLable release];
@@ -30,7 +30,7 @@
         orderNumberLable = [[UILabel alloc] init];
         orderNumberLable.frame = CGRectMake(75, 5, 140, 30);
         orderNumberLable.backgroundColor = [UIColor clearColor];
-        orderNumberLable.textColor = [UIColor whiteColor];
+        orderNumberLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
         orderNumberLable.font = [UIFont fontWithName:@"Arial" size:13.0];
         [self.contentView addSubview:orderNumberLable];
         
@@ -38,14 +38,14 @@
         startTimeLable.frame = CGRectMake(75, 35, 140, 30);
         startTimeLable.backgroundColor = [UIColor clearColor];
         startTimeLable.font = [UIFont fontWithName:@"Arial" size:13.0];
-        startTimeLable.textColor = [UIColor whiteColor];
+        startTimeLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
         [self.contentView addSubview: startTimeLable];
         
         departureLable = [[UILabel alloc] init];
         departureLable.frame = CGRectMake(75, 65, 180, 30);
         departureLable.backgroundColor = [UIColor clearColor];
         departureLable.numberOfLines = 0;
-        departureLable.textColor = [UIColor whiteColor];
+        departureLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
         departureLable.font = [UIFont fontWithName:@"Arial" size:13.0];
         [self.contentView addSubview: departureLable];
         

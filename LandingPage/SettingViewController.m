@@ -16,6 +16,7 @@
 #import "ManageMentViewController.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import <QuartzCore/QuartzCore.h>
 @interface SettingViewController ()
 
 @end
@@ -487,19 +488,19 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returRegisteredView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
     UIImageView * lineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
-    lineImageView.frame = CGRectMake(4.0f, 40.0f, 290.0f, 3.0f);
+    lineImageView.frame = CGRectMake(2.0f, 40.0f, 290.0f, 3.0f);
     
     UIImageView * secondLineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u93_line.png"]];
-    secondLineImageView.frame = CGRectMake(4.0f, 80.0f, 290.0f, 3.0f);
+    secondLineImageView.frame = CGRectMake(2.0f, 80.0f, 290.0f, 3.0f);
     
     UIImageView * threeLineImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u125_line.png"]];
-    threeLineImageView.frame = CGRectMake(80.0f, 4.0f, 3.0f, 115.0f);
+    threeLineImageView.frame = CGRectMake(80.0f, 2.0f, 3.0f, 118.0f);
     
     verificationText = [[UITextField alloc] initWithFrame:CGRectMake(85.0f, 5.0f, 160.0f,35.0f)];
     verificationText.backgroundColor = [UIColor clearColor];
@@ -536,10 +537,17 @@
     confirmText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     confirmText.delegate = self;
     
-    UIImage * informationImage = [UIImage imageNamed:@"u90_normal.png"];
-    UIImageView * informationImageView = [[UIImageView alloc] initWithImage:informationImage];
-    informationImageView.frame = CGRectMake(10.0f, 20.0f, informationImage.size.width, informationImage.size.height);
-    informationImageView.userInteractionEnabled = YES;
+       
+    UIView *informationView =[[UIView alloc] initWithFrame: CGRectMake(10.0, 20.0, 294.0f, 121.0f)];
+    informationView.backgroundColor=[UIColor whiteColor];
+    [[informationView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[informationView layer] setShadowRadius:5];
+    [[informationView layer] setShadowOpacity:1];
+    [[informationView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[informationView layer] setCornerRadius:7];
+    [[informationView layer] setBorderWidth:1];
+    [[informationView layer] setBorderColor:[UIColor grayColor].CGColor];
+    
     
     NSArray * lableAArray =[NSArray arrayWithObjects:@"验证码",@"密码",@"确认密码",nil];
     NSArray * lableBArray = [NSArray arrayWithObjects:@"验证码",@"新密码",@"确认密码", nil];
@@ -559,17 +567,20 @@
         firstLable.backgroundColor = [UIColor clearColor];
         firstLable.textAlignment = UITextAlignmentCenter;
         firstLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
-        [informationImageView addSubview:firstLable];
+        [informationView addSubview:firstLable];
         [firstLable release];
     }
-    [informationImageView addSubview:confirmText];
-    [informationImageView addSubview:passWordText];
-    [informationImageView addSubview:verificationText];    
-    [informationImageView addSubview:threeLineImageView];
-    [informationImageView addSubview:secondLineImageView];
-    [informationImageView addSubview:lineImageView];
-    [self.view addSubview:informationImageView];
-    [informationImageView release];
+    
+    
+    [informationView addSubview:confirmText];
+    [informationView addSubview:passWordText];
+    [informationView addSubview:verificationText];
+    [informationView addSubview:threeLineImageView];
+    [informationView addSubview:secondLineImageView];
+    [informationView addSubview:lineImageView];
+    [self.view addSubview:informationView];
+    
+    [informationView release];
     [secondLineImageView release];
     [lineImageView release];
     [threeLineImageView release];
@@ -600,6 +611,7 @@
 
 -(void)viewDidDisappear:(BOOL)animated
 {
+    [super viewDidDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
 

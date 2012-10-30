@@ -29,13 +29,13 @@
 	// Do any additional setup after loading the view.
     //[self.navigationController setNavigationBarHidden:NO];
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0f, -0.0f, 320.0f, 49.0f);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];

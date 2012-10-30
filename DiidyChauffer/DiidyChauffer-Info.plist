@@ -8,20 +8,18 @@
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
+	<key>CFBundleIconFiles</key>
+	<array>
+		<string>icon.png</string>
+	</array>
 	<key>CFBundleIdentifier</key>
-	<string>www.diidy.com.${PRODUCT_NAME:rfc1034identifier}</string>
+	<string>www.diidy.com</string>
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
 	<string>${PRODUCT_NAME}</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
-	<key>CFBundleIconFiles</key>
-	<array>
-		<string>icon.png</string>
-	</array>
-	<key>UILaunchImageFile</key>
-	<string>default.png</string>
 	<key>CFBundleShortVersionString</key>
 	<string>1.0</string>
 	<key>CFBundleSignature</key>
@@ -30,6 +28,8 @@
 	<string>1.0</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<key>UILaunchImageFile</key>
+	<string>default.png</string>
 	<key>UIRequiredDeviceCapabilities</key>
 	<array>
 		<string>armv7</string>

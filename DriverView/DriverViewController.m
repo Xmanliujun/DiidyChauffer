@@ -318,6 +318,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated{
 
+    [super viewWillDisappear:animated];
     [self.OrderStatus_request closeConnection];
 
 }

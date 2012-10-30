@@ -15,6 +15,7 @@
 #import "AppDelegate.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import <QuartzCore/QuartzCore.h>
 @interface OrdersPreviewViewController ()
 
 @end
@@ -25,6 +26,7 @@
 @synthesize departureLable,departureTimeLable,numberOfPeopleLable,destinationLable,contactLable,mobilNumberLable,remarkLable,couponLable;
 @synthesize orderArray,useCouponArray,selectArray;
 @synthesize submit_request;
+@synthesize orderPreView,inforPreView,couponView;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -73,26 +75,40 @@
         }else{
 
             if (self.departureTimeLable.text==NULL||[self.departureTimeLable.text length]==0) {
+                
                 self.departureTimeLable.text = @"无";
+                
             }
 
-            if ([self.departureLable.text isEqualToString:@""]) {
+            if (self.departureLable.text==NULL||[self.departureLable.text length]==0) {
+                
                 self.departureLable.text =@"无";
+                
             }
-            if ([self.numberOfPeopleLable.text isEqualToString:@""]) {
+            if (self.numberOfPeopleLable.text==NULL||[self.numberOfPeopleLable.text length]==0) {
+                
                 self.numberOfPeopleLable.text = @"无";
+                
             }
-            if ([self.contactLable.text isEqualToString:@""]) {
+            if (self.contactLable.text==NULL||[self.contactLable.text length]==0) {
+                
                 self.contactLable.text = @"无";
+                
             }
-            if ([self.destinationLable.text isEqualToString:@""]) {
+            if (self.destinationLable.text==NULL||[self.destinationLable.text length]==0) {
+                
                 self.destinationLable.text = @"无";
+                
             }
-            if ([self.mobilNumberLable.text isEqualToString:@""]) {
+            if (self.mobilNumberLable.text==NULL||[self.mobilNumberLable.text length]==0) {
+                
                 self.mobilNumberLable.text = @"无";
+                
             }
-            if ([self.contactLable.text isEqualToString:@""]) {
+            if (self.contactLable.text==NULL||[self.contactLable.text length]==0) {
+                
                 self.contactLable.text = @"无";
+                
             }
         
             NSMutableString * couString = [[[NSMutableString alloc]initWithCapacity:0] autorelease];
@@ -104,16 +120,19 @@
         
             [couString appendString:diidyModel.name];
             couString = [NSMutableString stringWithFormat:@"%@,",couString];
+                
             }
         
             if ([self.useCouponArray count]==0) {
+                
                 couString =[NSMutableString stringWithFormat:@"%@",@"无"];
+                
             }
+            
             NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,self.departureTimeLable.text,self.departureLable.text,self.numberOfPeopleLable.text,self.destinationLable.text,self.mobilNumberLable.text,self.contactLable.text,couString,ShareApp.mobilNumber];
             NSLog(@"%@",baseUrl);
             baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
 
-        
             HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
             [self.navigationController.view addSubview:HUD];
             HUD.delegate=self;
@@ -137,15 +156,16 @@
 -(void)parseStringJson:(NSString *)str
 {
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
     }
 
-    
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     if ([returenNews isEqualToString:@"s"]) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"提交成功"
                                                       delegate:nil
@@ -160,6 +180,7 @@
         [main release];
 
     }else {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                        message:@"提交失败请重试"                                                 
                                                       delegate:nil
@@ -175,6 +196,7 @@
 {
     
     if ([requestString length]==0) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
                                                        message:@"请检查网络是否连接"
                                                       delegate:nil
@@ -182,6 +204,7 @@
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        
     }else{
 
         [self parseStringJson:requestString];
@@ -193,9 +216,10 @@
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
-        HUD = nil;
+         HUD = nil;
     }
     
     
@@ -219,32 +243,76 @@
 }
 
 #pragma mark - System Approach
+
+-(void)creatOrderPreView
+{
+    self.orderPreView.backgroundColor=[UIColor whiteColor];
+    [[self.orderPreView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.orderPreView layer] setShadowRadius:5];
+    [[self.orderPreView layer] setShadowOpacity:1];
+    [[self.orderPreView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.orderPreView layer] setCornerRadius:7];
+    [[self.orderPreView layer] setBorderWidth:1];
+    [[self.orderPreView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.view sendSubviewToBack:self.orderPreView];
+    
+    self.inforPreView.backgroundColor=[UIColor whiteColor];
+    [[self.inforPreView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.inforPreView layer] setShadowRadius:5];
+    [[self.inforPreView layer] setShadowOpacity:1];
+    [[self.inforPreView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.inforPreView layer] setCornerRadius:7];
+    [[self.inforPreView layer] setBorderWidth:1];
+    [[self.inforPreView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.view sendSubviewToBack:self.inforPreView];
+
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    
+    [self creatOrderPreView];
     couponArray = [[NSMutableArray alloc] initWithCapacity:0];
     
     NSMutableString *couString = [[NSMutableString alloc] initWithCapacity:0];
-    [couString appendString:@"选择了："];
+    [couString appendString:@"选择了:"];
     if ([useCouponArray count]>=2) {
+        
         for (int i=0; i<[useCouponArray count]-1; i++) {
+            
             NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:i];
             DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section];
              [couString appendFormat:@"%@,",diidyModel.name];
+            
         }
 
     }
+    
     if ([useCouponArray count]>=1) {
+        
         NSIndexPath* lastdiidyPath = [useCouponArray objectAtIndex:[useCouponArray count]-1];
         DIIdyModel * lastDiidy = [selectArray objectAtIndex:lastdiidyPath.section];
         [couString appendFormat:@"%@",lastDiidy.name];
         self.couponLable.text = couString;
         
     }
+    
+    
+    CGSize size = [self.couponLable.text sizeWithFont:[UIFont systemFontOfSize:13.0] constrainedToSize:CGSizeMake(272, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
    
+    self.couponView.frame = CGRectMake(self.couponView.frame.origin.x, self.couponView.frame.origin.y, self.couponView.frame.size.width, size.height+20.0f);
+    self.couponView.backgroundColor=[UIColor whiteColor];
+    [[self.couponView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.couponView layer] setShadowRadius:5];
+    [[self.couponView layer] setShadowOpacity:1];
+    [[self.couponView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.couponView layer] setCornerRadius:7];
+    [[self.couponView layer] setBorderWidth:1];
+    [[self.couponView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.view sendSubviewToBack:self.couponView];
+
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
     topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
@@ -252,7 +320,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -265,12 +333,11 @@
     self.contactLable.text = [self.orderArray objectAtIndex:4];//联系人
     self.mobilNumberLable.text = [self.orderArray objectAtIndex:5];//手机号码
    
-    
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"orderPre.png"] forState:UIControlStateNormal];
     [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 55.0f, 31.0f);
     [rigthbutton setTitle:@"提交订单" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(submitOrders:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
@@ -285,8 +352,9 @@
     
 }
 
--(void)viewDidDisappear:(BOOL)animated
+-(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     rigthbutton.hidden = YES;

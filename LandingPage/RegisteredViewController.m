@@ -315,14 +315,16 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnLandingView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    rigthbutton.frame=CGRectMake(260.0f, 5.0f, 55.0f, 35.0f);
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
+    rigthbutton.frame=CGRectMake(262.0f, 7.0f, 50.0f, 30.0f);
+    
+    [rigthbutton setTitle:@"下一步 " forState:UIControlStateNormal];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button4.png"] forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
@@ -370,6 +372,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     rigthbutton.hidden = YES;
@@ -377,6 +380,7 @@
 }
 -(void)viewDidAppear:(BOOL)animated
 {
+    [super viewDidDisappear:animated];
     topImageView.hidden = NO;
     returnButton.hidden = NO;
     rigthbutton.hidden = NO;

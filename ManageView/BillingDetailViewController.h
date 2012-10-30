@@ -27,6 +27,8 @@
 @property(nonatomic,retain)IBOutlet UILabel *diidyWalletLable;//滴滴钱包
 @property(nonatomic,retain)IBOutlet UILabel *discountLable;//折扣
 @property(nonatomic,retain)IBOutlet UILabel *implementationFeesLable;//实收费用
+@property(nonatomic,retain)IBOutlet UIView *billInforView;
+
 @property(nonatomic,retain)NSString * orderID;
 @property(nonatomic, retain)HTTPRequest *bill_request;
 @property (nonatomic, retain) MBProgressHUD *HUD;

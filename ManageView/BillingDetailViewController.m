@@ -11,6 +11,7 @@
 #import "CONST.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import <QuartzCore/QuartzCore.h>
 @interface BillingDetailViewController ()
 
 @end
@@ -18,6 +19,7 @@
 @implementation BillingDetailViewController
 @synthesize enioyCardLable,giftCardLable,discountLable,diidyWalletLable,couponLable,feesReceivableLable,implementationFeesLable;
 @synthesize orderID,bill_request,HUD;
+@synthesize billInforView;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -152,7 +154,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnOrderDetailView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -172,16 +174,44 @@
     
 }
 #pragma mark - System Approach
+-(void)setBillView
+{
+
+    self.billInforView.backgroundColor=[UIColor whiteColor];
+    [[self.billInforView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.billInforView layer] setShadowRadius:5];
+    [[self.billInforView layer] setShadowOpacity:1];
+    [[self.billInforView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.billInforView layer] setCornerRadius:7];
+    [[self.billInforView layer] setBorderWidth:1];
+    [[self.billInforView layer] setBorderColor:[UIColor grayColor].CGColor];
+
+    [self.view sendSubviewToBack:self.billInforView];
+
+}
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    [self setTheNavigationBar]; 
+    
+    [self setTheNavigationBar];
+    
+    self.feesReceivableLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+    self.couponLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+    self.enioyCardLable.textColor =[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+    self.giftCardLable.textColor =[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+    self.diidyWalletLable.textColor =[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+    self.discountLable.textColor =[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+    self.implementationFeesLable.textColor =[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+    
     [self downLoadTheOrderDetail];
+    [self setBillView];
 }
 
--(void)viewDidDisappear:(BOOL)animated
+-(void)viewWillDisappear:(BOOL)animated
 {
     topImageView.hidden = YES;
     returnButton.hidden = YES;

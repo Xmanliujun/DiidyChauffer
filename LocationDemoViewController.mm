@@ -335,6 +335,7 @@
 -(void)glassMenuWithContent:(NSString *)text{
     
     if(_glassMenuView) {
+        
         [_glassMenuView removeFromSuperview];
         _glassMenuView = nil;
     }
@@ -342,12 +343,18 @@
     CGSize fontSize = [text sizeWithFont:[UIFont systemFontOfSize:12]];
     CGFloat width = 0;
     if(fontSize.width + 30 < WIDTH_GLASSMENU_MIN){
+        
         width = WIDTH_GLASSMENU_MIN;
+        
     }
     else if(fontSize.width + 30 > WIDTH_GLASSMENU_MAX){
+        
         width = WIDTH_GLASSMENU_MAX;
+        
     }else {
+        
         width = fontSize.width + 30;
+        
     }
     CGRect f = _mapView.frame;
     _markerView = [[UIView alloc] initWithFrame:CGRectMake(f.origin.x + f.size.width/2 ,
@@ -397,11 +404,14 @@
 -(void)searchAddress:(CLLocationCoordinate2D)centerLocation {
    
     [self animateMarker:^{
+        
         [self glassMenuWithLoadingStyle];
         if(_search != nil){
+            
            BOOL flag = [_search reverseGeocode:centerLocation];
             
             if (!flag) {
+                
                 NSLog(@"search failed!");
                 [self glassMenuWithContent:@"无法定位当前位置"];
             }
@@ -466,9 +476,11 @@
 - (id) initWithPossible:(BOOL)possibleM withLocation:(CLLocationCoordinate2D )Latitudelong withCityName:(NSString *)cityNa
 {
     if ([super init]) {
+        
         self.possibleLoca = Latitudelong;
         self.possible = possibleM;
         self.nowCityName = cityNa;
+        
     }
     return  self;
 
@@ -499,6 +511,7 @@
     [self.view addSubview:_mapView];
     
     if (!self.possible) {
+        
         BMKCoordinateSpan span;
         span.latitudeDelta = 0.1f; //zoom level
         span.longitudeDelta = 0.1f; //zoom level
@@ -520,6 +533,7 @@
 
 }
 - (void)dealloc {
+    
     [nowCityName release];
     [_search release];
     [_markerView release];

@@ -34,6 +34,8 @@
     NSDate* _date;
    
     NSDateFormatter*dateformatter;
+    
+    UIView * viewTest;
 }
 
 @property(nonatomic,retain)NSArray*couponaArray;//存放选择的优惠劵
@@ -49,6 +51,9 @@
 @property(nonatomic,retain)IBOutlet UIView *couponView;
 @property(nonatomic,retain)IBOutlet UILabel *couponLable;
 
+@property(nonatomic,retain)IBOutlet UIView *bookInforView;
+@property(nonatomic,retain)IBOutlet UIView *contactInforView;
+@property(nonatomic,retain)IBOutlet UIView *couponInforView;
 -(IBAction)selectDeparture:(id)sender;
 -(IBAction)selectDepartureTime:(id)sender;
 -(IBAction)selectNumberPeople:(id)sender;

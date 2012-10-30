@@ -99,14 +99,12 @@
     self.navigationItem.rightBarButtonItem = nextItem;
     [nextItem release];
     
-    
     UIImage * telImage = [UIImage imageNamed:@"call_btn_d.png"];
     UIButton * telButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
     telButton.frame=CGRectMake(80.0, 270.0, 160.0, 40.0);
     [telButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [telButton setBackgroundImage:telImage forState:UIControlStateNormal];
-    //[telButton setTitle:@"4006-960-666" forState:UIControlStateNormal];
     [telButton addTarget:self action:@selector(makeACall:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:telButton];
     

@@ -48,5 +48,6 @@
 -(IBAction)selectDepartureTime:(id)sender;
 -(IBAction)selectDeparture:(UIButton*)sender;
 -(IBAction)selectDestination:(UIButton *)sender;
-
+@property(nonatomic,retain)IBOutlet UIView *informationView;
+@property(nonatomic,retain)IBOutlet UIView *feeInforView;
 @end

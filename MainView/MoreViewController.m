@@ -63,12 +63,12 @@
     if(cell ==nil)
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID] autorelease];
-       cell.selectionStyle = UITableViewCellSelectionStyleGray;
+       cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
-        UIImageView * moreImageview = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"right_orange.png"]];
-        moreImageview.frame = CGRectMake(270.0f, 11.0f, 16.0f, 22.0f);
-        [cell.contentView addSubview:moreImageview];
-        [cell setBackgroundColor:[UIColor whiteColor]];
+//        UIImageView * moreImageview = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"right_orange.png"]];
+//        moreImageview.frame = CGRectMake(270.0f, 11.0f, 14.0f, 16.0f);
+//        [cell.contentView addSubview:moreImageview];
+//        [cell setBackgroundColor:[UIColor whiteColor]];
        // cell.contentView.backgroundColor = [UIColor darkGrayColor];
 //        UIView *tempView = [[[UIView alloc] init] autorelease];
 //        //tempView.backgroundColor = [UIColor darkGrayColor];
@@ -82,11 +82,10 @@
        // cell.contentView.backgroundColor = [UIColor darkGrayColor];
     
     }
-
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     cell.detailTextLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.backgroundColor = [UIColor clearColor];
-    cell.textLabel.textColor = [UIColor orangeColor];
-    
+    cell.textLabel.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
     if(indexPath.section==0){
         cell.textLabel.text = [moreNameArray objectAtIndex:indexPath.row];
        
@@ -190,7 +189,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f,7.0f,50.0f,30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -208,7 +207,7 @@
     UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     moreTableView.backgroundColor = [UIColor clearColor];
     moreTableView.backgroundView=nil;
-    [moreTableView setSeparatorColor:[UIColor darkGrayColor]];
+    moreTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
     moreTableView.delegate = self;
     moreTableView.dataSource = self;
     moreTableView.scrollEnabled = NO;
@@ -220,6 +219,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     centerLable.hidden = YES;
@@ -227,6 +227,7 @@
 
 -(void)viewWillAppear:(BOOL)animated{
     
+    [super viewWillAppear:animated];
     topImageView.hidden = NO;
     returnButton.hidden = NO;
     centerLable.hidden = NO;

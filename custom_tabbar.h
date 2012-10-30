@@ -24,6 +24,9 @@
     
     NSArray *tableArry;
     NSArray * seltArry;
+    UILabel * tabLable;
+    UILabel * tabLable1;
+    UILabel * tabLable2;
 }
 
 - (void) init_tab;

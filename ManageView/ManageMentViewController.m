@@ -41,7 +41,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -92,18 +92,33 @@
 {
     CGRect rect;
     if (100*[listOrderArray count]>400) {
+        
         rect =self.view.bounds;
+        
     }else {
+        
         rect = CGRectMake(0.0, 0.0, 320.0, 100*[listOrderArray count]);
+        
     }
     
     
     UITableView * orderTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
     orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    //orderTableView.backgroundColor = [UIColor whiteColor];
     orderTableView.backgroundView=nil;
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
-    [orderTableView setSeparatorColor:[UIColor blackColor]];
+    if (100*[listOrderArray count]>400) {
+        
+        orderTableView.scrollEnabled = YES;
+        
+    }else {
+        
+        orderTableView.scrollEnabled = NO;
+    }
+
+    orderTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
+    
     [self.view addSubview:orderTableView];
     [orderTableView release];
     
@@ -160,7 +175,6 @@
     HUD.square=YES;
     [HUD show:YES];
     
-    
     HTTPRequest *request = [[HTTPRequest alloc] init];
     self.m_request = request;
     self.m_request.m_delegate = self;
@@ -191,17 +205,23 @@
     if (sqlitArray.count!=0) {
         sqlitBool = YES;
         DIIdyModel*diiModel = [sqlitArray objectAtIndex:0];
-        NSLog(@"time  %@",diiModel.startTime);
         if (![diiModel.startTime isEqualToString:@""]) {
+            
             baseUrl = [NSString stringWithFormat:ORDERNUMBERSTARTTIME,ShareApp.mobilNumber,diiModel.startTime];
+            
         }else {
+            
             baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
+            
         }
         
         if (![diiModel.orderID isEqualToString:@""]) {
+            
             baseUrl = [baseUrl stringByAppendingFormat:@"/%@",diiModel.orderID];
+            
         }
         for (int i = 0; i<sqlitArray.count; i++) {
+            
             DIIdyModel * item = [sqlitArray objectAtIndex:i];
             item.orderID=item.orderID?item.orderID:@"";
             item.startTime=item.startTime?item.startTime:@"";
@@ -214,11 +234,14 @@
             item.coupon = item.coupon?item.coupon:@"";
             item.status= item.status?item.status:@"";
             [listOrderArray addObject:item];
+            
         }
         
     }else {
+        
         sqlitBool = NO;
         baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
+        
     }
     
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
@@ -227,6 +250,7 @@
     if ([r currentReachabilityStatus]==0) {
         
     }else{
+        
         [self showWithDetails];
     }
     
@@ -271,13 +295,17 @@
     NSArray* jsonParser =[str objectFromJSONString];
     int a;
     if (sqlitBool) {
+        
         a=1;
+        
     }else {
+        
         a=0;
+        
     }
     
     for(int i=0 ;i<[jsonParser count]-a;i++){
-        NSLog(@"ss");
+        
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
         diidy.orderID = [diidyDict objectForKey:@"orderid"];
@@ -290,12 +318,19 @@
         diidy.createTime = [diidyDict objectForKey:@"createtime"];
         diidy.coupon = [diidyDict objectForKey:@"coupon"];
         NSString* currentStatus = [diidyDict objectForKey:@"status"];
+        
         if([currentStatus floatValue]>=1.0&&[currentStatus floatValue]<=4.0){
+            
             diidy.status = @"已受理";
+            
         }else if ([currentStatus floatValue]==5.0) {
+            
             diidy.status = @"完成";
+            
         }else {
+            
             diidy.status = @"已取消";
+            
         }
         [ShareApp.mDatabase insertItemWithFMDB:diidy];
         if (a==0) {
@@ -306,13 +341,15 @@
             
             [listOrderArray insertObject:diidy atIndex:0];
         }
-        [diidy release];
+            [diidy release];
         
     }
-       if(([jsonParser count])==0)
-       {
+       if(([jsonParser count])==0){
+           
          [self creatNOOrdersView];
+           
     }else {
+        
          [self creatHaveOrderView];
         
     }
@@ -341,21 +378,26 @@
     if(cell ==nil)
     {
         cell = [[[ManageTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
-        //cell.backgroundColor = [UIColor darkGrayColor];
-        cell.contentView.backgroundColor = [UIColor darkGrayColor];
-        
+        cell.contentView.backgroundColor = [UIColor whiteColor];
+
     }
     DIIdyModel * diidy = [listOrderArray objectAtIndex:indexPath.row];
     
     if ([diidy.status isEqualToString:@"已受理"]) {
+        
         cell.statusLable.textColor = [UIColor orangeColor];
         cell.statusLable.text = [NSString stringWithFormat:@"%@>",diidy.status];
+        
     }else if([diidy.status isEqualToString:@"完成"]){
+        
         cell.statusLable.textColor = [UIColor greenColor];
         cell.statusLable.text = [NSString stringWithFormat:@"以%@>",diidy.status];
+        
     }else {
+        
         cell.statusLable.textColor = [UIColor grayColor];
         cell.statusLable.text = [NSString stringWithFormat:@"%@>",diidy.status];
+        
     }
    
     cell.orderNumberLable.text = diidy.orderID;
@@ -381,8 +423,7 @@
     [super viewDidLoad];
     self.navigationController.navigationBar.tintColor = [UIColor grayColor];
     self.navigationItem.hidesBackButton = YES;
-//    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    self.view.backgroundColor = [UIColor darkGrayColor];
+    self.view.backgroundColor = [UIColor whiteColor];
    
     sqlitBool = YES;
     listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -392,8 +433,9 @@
 }
 
 
--(void)viewDidDisappear:(BOOL)animated
+-(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     centerLable.hidden = YES;
@@ -401,6 +443,7 @@
 }
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     rigthbutton.hidden = NO;
     topImageView.hidden = NO;
     returnButton.hidden = NO;

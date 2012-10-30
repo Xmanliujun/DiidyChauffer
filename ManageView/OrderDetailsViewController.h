@@ -26,5 +26,9 @@
 @property(nonatomic,retain)IBOutlet UILabel *mobilNumberLable;//手机号码
 @property(nonatomic,retain)IBOutlet UILabel *couponLable;//优惠劵
 @property(nonatomic,retain)IBOutlet UILabel *leftDepartureTimeLable;
+
+@property(nonatomic,retain)IBOutlet UIView *statInforView;
+@property(nonatomic,retain)IBOutlet UIView *reservatInforView;
+@property(nonatomic,retain)UIView *clearingView;
 @property(nonatomic,retain)DIIdyModel * diidyModel;
 @end

@@ -45,10 +45,11 @@
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
         cell.backgroundColor = [UIColor whiteColor];
+       
         
     }
     cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-    cell.textLabel.textColor = [UIColor orangeColor];
+    cell.textLabel.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
     cell.textLabel.text = [moreNameArray objectAtIndex:indexPath.row];
     return cell;
     
@@ -140,7 +141,7 @@
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.tag = 201;
     returnButton.frame=CGRectMake(7.0f,7.0f,50.0f,30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
 
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];
@@ -163,7 +164,7 @@
     UITableView * moreTableView = [[UITableView alloc] initWithFrame:self.view.bounds style:UITableViewStyleGrouped];
     moreTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     moreTableView.backgroundView = nil;
-    [moreTableView setSeparatorColor:[UIColor blackColor]];
+    moreTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
     moreTableView.delegate = self;
     moreTableView.dataSource = self;
     [self.view addSubview:moreTableView];
@@ -172,6 +173,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     centerLable.hidden = YES;
     returnButton.hidden = YES;
@@ -180,6 +182,7 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     topImageView.hidden = NO;
     centerLable.hidden = NO;
     returnButton.hidden = NO;

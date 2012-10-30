@@ -65,7 +65,7 @@
 -(void)getDeviceInformation{
     
     self.uniqueString = [[NSProcessInfo processInfo] globallyUniqueString];//标识号
-    
+   
     self.deviceName = [[UIDevice currentDevice] name];
     float  verion = [[[UIDevice currentDevice] systemVersion] floatValue];//操作系统
     self.phoneVerion = verion;
@@ -160,6 +160,9 @@
     
     self.window.backgroundColor = [UIColor whiteColor];
     [self.window makeKeyAndVisible];
+//    
+//      [[UIApplication sharedApplication] registerForRemoteNotificationTypes: UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeSound | UIRemoteNotificationTypeAlert];
+    
     return YES;
 }
 - (NSUInteger)application:(UIApplication *)application supportedInterfaceOrientationsForWindow:(UIWindow *)window
@@ -193,5 +196,27 @@
 {
     // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
 }
+//- (void)application:(UIApplication *)application didRegisterForRemoteNotificationsWithDeviceToken:(NSData *)pToken {
+//    
+//    NSLog(@"regisger success:%@", pToken);
+//    
+//    //注册成功，将deviceToken保存到应用服务器数据库中
+//    
+//}
+//
+//
+//- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo{
+//    // 处理推送消息
+//    UIAlertView *alert=[[UIAlertView alloc]initWithTitle:@"通知" message:@"我的信息" delegate:self cancelButtonTitle:@"取消" otherButtonTitles:nil, nil];
+//    [alert show];
+//    [alert release];
+//    NSLog(@"%@", userInfo);
+//}
+//
+//- (void)application:(UIApplication *)application didFailToRegisterForRemoteNotificationsWithError:(NSError *)error {
+//    NSLog(@"Regist fail%@",error);
+//    
+//    
+//}
 
 @end

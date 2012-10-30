@@ -152,9 +152,7 @@ char* getlf(char* s)
     char *aaa = (char*)[CURRENTVERSION UTF8String];
     char* point2 = getoutpoint(aaa);
 
-
     int returnJudge = my_strcmp(lf,point2);
-    NSLog(@"%d",returnJudge);
     if ([responseString length]==0) {
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
                                                    message:@"请检查网络是否连接"
@@ -220,6 +218,7 @@ char* getlf(char* s)
 
 -(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
+    
     if (nOrder==10) {
         
             [self parseNewStringJson:requestString];
@@ -289,7 +288,7 @@ char* getlf(char* s)
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.tag = 201;
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnORMoreView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -303,6 +302,7 @@ char* getlf(char* s)
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     centerLable.hidden = YES;
     returnButton.hidden = YES;

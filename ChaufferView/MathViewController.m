@@ -9,6 +9,7 @@
 #import "MathViewController.h"
 #import "MainViewController.h"
 #import "AppDelegate.h"
+#import <QuartzCore/QuartzCore.h>
 @interface MathViewController ()
 
 @end
@@ -16,7 +17,7 @@
 @implementation MathViewController
 @synthesize totalCostLable;
 @synthesize travelTimeLable,time,cost;
-@synthesize travelTimeSlider;
+@synthesize travelTimeSlider,informationView,feeInforView;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -111,11 +112,15 @@
 {
     
     int travelTimea= self.travelTimeSlider.value;
+    
     if (self.travelTimeSlider.value/60>=1) {
+        
         int traverTimeA = self.travelTimeSlider.value/60;
         int travelMin = self.travelTimeSlider.value-traverTimeA*60;
          self.travelTimeLable.text = [NSString stringWithFormat:@"%d小时%d分钟",traverTimeA,travelMin];
+        
     }else{
+        
          self.travelTimeLable.text = [NSString stringWithFormat:@"%d分钟",travelTimea];
     }
     
@@ -421,7 +426,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if((tempHour >= 0 && tempHour < 6)||tempHour>=23){
+                }else if((tempHour >= 0 && tempHour < 8)||tempHour>=23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -478,22 +483,28 @@
 {
    
     if (sender.tag==60) {
+        
         _fiveRing.selected = !_fiveRing.selected;
         _fiveOutSide.selected = NO;
         _sixOutSide.selected = NO;
+        
     }else if(sender.tag==61){
+        
         _fiveOutSide.selected = !_fiveOutSide.selected;
         _fiveRing.selected = NO;
         _sixOutSide.selected = NO;
+        
     }else {
+        
         _sixOutSide.selected = !_sixOutSide.selected;
         _fiveRing.selected = NO;
         _fiveOutSide.selected = NO;
     }
     
     
-    CGRect costRect = totalCostLable.frame;
-    CGRect endRect = endLable.frame;
+    CGRect costRect =  CGRectMake(24.0f, 293.0f, 251.0f, 20.0f);
+   
+    CGRect endRect = CGRectMake(24.0f, 293.0f, 251.0f, 20.0f);
     additional = 0;
    
     if (sender.tag ==60) {
@@ -503,17 +514,18 @@
             CGRect costRect = totalCostLable.frame;
             int total = additional+price+endAddional;
             self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
-
-            totalCostLable.frame = CGRectMake(costRect.origin.x, 291, costRect.size.width, costRect.size.height);
+            self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,90.0f);
+            totalCostLable.frame = CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
         }else {
             startLable.hidden = YES;
            
-            endLable.frame = CGRectMake(endRect.origin.x, 291, endRect.size.width, endRect.size.height);
+            endLable.frame = CGRectMake(endRect.origin.x, 293.0f, endRect.size.width, endRect.size.height);
             int total = additional+price+endAddional;
             self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
-            totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
+             self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
+            totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
         }
-        
+       
         
     }else if (sender.tag==61) {
         endParture = YES;
@@ -521,17 +533,21 @@
             startLable.hidden = NO;
             additional = 20;
             startLable.text = @"出发地在五环外加收:20元";
-            totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
+            startLable.frame =CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
+            totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
             int total = additional+price+endAddional;
             self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+             self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width, 110.0f);
         }else {
             startLable.hidden = NO;
             additional = 20;
             startLable.text = @"出发地在五环外加收:20元";
-            endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
-            totalCostLable.frame = CGRectMake(costRect.origin.x, 328, costRect.size.width, costRect.size.height);
+            startLable.frame =CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
+            endLable.frame = CGRectMake(endRect.origin.x, 313.0f, endRect.size.width, endRect.size.height);
+            totalCostLable.frame = CGRectMake(costRect.origin.x, 333.0f, costRect.size.width, costRect.size.height);
             int total = additional+price+endAddional;
             self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+            self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,130.0f);
         }
         
     }else if (sender.tag==62) {
@@ -539,38 +555,50 @@
          startLable.hidden = NO;
         if (!departure) {
             int mHour = [travelTime.text intValue];
-            if(mHour >= 21 || (mHour >= 0 && mHour <6)){
+            if(mHour >= 21 || (mHour >= 0 && mHour <8)){
                
                 startLable.text = @"出发地在六环外加收:50元";
                 additional=50;
                 int total = additional+price+endAddional;
-                totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
+                
+                startLable.frame =CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
+                totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+                self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width, 110.0f);
+                
             }else{
                 startLable.text=@"出发地在六环外加收:20元";
                 additional= 20;
                 int total = additional+price+endAddional;
-                totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
-
+                startLable.frame =CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
+                totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
+                self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
             }
         }else {
             int mHour = [travelTime.text intValue];
-            if(mHour >= 21 || (mHour >= 0 && mHour <6)){
+            if(mHour >= 21 || (mHour >= 0 && mHour <8)){
                 
                 startLable.text = @"出发地在六环外加收:50元";
                 additional=50;
                 int total = additional+price+endAddional;
-                endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
-                totalCostLable.frame = CGRectMake(costRect.origin.x, 328, costRect.size.width, costRect.size.height);
+                startLable.frame =CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
+                endLable.frame = CGRectMake(endRect.origin.x, 313.0f, endRect.size.width, endRect.size.height);
+                totalCostLable.frame = CGRectMake(costRect.origin.x, 333.0f, costRect.size.width, costRect.size.height);
+                self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width, 130.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+                
             }else{
+                
                 startLable.text=@"出发地在六环外加收:20元";
                 additional= 20;
                 int total = additional+price+endAddional;
-                endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
-                totalCostLable.frame = CGRectMake(costRect.origin.x, 328, costRect.size.width, costRect.size.height);                
+                startLable.frame =CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
+                endLable.frame = CGRectMake(endRect.origin.x, 313.0f, endRect.size.width, endRect.size.height);
+                totalCostLable.frame = CGRectMake(costRect.origin.x, 333.0f, costRect.size.width, costRect.size.height);
+                self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width, 130.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+                
             }
         }
 
@@ -596,46 +624,60 @@
 
     
     
-    CGRect costRect = totalCostLable.frame;
-    CGRect endRect = endLable.frame;
+    CGRect costRect = CGRectMake(24.0f, 293.0f, 251.0f, 20.0f);
+    CGRect endRect = CGRectMake(24.0f, 293.0f, 251.0f, 20.0f);
     endAddional = 0;
     
     if (sender.tag ==70) {
         departure = NO;
         if (!endParture) {
+            
             endLable.hidden = YES;
             CGRect costRect = totalCostLable.frame;
             int total = endAddional+price+additional;
-            self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+            self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d元",total];
+             self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,90.0f);
+            totalCostLable.frame = CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
             
-            totalCostLable.frame = CGRectMake(costRect.origin.x, 291, costRect.size.width, costRect.size.height);
         }else {
+            
             endLable.hidden = YES;
-            startLable.frame = CGRectMake(endRect.origin.x, 291, endRect.size.width, endRect.size.height);
+            startLable.frame = CGRectMake(endRect.origin.x, 293.0f, endRect.size.width, endRect.size.height);
             int total = endAddional+price+additional;
-            self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
-            totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
+            self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d元",total];
+             self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
+             self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
+            totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
         }
         
         
     }else if (sender.tag==71) {
+        
         departure = YES;
+        
         if (!endParture) {
+            
             endLable.hidden = NO;
             endAddional = 20;
             endLable.text = @"目的地在五环外加收:20元";
-            endLable.frame = CGRectMake(endLable.frame.origin.x, 291, endLable.frame.size.width, endLable.frame.size.height);
-            totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
+            endLable.frame = CGRectMake(endLable.frame.origin.x, 293.0f, endLable.frame.size.width, endLable.frame.size.height);
+            totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
+             self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
             int total = endAddional+price+additional;
-            self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+            self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d元",total];
+            
         }else {
+            
             endLable.hidden = NO;
             endAddional = 20;
             endLable.text = @"目的地在五环外加收:20元";
-            endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
-            totalCostLable.frame = CGRectMake(costRect.origin.x, 328, costRect.size.width, costRect.size.height);
+            startLable.frame = CGRectMake(endRect.origin.x, 293.0f, endRect.size.width, endRect.size.height);
+            endLable.frame = CGRectMake(endRect.origin.x, 313.0f, endRect.size.width, endRect.size.height);
+            totalCostLable.frame = CGRectMake(costRect.origin.x, 333.0f, costRect.size.width, costRect.size.height);
+             self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,130.0f);
             int total = endAddional+price+additional;
-            self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+            self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d元",total];
+            
         }
         
     }else if (sender.tag==72) {
@@ -643,39 +685,44 @@
         endLable.hidden = NO;
         if (!endParture) {
             int mHour = [travelTime.text intValue];
-            if(mHour >= 21 || (mHour >= 0 && mHour <6)){
+            if(mHour >= 21 || (mHour >= 0 && mHour <8)){
                 
                 endLable.text = @"目的地在六环外加收:50元";
                 endAddional=50;
                 int total = additional+price+endAddional;
-                endLable.frame = CGRectMake(endLable.frame.origin.x, 291, endLable.frame.size.width, endLable.frame.size.height);
-                totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
-                self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+                endLable.frame = CGRectMake(endLable.frame.origin.x, 293.0f, endLable.frame.size.width, endLable.frame.size.height);
+                totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
+                 self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
+                self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d元都是些啊啊啊啊啊、 ",total];
             }else{
                 endLable.text=@"目的地在六环外加收:20元";
-               endAddional= 20;
+                endAddional= 20;
                 int total = endAddional+price+additional;
-                endLable.frame = CGRectMake(endRect.origin.x, 291, endRect.size.width, endRect.size.height);
-                totalCostLable.frame = CGRectMake(costRect.origin.x, 306, costRect.size.width, costRect.size.height);
-                
+                endLable.frame = CGRectMake(endRect.origin.x, 293.0f, endRect.size.width, endRect.size.height);
+                totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
+                 self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
             }
         }else {
             int mHour = [travelTime.text intValue];
-            if(mHour >= 21 || (mHour >= 0 && mHour <6)){
+            if(mHour >= 21 || (mHour >= 0 && mHour <8)){
                 
                 endLable.text = @"目的地在六环外加收:50元";
                 endAddional=50;
                 int total = endAddional+price+additional;
-                endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
-                totalCostLable.frame = CGRectMake(costRect.origin.x, 328, costRect.size.width, costRect.size.height);
+                startLable.frame = CGRectMake(endRect.origin.x, 293.0f, endRect.size.width, endRect.size.height);
+                endLable.frame = CGRectMake(endRect.origin.x, 313.0f, endRect.size.width, endRect.size.height);
+                totalCostLable.frame = CGRectMake(costRect.origin.x, 333.0f, costRect.size.width, costRect.size.height);
+                 self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,130.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
             }else{
                 endLable.text=@"目的地在六环外加收:20元";
                 endAddional= 20;
                 int total =endAddional+price+additional;
-                endLable.frame = CGRectMake(endRect.origin.x, 306, endRect.size.width, endRect.size.height);
-                totalCostLable.frame = CGRectMake(costRect.origin.x, 328, costRect.size.width, costRect.size.height);                
+                startLable.frame = CGRectMake(endRect.origin.x, 293.0f, endRect.size.width, endRect.size.height);
+                endLable.frame = CGRectMake(endRect.origin.x, 313.0f, endRect.size.width, endRect.size.height);
+                totalCostLable.frame = CGRectMake(costRect.origin.x, 333.0f, costRect.size.width, costRect.size.height);
+                 self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,130.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
             }
         }
@@ -685,6 +732,32 @@
 
 }
 #pragma mark - System Approach
+-(void)setMathView
+{
+    
+    self.informationView.backgroundColor=[UIColor whiteColor];
+    [[self.informationView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.informationView layer] setShadowRadius:5];
+    [[self.informationView layer] setShadowOpacity:1];
+    [[self.informationView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.informationView layer] setCornerRadius:7];
+    [[self.informationView layer] setBorderWidth:1];
+    [[self.informationView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.view sendSubviewToBack: self.informationView];
+    
+    self.feeInforView.backgroundColor=[UIColor whiteColor];
+    [[self.feeInforView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.feeInforView layer] setShadowRadius:5];
+    [[self.feeInforView layer] setShadowOpacity:1];
+    [[self.feeInforView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.feeInforView layer] setCornerRadius:7];
+    [[self.feeInforView layer] setBorderWidth:1];
+    [[self.feeInforView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.view sendSubviewToBack: self.feeInforView];
+}
+
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -700,15 +773,18 @@
     endParture = NO;
     startLable.hidden = YES;
     endLable.hidden = YES;
-    CGRect costRect = totalCostLable.frame;
-    totalCostLable.frame = CGRectMake(costRect.origin.x, 291, costRect.size.width, costRect.size.height);
     
+    [self setMathView];
+    
+    CGRect costRect = totalCostLable.frame;
+    totalCostLable.frame = CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
+    self.cost.text =@"花费:0元";
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     timeArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ProvincesAndCities.plist" ofType:nil]];
     minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
     
     UIImageView* topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
-    topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
+    topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
     [topImageView release];
     
@@ -734,19 +810,13 @@
     self.navigationItem.rightBarButtonItem = nextItem;
     [nextItem release];
     
-    UIImage * detailExpenseImage = [UIImage imageNamed:@"u283_normal.png"];
-    UIImageView *detailExpenseImageView = [[UIImageView alloc] initWithImage:detailExpenseImage];
-    detailExpenseImageView.frame = CGRectMake(5.0, 230.0, detailExpenseImage.size.width, 120.0);
-    [self.view addSubview:detailExpenseImageView];
-    [detailExpenseImageView release];
-    
-    travelTime = [[UILabel alloc] initWithFrame:CGRectMake(95.0, 33.0, 61.0, 34.0)];
+    travelTime = [[UILabel alloc] initWithFrame:CGRectMake(95.0, 26.0, 61.0, 34.0)];
     travelTime.backgroundColor = [UIColor clearColor];
     travelTime.textAlignment = NSTextAlignmentRight;
     travelTime.font = [UIFont fontWithName:@"Arial" size:14];
     [self.view addSubview:travelTime];
     
-    travelMinute = [[UILabel alloc] initWithFrame:CGRectMake(156.0, 33.0, 61.0, 34.0)];
+    travelMinute = [[UILabel alloc] initWithFrame:CGRectMake(156.0, 26.0, 61.0, 34.0)];
     travelMinute.backgroundColor = [UIColor clearColor];
     travelMinute.textAlignment = NSTextAlignmentLeft;
     travelMinute.font = [UIFont fontWithName:@"Arial" size:14];
@@ -763,9 +833,9 @@
     self.time.text = [NSString stringWithFormat:@"出发时间:  %@点%@分",[timesArray objectAtIndex:0],[timesArray objectAtIndex:1]];
     
     UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    //[rigthbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
     rigthbutton.frame=CGRectMake(270.0,0.0, 42.0, 42.0);
-    [rigthbutton setTitle:@"完成" forState:UIControlStateNormal];
+   // [rigthbutton setTitle:@"完成" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(selectOK:) forControlEvents:UIControlEventTouchUpInside];
     
     UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];

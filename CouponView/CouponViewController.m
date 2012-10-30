@@ -15,12 +15,13 @@
 #import "CouponTableCell.h"
 #import "ActivityViewController.h"
 #import "JSONKit.h"
+#import <QuartzCore/QuartzCore.h>
 @interface CouponViewController ()
 
 @end
 
 @implementation CouponViewController
-@synthesize order_request;
+@synthesize order_request,detailCoupon,couponID;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -29,26 +30,36 @@
     }
     return self;
 }
-#pragma Button Call
+#pragma mark-Button Call
 -(void)viewActivity:(UIButton*)sender
 {
     
     ActivityViewController * active = [[ActivityViewController alloc] init];
     if (sender.tag==1) {
+        
         active.diidyContent = HUNDREDYUAN;
         active.diidyTitle = @"不计里程，百元两次";
+        
     }else if (sender.tag ==2) {
+        
         active.diidyContent = ENJOYCARD;
         active.diidyTitle = @"代驾实惠无边，畅想会员特权！";
+        
     }else if (sender.tag==3) {
+        
         active.diidyContent = PREFERRNTIAL;
         active.diidyTitle = @"0元用代驾！优惠无底线！";
+        
     }else if (sender.tag==4) {
+        
         active.diidyContent = STUDENTCARD;
         active.diidyTitle = @"学生接送卡，准时接送，安全呵护。";
+        
     }else if (sender.tag ==5) {
+        
         active.diidyContent = REGISTERCARD;
         active.diidyTitle = @"注册即送50元！";
+        
     }
     [self.navigationController pushViewController:active animated:YES];
     [active release];
@@ -103,8 +114,8 @@
     if(cell==nil)
     {
         cell = [[[CouponTableCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:ID] autorelease];
-        //cell.backgroundColor = [UIColor grayColor];
-        cell.contentView.backgroundColor = [UIColor darkGrayColor];
+        cell.contentView.backgroundColor = [UIColor whiteColor];
+        cell.selectionStyle = UITableViewCellSelectionStyleGray;
     }
   
     DIIdyModel *diidy = [dataArry objectAtIndex:indexPath.row];
@@ -119,13 +130,17 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     DIIdyModel * diidyModel = [dataArry objectAtIndex:indexPath.row];
-    DetailPageViewController * detail = [[DetailPageViewController alloc] init];
-    detail.couponID =diidyModel.ID;
-    detail.detailCoupon = diidyModel.name;
-    [self.navigationController pushViewController:detail animated:YES];
-    [detail release];
+    self.couponID =diidyModel.ID;
+    self.detailCoupon= diidyModel.name;
+    
+    [self creatGiftToFriendView];
+//    DetailPageViewController * detail = [[DetailPageViewController alloc] init];
+//    detail.couponID =diidyModel.ID;
+//    detail.detailCoupon = diidyModel.name;
+//    [self.navigationController pushViewController:detail animated:YES];
+//    [detail release];
 }
-#pragma DownLoad Parsing
+#pragma mark-DownLoad Parsing
 -(void)parseStringJson:(NSString *)str
 {
     if (HUD){
@@ -137,12 +152,17 @@
    // NSArray* jsonParser =[str JSONValue];
     NSArray* jsonParser =[str objectFromJSONString];
     if (dataArry) {
+        
         [dataArry removeAllObjects];
+        
     }else{
-        dataArry = [[NSMutableArray alloc] initWithCapacity:0];;
+        
+        dataArry = [[NSMutableArray alloc] initWithCapacity:0];
+        
     }
     
     for (int i = 0; i<[jsonParser count]; i++) {
+        
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
         diidy.ID = [diidyDict objectForKey:@"id"];
@@ -153,23 +173,37 @@
         diidy.amount = [diidyDict objectForKey:@"amount"];
         [dataArry addObject:diidy];
         [diidy release];
+        
     }
     CGRect rect;
     if([jsonParser count]!=0){
+        
         messgeLable.text = MESSAGE; 
     
-        if (60*[jsonParser count]>270) {
-            rect = CGRectMake(0.0, 150.0, 320.0, 270);
+        if (60*[jsonParser count]>276) {
+            
+            rect = CGRectMake(0.0, 150.0, 320.0, 276);
+            
         }else {
+            
              rect = CGRectMake(0.0, 150.0, 320.0, 60*[jsonParser count]);
+            
         }
         
         UITableView * couponTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
         couponTableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
         couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-        //couponTableView.backgroundColor = [UIColor whiteColor];
-        [couponTableView setSeparatorColor:[UIColor blackColor]];
-        couponTableView.separatorStyle = UITableViewCellEditingStyleNone;
+        if (60*[jsonParser count]>276) {
+            
+            couponTableView.scrollEnabled = YES;
+            
+        }else {
+            
+            couponTableView.scrollEnabled=NO;
+            
+        }
+         couponTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
+       // couponTableView.separatorStyle = UITableViewCellEditingStyleNone;
         couponTableView.delegate = self;
         couponTableView.dataSource = self;
         [self.view addSubview:couponTableView];
@@ -178,6 +212,8 @@
     }else {
         messgeLable.text = NOMESSAGE;
     }
+    
+
     
 }
 -(void)requesttimeout
@@ -230,7 +266,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -280,11 +316,13 @@
     [fourImageView release];
     
     for (int i=0; i<5; i++) {
+        
         UIButton * couButton = [UIButton buttonWithType:UIButtonTypeCustom];
         couButton.frame = CGRectMake(i*320, 0, 320, 90);
         couButton.tag = i+1;
         [couButton addTarget:self action:@selector(viewActivity:) forControlEvents:UIControlEventTouchUpInside];
         [couponScrollView addSubview:couButton];
+        
     }
     [self.view addSubview:couponScrollView];
     
@@ -336,18 +374,182 @@
     
     [self.order_request requestByUrlByGet: baseUrl];
 }
--(void)regainData:(NSNotification *) notify {
+
+#pragma mark-giftFriend
+-(void)creatGiftToFriendView
+{
+    UILabel * giftNumberLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0, 5.0, 120.0, 40.0)];
+    giftNumberLable.text = @"赠送给(手机号) :";
+    giftNumberLable.backgroundColor = [UIColor clearColor];
+    giftNumberLable.textAlignment = NSTextAlignmentCenter;
+    giftNumberLable.font = [UIFont fontWithName:@"Arial" size:13.0];
     
-    [self showWithDetails];
+    UIImage * giftImage = [UIImage imageNamed:@"u84_line.png"];
+    UIImageView * giftLineImage = [[UIImageView alloc] initWithImage:giftImage];
+    giftLineImage.frame = CGRectMake(0.0, 45.0, 300.0, giftImage.size.height);
+
+    giftNumberText = [[UITextView alloc] initWithFrame:CGRectMake(110.0, 7.0,160.0, 40.0)];
+    giftNumberText.textColor = [UIColor blackColor];
+    giftNumberText.text = @"";
+    giftNumberText.returnKeyType = UIReturnKeyDefault;
+    giftNumberText.font = [UIFont fontWithName:@"Arial" size:16.0];
+    giftNumberText.keyboardType = UIKeyboardTypePhonePad;
+    [giftNumberText becomeFirstResponder];
+    
+    UIImage * determineImage = [UIImage imageNamed:@"u102_normal.png"];
+    UIButton* determineButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    determineButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    determineButton.frame=CGRectMake(15.0,135.0 , determineImage.size.width, determineImage.size.height);
+    [determineButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [determineButton setBackgroundImage:determineImage forState:UIControlStateNormal];
+    [determineButton setTitle:@"确定" forState:UIControlStateNormal];
+    [determineButton addTarget:self action:@selector(determineSender:) forControlEvents:UIControlEventTouchUpInside];
+    
+    UIImage *cancelImage = [UIImage imageNamed:@"u104_normal.png"];
+    UIButton* cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    cancelButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    cancelButton.frame=CGRectMake(160.0,135.0 , determineImage.size.width, determineImage.size.height);
+    [cancelButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [cancelButton setBackgroundImage:cancelImage forState:UIControlStateNormal];
+    [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelButton addTarget:self action:@selector(cancelSender:) forControlEvents:UIControlEventTouchUpInside];
+    
+    NSString * content = [NSString stringWithFormat:@"您的朋友%@送您1张%@，喝酒了疲劳了不想开车了，记着找嘀嘀！记住电话4006960666,客户端约代驾更方便，+wap嘀嘀代驾客户端下载地址。",ShareApp.mobilNumber,self.detailCoupon];
+    
+    UILabel * contentLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0,55.0, 290.0, 70.0)];
+    contentLable.text = content;
+    contentLable.numberOfLines = 0;
+    contentLable.backgroundColor = [UIColor grayColor];
+    [contentLable.layer setCornerRadius:4.0f];
+    [contentLable.layer setMasksToBounds:YES];
+    contentLable.textAlignment = NSTextAlignmentLeft;
+    contentLable.font = [UIFont fontWithName:@"Arial" size:13.0];
+
+    
+    giftFrientView = [[UIView alloc] initWithFrame:CGRectMake(10.0,5.0, 300.0, 190.0)];
+    
+    giftFrientView.backgroundColor=[UIColor whiteColor];
+    [[giftFrientView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[giftFrientView layer] setShadowRadius:5];
+    [[giftFrientView layer] setShadowOpacity:1];
+    [[giftFrientView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[giftFrientView layer] setCornerRadius:7];
+    [[giftFrientView layer] setBorderWidth:1];
+    [[giftFrientView layer] setBorderColor:[UIColor grayColor].CGColor];
+    
+    [giftFrientView addSubview:contentLable];
+    [giftFrientView addSubview:cancelButton];
+    [giftFrientView addSubview:determineButton];
+    [giftFrientView addSubview:giftNumberText];
+    [giftFrientView addSubview:giftLineImage];
+    [giftFrientView addSubview:giftNumberLable];
+    [self.view addSubview:giftFrientView];
    
+    [giftNumberLable release];
+    [contentLable release];
+    [giftLineImage release];
 }
 
+
+-(void)cancelSender:(id)sender
+{
+    if (giftFrientView) {
+        
+        [giftFrientView removeFromSuperview];
+         giftFrientView= nil;
+        
+    }
+}
+-(void)determineSender:(id)sender
+{
+    if (giftNumberText.text==NULL||[giftNumberText.text length]==0||[giftNumberText.text isEqualToString:ShareApp.mobilNumber]) {
+        
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"手机号为空或格式错误" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+
+    }else{
+    
+        NSString * baseUrl = [NSString stringWithFormat:GIFTCOUPONS,ShareApp.mobilNumber,giftNumberText.text,couponID];
+        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        NSURL * url = [NSURL URLWithString:baseUrl];
+    
+        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+        [request setTimeOutSeconds:15.0f];
+        [request setDelegate:self];
+        [request setTag:100];
+        [request startAsynchronous];}
+    
+}
+
+-(void)parseGiftFrientStringJson:(NSString *)str
+{
+    
+    NSDictionary * jsonParser =[str objectFromJSONString];
+    NSString * returenNews =[jsonParser objectForKey:@"r"];
+    
+    if([returenNews isEqualToString:@"s"]){
+        
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送成功" delegate:self cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+
+        
+    }else {
+        
+        UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送失败，请重试" delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    }
+    
+}
+
+-(void)requestFinished:(ASIHTTPRequest *)request
+{
+    if ([request responseString]==NULL||[[request responseString] length]==0) {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"赠送失败"
+                                                       message:@"请检查网络是否连接"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"OK"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+
+        
+    }else{
+        
+        [self parseGiftFrientStringJson:[request responseString]];
+    }
+}
+
+-(void)requestFailed:(ASIHTTPRequest *)request
+{
+
+    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送失败，请重试" delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil];
+    [alert show];
+    [alert release];
+
+}
+-(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    
+    if (giftFrientView) {
+        
+        [giftFrientView removeFromSuperview];
+        giftFrientView= nil;
+        
+    }
+
+    [self showWithDetails];
+
+
+}
 #pragma mark - System Approach
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(regainData:) name:@"ChangeTheme" object:nil];
-    self.view.backgroundColor = [UIColor darkGrayColor];
+   self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
     [self setTheNavigationBar];
      
@@ -364,19 +566,21 @@
    
     [self creatScrollView];
     [self showWithDetails];
-
+   
     couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
     
 }
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
     centerLable.hidden = NO;
     topImageView.hidden = NO;
     returnButton.hidden = NO;
 }
--(void)viewDidDisappear:(BOOL)animated
+-(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     centerLable.hidden = YES;
     topImageView.hidden = YES;
     returnButton.hidden = YES;
@@ -384,6 +588,11 @@
 }
 -(void)dealloc
 {
+   
+    [couponID release];
+    [detailCoupon release];
+    [giftFrientView release];
+    
     [couponPage release];
     [couponScrollView release];
     [topImageView release];

@@ -7,7 +7,7 @@
 //
 
 #import "EditDepartureViewController.h"
-
+#import <QuartzCore/QuartzCore.h>
 @interface EditDepartureViewController ()
 
 @end
@@ -29,7 +29,9 @@
   
     
     if ([addressinformationArray count]!=0) {
+        
         [addressinformationArray removeAllObjects];
+        
     }
     
    	if (error == 0) {
@@ -37,6 +39,7 @@
         NSArray* name = result.poiList;
         NSLog(@"%d",[name count]);
         for (int i = 0; i<[name count]; i++) {
+            
             BMKPoiInfo* moreNes =[name objectAtIndex:i];
             NSLog(@"%@",moreNes.name);
             NSLog(@"%@",moreNes.address);
@@ -44,10 +47,13 @@
         }
         
         CGRect rect;
-        if ([addressinformationArray count]*44<346) {
+        if ([addressinformationArray count]*44<246) {
             rect = CGRectMake(0, 170, 320, [addressinformationArray count]*44);
+            
         }else {
+            
             rect = CGRectMake(0, 170, 320, 460-44-170);
+            
         }
         orderTableView.frame = rect;
         [orderTableView reloadData];
@@ -57,11 +63,10 @@
 -(void)getPeripheralInformation
 {
    
-   // CLLocationCoordinate2D pt = (CLLocationCoordinate2D){39.915101, 116.403981};
-   // locationDe
     NSLog(@"%f %f ",self.locationDe.latitude,self.locationDe.longitude);
     BOOL flag = [_search reverseGeocode:self.locationDe];
     if (!flag) {
+        
 		NSLog(@"search failed!");
 	}
 }
@@ -77,27 +82,38 @@
     CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
     CGSize size2 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
     if (size.height>22&&size2.height>22) {
+        
         return size.height+size2.height;
+        
     }else if(size.height<22&&size2.height>22){
         
         return 22.0+size2.height;
+        
     }else if(size.height>22&&size2.height<22){
+        
         return size.height+22;
+        
     }else {
+        
         return 44;
+        
     }
     
     
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section{
+    
     return [addressinformationArray count];
+    
 }
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+    
     NSString * cellID = @"cellID";
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellID];
-    if(cell ==nil)
-    {
+    
+    if(cell ==nil){
+        
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
         
         cell.backgroundColor = [UIColor darkGrayColor];
@@ -113,8 +129,8 @@
        // nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
         
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
-        nameLable.backgroundColor = [UIColor darkGrayColor];
-        nameLable.textColor = [UIColor whiteColor];
+        nameLable.backgroundColor = [UIColor clearColor];
+        nameLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
         nameLable.tag = 81;
         [cell.contentView addSubview:nameLable];
         [nameLable release];
@@ -123,13 +139,13 @@
         addressLable.numberOfLines = 0;
         //addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"u0_normal.png"]];
         addressLable.font = [UIFont fontWithName:@"Arial" size:12];
-        addressLable.backgroundColor = [UIColor darkGrayColor];
-        addressLable.textColor = [UIColor whiteColor];
+        addressLable.backgroundColor = [UIColor clearColor];
+        addressLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
         addressLable.tag = 82;
         [cell.contentView addSubview:addressLable];
         [addressLable release];
         
-        cell.contentView.backgroundColor = [UIColor darkGrayColor];
+        cell.contentView.backgroundColor = [UIColor whiteColor];
     }
    
     
@@ -144,9 +160,13 @@
     UILabel * nameLable = (UILabel *)[cell.contentView viewWithTag:81];
     
     if (size1.height>22) {
+        
         nameLable.frame = CGRectMake(50,0, 270,size1.height);
+        
     }else {
+        
         nameLable.frame = CGRectMake(50,0, 270,22);
+        
     }
     nameLable.text = cityName;
     
@@ -154,9 +174,13 @@
     UILabel * addressLable = (UILabel*)[cell.contentView viewWithTag:82];
     
     if (size.height <22) {
+        
         addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 270,22);
+        
     }else {
+        
         addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 270,size.height);
+        
     }
     
     addressLable.text = addressd;
@@ -173,16 +197,9 @@
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     
-    if([text isEqualToString:@"\n"])
-    {
-        departure = [departureView.text retain];
+    if([text isEqualToString:@"\n"]){
+        
         [departureView resignFirstResponder];
-//        NSLog(@"%@",departureView.text);
-//        BOOL flag = [_search geocode:departureView.text withCity:@"北京"];
-//        if (!flag) {
-//            NSLog(@"search failed!");
-//        }
-
         
     }
     return YES;
@@ -198,7 +215,8 @@
 
 -(void)nextStep:(id)sender
 {
-  
+    departure = [departureView.text retain];
+
     [DepartureDelegate selectThePlaceOfDeparture:departure];
     [self.navigationController popViewControllerAnimated:YES];
 
@@ -215,7 +233,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnFillOrderView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -252,15 +270,15 @@
 	_search.delegate = self;
     
     UILabel *departureLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 120, 30)];
-    departureLable.font = [UIFont systemFontOfSize:14];
+    departureLable.font = [UIFont fontWithName:@"Arial" size:14.0];
     departureLable.textColor = [UIColor orangeColor];
     departureLable.backgroundColor = [UIColor clearColor];
-    departureLable.textAlignment = UITextAlignmentLeft;
+    departureLable.textAlignment = NSTextAlignmentLeft;
     departureLable.text = @"出发地:";
     [self.view addSubview:departureLable];
     [departureLable release];
     
-    departureView = [[UITextView alloc] initWithFrame:CGRectMake(10, 40, 300, 60)];
+    departureView = [[UITextView alloc] initWithFrame:CGRectMake(10, 40, 300, 80)];
     departureView.text = self.departureName;
     departureView.delegate = self;
     departureView.returnKeyType = UIReturnKeyDone;
@@ -268,11 +286,17 @@
     departureView.keyboardType = UIKeyboardTypeDefault;
     [self.view addSubview:departureView];
     
-    UILabel *peripheryLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 140, 120, 30)];
-    peripheryLable.font = [UIFont systemFontOfSize:14];
+    [[departureView layer] setBorderColor:[UIColor grayColor].CGColor];
+     [[departureView layer] setBorderWidth:1];
+    [[departureView layer] setCornerRadius:5];
+    [departureView setClipsToBounds: YES];
+    
+    
+    UILabel *peripheryLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 135, 120, 40)];
+    peripheryLable.font = [UIFont fontWithName:@"Arial" size:14.0];
     peripheryLable.textColor = [UIColor orangeColor];
     peripheryLable.backgroundColor = [UIColor clearColor];
-    peripheryLable.textAlignment = UITextAlignmentLeft;
+    peripheryLable.textAlignment = NSTextAlignmentLeft;
     peripheryLable.text = @"周边:";
     [self.view addSubview:peripheryLable];
     [peripheryLable release];
@@ -283,7 +307,7 @@
     [lineImageView release];
     
     orderTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 170, 320, 0) style:UITableViewStylePlain];
-    orderTableView.separatorColor = [UIColor grayColor];
+    orderTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
     // orderTableView.separatorStyle =UITableViewCellEditingStyleNone;
     //orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     orderTableView.backgroundColor = [UIColor whiteColor];
@@ -298,6 +322,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     rigthbutton.hidden = YES;
@@ -314,8 +339,6 @@
     [topImageView release];
     [_search release];
     [orderTableView release];
-   
-    
     [super dealloc];
 }
 - (void)viewDidUnload

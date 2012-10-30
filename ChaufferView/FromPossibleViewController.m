@@ -62,6 +62,7 @@
     if(cell ==nil)
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
+        cell.selectionStyle = UITableViewCellSelectionStyleNone;
         
         UIImageView * startImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"start.png"]];
         startImageView.tag = 80;
@@ -74,7 +75,7 @@
        // nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
         nameLable.backgroundColor =[UIColor clearColor];
         nameLable.font = [UIFont fontWithName:@"Arial" size:14];
-        nameLable.textColor = [UIColor orangeColor];
+        nameLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
         nameLable.tag = 81;
         [cell.contentView addSubview:nameLable];
         [nameLable release];
@@ -84,11 +85,12 @@
        // addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
         addressLable.backgroundColor = [UIColor clearColor];
         addressLable.font = [UIFont fontWithName:@"Arial" size:12];
-        addressLable.textColor = [UIColor orangeColor];
+        addressLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
         addressLable.tag = 82;
         [cell.contentView addSubview:addressLable];
         [addressLable release];
         
+        cell.contentView.backgroundColor = [UIColor whiteColor];
     }
     
     BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
@@ -128,14 +130,7 @@
     CLLocationCoordinate2D ptCenter = bmn.pt;
     NSString * cityName =bmn.name;
   
-//    NSString*address = bmn.address;
-//    NSString * lt = [NSString stringWithFormat:@"%f",ptCenter.latitude];
-//    NSString * lo = [NSString stringWithFormat:@"%f",ptCenter.longitude];
-//    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:cityName,@"City",address,@"Address",lt,@"lation",lo,@"longitue",nil];
-//    
-//    
-//    [[NSNotificationCenter defaultCenter] postNotificationName:@"SELECTCITY" object:self userInfo:dict];
-//    [self dismissModalViewControllerAnimated:NO];
+
     TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
     ShareApp.pageManageMent = @"chauffer";
     
@@ -177,7 +172,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+	
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
     
@@ -188,7 +183,7 @@
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0, 7.0, 50.0, 30.0);
-    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
@@ -203,15 +198,32 @@
     
     CGRect rect;
     if ([self.possibleCityArray count]*44.0<416.0) {
-        rect = CGRectMake(0.0, 0.0, 320.0, [self.possibleCityArray count]*44.0);
+        
+        rect = CGRectMake(0.0, 0.0, 320.0, [self.possibleCityArray count]*44.0+44);
+        
     }else {
+        
         rect = CGRectMake(0.0, 0.0, 320.0, 460.0-44.0);
+        
     }
     
     UITableView * possibleTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
-    possibleTableView.separatorColor = [UIColor grayColor];
+    possibleTableView.separatorColor =  [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
    // possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     possibleTableView.backgroundColor = [UIColor clearColor];
+    if ([self.possibleCityArray count]*44.0<416.0) {
+   
+        possibleTableView.scrollEnabled = NO;
+        
+        
+    }else {
+        
+        possibleTableView.scrollEnabled = YES;
+        
+    }
+
+    
+    
     possibleTableView.delegate = self;
     possibleTableView.dataSource = self;
     [self.view addSubview: possibleTableView];
@@ -221,6 +233,7 @@
 
 -(void)viewWillDisappear:(BOOL)animated
 {
+    [super viewWillDisappear:animated];
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     centerLable.hidden = YES;

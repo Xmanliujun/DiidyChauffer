@@ -439,8 +439,10 @@
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex==1) {
-           NSString *webLink = @"itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=4574";
+        
+           NSString *webLink = @"itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=46703830";//http://itunes.apple.com/cn/app/id333206289?mt=8
            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:webLink]];
+        
     }else
     {
        
@@ -471,6 +473,8 @@
 }
 -(void)viewWillAppear:(BOOL)animated
 {
+    [super viewWillAppear:animated];
+    
     NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);  
     //获取完整路径
     NSString *documentsDirectory = [paths objectAtIndex:0];
