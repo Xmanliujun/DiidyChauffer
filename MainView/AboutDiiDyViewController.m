@@ -90,6 +90,7 @@ char* getlf(char* s)
     
     Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
     if ([r currentReachabilityStatus]==0) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
                                                       delegate:nil
@@ -97,6 +98,7 @@ char* getlf(char* s)
                                              otherButtonTitles:nil];
         [alert show];
         [alert release];
+        
     }else{
 
         HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
@@ -154,6 +156,7 @@ char* getlf(char* s)
 
     int returnJudge = my_strcmp(lf,point2);
     if ([responseString length]==0) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
                                                    message:@"请检查网络是否连接"
                                                   delegate:nil
@@ -161,10 +164,11 @@ char* getlf(char* s)
                                          otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        
     }else{
     
-    
         if (returnJudge==0) {
+            
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"您已是最新版本"
                                                       delegate:nil
@@ -172,7 +176,9 @@ char* getlf(char* s)
                                              otherButtonTitles:nil ];
             [alert show];
             [alert release];
+            
         }else{
+            
             NSString * nerVer = [NSString stringWithFormat:@"检测到%@新版本",responseString];
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                            message:nerVer

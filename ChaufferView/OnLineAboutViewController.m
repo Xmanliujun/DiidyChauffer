@@ -40,7 +40,9 @@
         [self presentModalViewController:fillNa animated:NO];
         [fillNa release];
         [fillOrder release];
+        
     }else {
+        
         FillOrdersViewController * fillOrder = [[FillOrdersViewController alloc] initWithDeparture:text CLLocation:centers];
         UINavigationController * fillNa = [[UINavigationController alloc] initWithRootViewController:fillOrder];
         fillOrder.landed = NO;
@@ -83,8 +85,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
-    // self.navigationController.navigationBar.tintColor = [UIColor grayColor];
+	
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
     self.hidesBottomBarWhenPushed = YES;

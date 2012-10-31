@@ -2,14 +2,15 @@
 
 #import "HTTPRequest.h"
 
-#define TIMEOUT 20
-#define LONGTIME 20
+#define TIMEOUT 15
+#define LONGTIME 15
 
 @implementation HTTPRequest
 @synthesize HttpConnection,receiveData,m_delegate;
 @synthesize forwordFlag;
 @synthesize timer;
 @synthesize hasTimeOut;
+@synthesize time;
 
 - (void)dealloc 
 {
@@ -20,7 +21,7 @@
 
 -(void)requestByUrlByGet:(NSString*)stringUrl//get方式请求
 {
-    
+    self.time = 0;
     [UIApplication sharedApplication].networkActivityIndicatorVisible = YES;
     
     NSURL *myWebserverURL = [NSURL URLWithString:[stringUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding]]; 
@@ -29,7 +30,8 @@
     
     if(timer)
         [self.timer invalidate];
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:TIMEOUT target:self selector:@selector(timeout:) userInfo:nil repeats:NO];
+    self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(timeout:) userInfo:nil repeats:YES];
+    [self.timer fire];
     [httprequest setTimeoutInterval:TIMEOUT];
     
 	[httprequest setCachePolicy: NSURLRequestUseProtocolCachePolicy];
@@ -49,6 +51,7 @@
 	NSMutableURLRequest *httprequest = [[NSMutableURLRequest alloc] initWithURL:myWebserverURL];
     NSMutableString *mustr = [[NSMutableString alloc] init];
     NSArray *array = [dic allKeys];
+    
     for(int i=0;i<[dic count];i++)
     {
         NSString *key = [array objectAtIndex:i];
@@ -87,14 +90,23 @@
 //超时 
 -(void)timeout:(id)sender
 {
+    self.time++;
+    NSLog(@"%d",self.time);
     
-	[self closeConnection];
-	[UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
-    
-    if(m_delegate ==nil)
-        return ;
-    if([m_delegate respondsToSelector:@selector(requesttimeout)])
-        [m_delegate requesttimeout];
+    if (self.time>=15) {
+       
+        self.time=0;
+        
+        [self closeConnection];
+        [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
+        
+        if(m_delegate ==nil)
+            return ;
+        if([m_delegate respondsToSelector:@selector(requesttimeout)])
+            [m_delegate requesttimeout];
+        
+    }
+	
 }
 
 #pragma mark 网络连接

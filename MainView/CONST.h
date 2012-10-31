@@ -30,6 +30,13 @@
 #define VERSION  @"http://www.diidy.com/ios/client/version.txt"
 #define CURRENTVERSION  @"1.0"
 
+
+#define COUPONTITLE0 @"http://coupon.diidy.com/coupon_0.php"
+#define COUPONTITLE1 @"http://coupon.diidy.com/coupon_1.php"
+#define COUPONTITLE2 @"http://coupon.diidy.com/coupon_2.php"
+#define COUPONTITLE3 @"http://coupon.diidy.com/coupon_3.php"
+#define COUPONTITLE4 @"http://coupon.diidy.com/coupon_4.php"
+
 #define REQUEST_COMPLETE  @"RequestComplete"
 #define MORE_QUEST  @"MoreRequestComplete"
 

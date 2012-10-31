@@ -603,7 +603,7 @@
 								<int key="IBUIContentMode">7</int>
 								<bool key="IBUIUserInteractionEnabled">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-								<string key="IBUIText">滴滴优惠劵</string>
+								<string key="IBUIText">嘀嘀优惠劵</string>
 								<reference key="IBUITextColor" ref="1019506535"/>
 								<nil key="IBUIHighlightedColor"/>
 								<int key="IBUIBaselineAdjustment">0</int>
@@ -624,7 +624,6 @@
 								<string key="NSFrame">{{123, 31}, {187, 30}}</string>
 								<reference key="NSSuperview" ref="187757929"/>
 								<reference key="NSWindow"/>
-								<reference key="NSNextKeyView"/>
 								<string key="NSReuseIdentifierKey">_NS:9</string>
 								<bool key="IBUIOpaque">NO</bool>
 								<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>

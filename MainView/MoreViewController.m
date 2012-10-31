@@ -99,26 +99,35 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if(indexPath.section ==0&&indexPath.row ==0){
+        
         ChangePasswordViewController * road =[[ChangePasswordViewController alloc] init];
         [self.navigationController pushViewController:road animated:YES];
         [road release];
+        
     }else if (indexPath.section==1&&indexPath.row==0) {
+        
         FeedBackViewController * feedBack = [[FeedBackViewController alloc] init];
         feedBack.judge = @"more";
         [self.navigationController pushViewController:feedBack animated:YES];
         [feedBack release];
+        
     }else if (indexPath.section==1&&indexPath.row ==1) {
+        
         AboutDiiDyViewController*aboutDiidy = [[AboutDiiDyViewController alloc] initWithNibName:@"AboutDiiDyViewController" bundle:nil];
         [self.navigationController pushViewController:aboutDiidy animated:YES];
         [aboutDiidy release];
+        
     }else if (indexPath.section==1&&indexPath.row==2) {
+        
         NoviceGuidanceViewController * noviceGudice= [[NoviceGuidanceViewController alloc] init];
         noviceGudice.noviceGuidan = @"more";
          [self presentModalViewController:noviceGudice animated:NO];
         //[self.navigationController pushViewController:noviceGudice animated:YES];
         [noviceGudice release];
+        
     }else if (indexPath.section==1&&indexPath.row ==3) {
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"确定要注销登陆吗？" 
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"确定要注销登陆吗？"
                                                        message:@""
                                                       delegate:self 
                                              cancelButtonTitle:@"确定" 

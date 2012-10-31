@@ -33,4 +33,5 @@
 @property(nonatomic,retain)NSString* detailCoupon;
 @property(nonatomic,retain)NSString * couponID;
 
+
 @end

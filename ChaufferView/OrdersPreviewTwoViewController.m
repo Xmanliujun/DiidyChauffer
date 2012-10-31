@@ -282,8 +282,6 @@
         
     }
 
-    
-    
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
     centerLable.font = [UIFont systemFontOfSize:17];
     centerLable.textColor = [UIColor whiteColor];
@@ -307,6 +305,8 @@
 }
 -(void)dealloc
 {
+    [orderPreView release];
+    [inforPreView release];
     [contactLable release];
     [centerLable release];
     [departureLable release];

@@ -16,6 +16,7 @@
 #import "ActivityViewController.h"
 #import "JSONKit.h"
 #import <QuartzCore/QuartzCore.h>
+#import "UIImageView+WebCache.h"
 @interface CouponViewController ()
 
 @end
@@ -39,26 +40,31 @@
         
         active.diidyContent = HUNDREDYUAN;
         active.diidyTitle = @"不计里程，百元两次";
+        active.coponurl = COUPONTITLE0;
         
     }else if (sender.tag ==2) {
         
         active.diidyContent = ENJOYCARD;
         active.diidyTitle = @"代驾实惠无边，畅想会员特权！";
+         active.coponurl = COUPONTITLE1;
         
     }else if (sender.tag==3) {
         
         active.diidyContent = PREFERRNTIAL;
         active.diidyTitle = @"0元用代驾！优惠无底线！";
+         active.coponurl = COUPONTITLE2;
         
     }else if (sender.tag==4) {
         
         active.diidyContent = STUDENTCARD;
         active.diidyTitle = @"学生接送卡，准时接送，安全呵护。";
+         active.coponurl = COUPONTITLE3;
         
     }else if (sender.tag ==5) {
         
         active.diidyContent = REGISTERCARD;
         active.diidyTitle = @"注册即送50元！";
+         active.coponurl = COUPONTITLE4;
         
     }
     [self.navigationController pushViewController:active animated:YES];
@@ -149,7 +155,6 @@
         HUD = nil;
     }
 
-   // NSArray* jsonParser =[str JSONValue];
     NSArray* jsonParser =[str objectFromJSONString];
     if (dataArry) {
         
@@ -186,12 +191,12 @@
             
         }else {
             
-             rect = CGRectMake(0.0, 150.0, 320.0, 60*[jsonParser count]);
+             rect = CGRectMake(0.0, 150.0, 320.0, 60*[jsonParser count]+1);
             
         }
         
         UITableView * couponTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
-        couponTableView.contentInset = UIEdgeInsetsMake(0, 0, 0, 0);
+        couponTableView.contentInset = UIEdgeInsetsMake(1.0f, 0.0f, 0.0f, 0.0);
         couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
         if (60*[jsonParser count]>276) {
             
@@ -204,6 +209,7 @@
         }
          couponTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
        // couponTableView.separatorStyle = UITableViewCellEditingStyleNone;
+      
         couponTableView.delegate = self;
         couponTableView.dataSource = self;
         [self.view addSubview:couponTableView];
@@ -272,30 +278,122 @@
     [self.navigationController.navigationBar addSubview:returnButton];
 
 }
-
-
--(void)creatScrollView
+-(void)downCouponStat
 {
+    NSURL *url=[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon.txt"];
+    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
+    [request setTimeOutSeconds:15.0f];
+    [request setDelegate:self];
+    [request setTag:110];
+    [request startAsynchronous];
+}
+
+
+
+-(void)creatScrollView:(NSString*)responseString
+{
+    NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
+    //获取完整路径
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"coupon.plist"];
+    NSDictionary * dict = [NSDictionary dictionaryWithContentsOfFile:plistPath];
+    NSDictionary * dictStat = [dict objectForKey:@"statusDict"];
+    NSString * couponVer = [dictStat objectForKey:@"couponImage"];
     
-    UIImageView * zeroImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coupon_0.jpg"]];
-    zeroImageView .frame = CGRectMake(0, 0, 320, 90);
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    NSString *pathDocuments=[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *createPath=[NSString stringWithFormat:@"%@/Image",pathDocuments];
+  
+    if (![[NSFileManager defaultManager] fileExistsAtPath:createPath])
+    {
+        
+        [fileManager createDirectoryAtPath:createPath withIntermediateDirectories:YES attributes:nil error:nil];
+        
+        
+    }
+    else
+    {
+        NSLog(@"Have");
+    }
+
+    NSString *savedImagePath0 ;
+    NSString *savedImagePath1;
+    NSString *savedImagePath2;
+    NSString *savedImagePath3;
+    NSString *savedImagePath4;
+    
+    savedImagePath0 = [createPath stringByAppendingPathComponent:@"coupon0.png"];
+    savedImagePath1 = [createPath stringByAppendingPathComponent:@"coupon1.png"];
+    savedImagePath2 = [createPath stringByAppendingPathComponent:@"coupon2.png"];
+    savedImagePath3 = [createPath stringByAppendingPathComponent:@"coupon3.png"];
+   // savedImagePath4 = [createPath stringByAppendingPathComponent:@"coupon4.png"];
+    
+    if ([responseString isEqualToString:couponVer]) {
+       
+        NSLog(@"相同");
+        
+    }else{
+    
+        UIImage *img0=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_0.jpg"]]];
+        NSData *imageData0 = UIImagePNGRepresentation(img0);
+        [imageData0 writeToFile:savedImagePath0 atomically:NO];
+        
+        
+        UIImage *img1=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_1.jpg"]]];
+        NSData *imageData1 = UIImagePNGRepresentation(img1);
+        [imageData1 writeToFile:savedImagePath1 atomically:NO];
+        
+        UIImage *img2=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_2.jpg"]]];
+        NSData *imageData2 = UIImagePNGRepresentation(img2);
+        [imageData2 writeToFile:savedImagePath2 atomically:NO];
+        
+        
+        UIImage *img3=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_3.jpg"]]];
+        NSData *imageData3 = UIImagePNGRepresentation(img3);
+        [imageData3 writeToFile:savedImagePath3 atomically:NO];
+        
+       
+//        UIImage *img4=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_4.jpg"]]];
+//        NSData *imageData4 = UIImagePNGRepresentation(img4);
+//        [imageData4 writeToFile:savedImagePath4 atomically:NO];
+        
+          NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
+          NSString *documentsDirectory = [paths objectAtIndex:0];
+          NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"coupon.plist"];
+          NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
+          NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
+          [plugin1 setObject:responseString forKey:@"couponImage"];
+          [dictplist setObject:plugin1 forKey:@"statusDict"];
+          [dictplist writeToFile:plistPath atomically:YES];
+          [dictplist release];
+          [plugin1 release];
+    }
     
     
-    UIImageView * firstImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coupon_1.jpg"]];
-    firstImageView .frame = CGRectMake(320, 0, 320, 90);
+    UIImage* im0 = [UIImage imageWithContentsOfFile:savedImagePath0];
+
+    UIImageView * zeroImageView = [[UIImageView alloc] initWithImage:im0];
+    zeroImageView.frame = CGRectMake(0, 0, 320, 90);
     
-    UIImageView * secondImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coupon_2.jpg"]];
-    secondImageView .frame = CGRectMake(640, 0, 320, 90);
+    UIImage* im1 = [UIImage imageWithContentsOfFile:savedImagePath1];
+    UIImageView * firstImageView = [[UIImageView alloc] initWithImage:im1 ];
+    firstImageView.frame=CGRectMake(320, 0, 320, 90);
     
-    UIImageView * threeImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coupon_3.jpg"]];
+    UIImage* im2 = [UIImage imageWithContentsOfFile:savedImagePath2];
+    UIImageView * secondImageView = [[UIImageView alloc] initWithImage:im2];
+    secondImageView.frame = CGRectMake(640, 0, 320, 90);
+    
+    UIImage* im3 = [UIImage imageWithContentsOfFile:savedImagePath3];
+    UIImageView * threeImageView = [[UIImageView alloc] initWithImage:im3];
     threeImageView.frame = CGRectMake(960, 0, 320, 90);
     
-    UIImageView * fourImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"coupon_4.jpg"]];
-    fourImageView .frame = CGRectMake(1280, 0, 320, 90);
+//    UIImage* im4 = [UIImage imageWithContentsOfFile:savedImagePath4];
+//    UIImageView * fourImageView = [[UIImageView alloc] initWithImage:im4];
+//    fourImageView.frame =CGRectMake(1280, 0, 320, 90);
     
     couponScrollView = [[UIScrollView alloc] init];
     couponScrollView.frame = CGRectMake(0.0, 0.0, 320.0, 90.0);
-    couponScrollView.contentSize = CGSizeMake(320.0*5,80.0);
+    couponScrollView.contentSize = CGSizeMake(320.0*4,80.0);
     couponScrollView.backgroundColor = [UIColor grayColor];
     couponScrollView.showsVerticalScrollIndicator = NO;
     couponScrollView.showsHorizontalScrollIndicator = NO;
@@ -307,15 +405,15 @@
     [couponScrollView addSubview:firstImageView];
     [couponScrollView addSubview:secondImageView];
     [couponScrollView addSubview:threeImageView];
-    [couponScrollView addSubview:fourImageView];
+  //  [couponScrollView addSubview:fourImageView];
     
     [zeroImageView release];
     [firstImageView release];
     [secondImageView release];
     [threeImageView release];
-    [fourImageView release];
+ //   [fourImageView release];
     
-    for (int i=0; i<5; i++) {
+    for (int i=0; i<4; i++) {
         
         UIButton * couButton = [UIButton buttonWithType:UIButtonTypeCustom];
         couButton.frame = CGRectMake(i*320, 0, 320, 90);
@@ -327,8 +425,10 @@
     [self.view addSubview:couponScrollView];
     
     couponPage= [[UIPageControl alloc] init];
-    couponPage.frame = CGRectMake(150.0, 90.0, 30.0, 20.0);
-    couponPage.numberOfPages = 5;
+    couponPage.backgroundColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:0.6];
+    couponPage.alpha = 0.7;
+    couponPage.frame = CGRectMake(0.0, 90.0, 320.0, 20.0);
+    couponPage.numberOfPages = 4;
     couponPage.currentPage = 0;
     [self.view addSubview:couponPage];
 }
@@ -337,6 +437,7 @@
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
@@ -518,8 +619,13 @@
 
         
     }else{
+        if (request.tag==110) {
+            [self creatScrollView:[request responseString]];
+            
+        }else{
         
-        [self parseGiftFrientStringJson:[request responseString]];
+            [self parseGiftFrientStringJson:[request responseString]];
+        }
     }
 }
 
@@ -546,16 +652,17 @@
 
 }
 #pragma mark - System Approach
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-   self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.hidesBackButton = YES;
     [self setTheNavigationBar];
      
     page = -1;
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
-    
+
     messgeLable = [[UILabel alloc] init];
     messgeLable.frame = CGRectMake(0, 110, 320, 40);
     messgeLable.numberOfLines = 0;
@@ -563,10 +670,10 @@
     messgeLable.font = [UIFont fontWithName:@"Arial" size:14];
     messgeLable.textColor = [UIColor orangeColor];
     [self.view addSubview:messgeLable];
-   
-    [self creatScrollView];
+    
+    [self downCouponStat];
     [self showWithDetails];
-   
+    
     couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
     
 }

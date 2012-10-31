@@ -313,7 +313,6 @@
     orderTableView.backgroundColor = [UIColor whiteColor];
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
-    [orderTableView setSeparatorColor:[UIColor blackColor]];
     [self.view addSubview:orderTableView];
     
     [self getPeripheralInformation];

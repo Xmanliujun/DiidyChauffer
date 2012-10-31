@@ -42,6 +42,7 @@
     
     Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
     if ([r currentReachabilityStatus]==0) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
                                                       delegate:nil
@@ -49,9 +50,11 @@
                                              otherButtonTitles:nil];
         [alert show];
         [alert release];
+        
     }else{
 
         if (newPassWordText.text==NULL||[newPassWordText.text length]==0||confirmPassWordText.text==NULL||[confirmPassWordText.text length]==0) {
+            
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                            message:@"密码不能为空"
                                                           delegate:nil
@@ -59,6 +62,7 @@
                                                  otherButtonTitles:nil ];
             [alert show];
             [alert release];
+            
         }else{
             if ([newPassWordText.text isEqualToString:confirmPassWordText.text]) {
             
@@ -95,6 +99,7 @@
                 }
 
             }else {
+                
                 UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                            message:@"您输入的两次密码不一致哦，再试试看"
                                                           delegate:nil 
@@ -112,9 +117,11 @@
 {
    
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
+        
     }
     
     NSDictionary * jsonParser =[str objectFromJSONString];
@@ -129,7 +136,9 @@
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        
     }else if([returenNews isEqualToString:@"f"]){
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:nil 
                                                        message:@"密码修改失败,请重试"
                                                       delegate:nil 
@@ -139,6 +148,7 @@
         [alert release];
 
     }else if([returenNews isEqualToString:@"pwderror"]){
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:nil 
                                                        message:@"您的旧密码有误,请重试"
                                                       delegate:nil 
@@ -146,6 +156,7 @@
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        
     }
 }
 
@@ -292,7 +303,6 @@
     confirmPassWordText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     confirmPassWordText.delegate = self;
     
-       
     UIView *changePasswordView =[[UIView alloc] initWithFrame: CGRectMake(10.0, 20.0, 294.0f, 121.0f)];
     changePasswordView.backgroundColor=[UIColor whiteColor];
     [[changePasswordView layer] setShadowOffset:CGSizeMake(1, 1)];
@@ -303,16 +313,14 @@
     [[changePasswordView layer] setBorderWidth:1];
     [[changePasswordView layer] setBorderColor:[UIColor grayColor].CGColor];
         
-    
     NSArray * lableBArray = [NSArray arrayWithObjects:@"旧密码",@"新密码",@"确认密码", nil];
     
     for(int i = 0;i<3;i++){
+        
         UILabel * firstLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 40.0f*i, 80.0f, 40.0f)];
-        
         firstLable.text = [lableBArray objectAtIndex:i];
-        
         firstLable.backgroundColor = [UIColor clearColor];
-        firstLable.textAlignment = UITextAlignmentCenter;
+        firstLable.textAlignment = NSTextAlignmentCenter;
         firstLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
         [changePasswordView addSubview:firstLable];
         [firstLable release];

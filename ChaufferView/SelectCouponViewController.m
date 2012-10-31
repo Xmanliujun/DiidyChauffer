@@ -88,10 +88,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 
-      UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
+    UITableViewCell* cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.accessoryType = UITableViewCellAccessoryCheckmark;
     cell.editingAccessoryView.backgroundColor = [UIColor redColor];;
-    NSLog(@"count  %d",[useSelectCouponArray count]);
     
     if ([useSelectCouponArray count]>=number) {
         
@@ -115,11 +114,9 @@
 
 - (void)tableView:(UITableView *)tableView didDeselectRowAtIndexPath:(NSIndexPath *)indexPath{
     
-    NSLog(@"Fffffff  ");
     UITableViewCell*cell = [tableView cellForRowAtIndexPath:indexPath];
     cell.accessoryType = UITableViewCellAccessoryNone;
 
-    
     for (NSIndexPath *ip in useSelectCouponArray) {
         
         if (ip.section == indexPath.section && ip.row == indexPath.row) {
@@ -145,6 +142,7 @@
 -(void)nextStep:(id)sender
 {
     if(!self.mark){
+        
         NSLog(@"%d",[useSelectCouponArray count]);
         [delegate selectedCoupon:useSelectCouponArray];
         [self.navigationController popViewControllerAnimated:YES];
@@ -165,8 +163,8 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-  //  self.view.backgroundColor= [UIColor darkGrayColor];
+   // self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.view.backgroundColor= [UIColor whiteColor];
     self.navigationItem.hidesBackButton = YES;
     
     useSelectCouponArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -229,6 +227,7 @@
     UITableView * orderTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
     [orderTableView setEditing:YES animated:YES];
     orderTableView.autoresizingMask = UIViewAutoresizingFlexibleHeight |UIViewAutoresizingFlexibleWidth;
+    
     if((self.rowNumber*44.0f)>416.0f){
     
         orderTableView.scrollEnabled = YES;
@@ -238,7 +237,8 @@
         orderTableView.scrollEnabled = NO;
     }
 
-    orderTableView.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+   // orderTableView.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    orderTableView.backgroundColor = [UIColor whiteColor];
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
     orderTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];

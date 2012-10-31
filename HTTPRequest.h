@@ -20,6 +20,9 @@
 @property (nonatomic, retain) NSTimer *timer;
 
 @property (nonatomic, assign) int forwordFlag;
+@property (nonatomic, assign) int time;
+
+
 
 -(void)requestByUrl:(NSString*)stringUrl dic:(NSMutableDictionary*)dic;
 -(void)requestByUrlByGet:(NSString*)stringUrl;

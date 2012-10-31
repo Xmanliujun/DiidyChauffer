@@ -17,7 +17,7 @@
 #import "FMDatabase.h"
 #import "FMDatabasePool.h"
 @implementation AppDelegate
-
+UIBackgroundTaskIdentifier backgroundTask;//写成成员
 @synthesize reachable;
 @synthesize window = _window,phoneVerion,deviceName,uniqueString,logInState;
 @synthesize pageManageMent,mobilNumber;
@@ -127,6 +127,7 @@
     [self umengTrack];
     [self creatDatabase];
     
+    
     _mapManager = [[BMKMapManager alloc]init];
     // 如果要关注网络及授权验证事件，请设定generalDelegate参数
 	BOOL ret = [_mapManager start:@"0620AE5E420F347628B96739E458B4293E377EAE" generalDelegate:self];
@@ -177,10 +178,27 @@
 }
 
 - (void)applicationDidEnterBackground:(UIApplication *)application
-{
-    // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later. 
-    // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
-}
+    {
+        if (([[[UIDevice currentDevice] systemVersion] floatValue] >= 6.0))
+        {
+            // Acquired additional time
+            UIDevice *device = [UIDevice currentDevice];
+            BOOL backgroundSupported = NO;
+            if ([device respondsToSelector:@selector(isMultitaskingSupported)])
+            {
+                backgroundSupported = device.multitaskingSupported;
+            }
+            if (backgroundSupported)
+            {
+                backgroundTask = [application beginBackgroundTaskWithExpirationHandler:^{
+                    [application endBackgroundTask:backgroundTask];
+                    backgroundTask = UIBackgroundTaskInvalid;
+                }];
+            }
+        }
+    }
+
+
 
 - (void)applicationWillEnterForeground:(UIApplication *)application
 {

@@ -53,7 +53,6 @@
 -(void)downLoadTheCouponData
 {
     
-    
     Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
     if ([r currentReachabilityStatus]==0) {
         
@@ -89,6 +88,7 @@
     NSArray* jsonParser =[str objectFromJSONString];
     NSLog(@"%d",[jsonParser count]);
     for (int i = 0; i<[jsonParser count]; i++) {
+        
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
         diidy.ID = [diidyDict objectForKey:@"id"];
@@ -100,11 +100,14 @@
         total += [diidy.number intValue];
         [dataArry addObject:diidy];
         [diidy release];
+        
     }
-    NSLog(@"data    %@",dataArry);
+   
     if(total!=0){
+        
         self.couponLable.text = [NSString stringWithFormat:@"%d张",total];
         self.couponView.hidden = NO;
+        
     }
         
 }
@@ -112,6 +115,7 @@
 {
 
     if ([requestString length]==0) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败"
                                                        message:@"请检查网络是否连接"
                                                       delegate:nil
@@ -119,6 +123,7 @@
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        
     }else{
         
         [self parseStringJson:requestString];
@@ -140,11 +145,13 @@
 - (BOOL)textFieldShouldBeginEditing:(UITextField *)textField
 {
     if(textField.tag ==42){
-    [UIView beginAnimations:@"animation" context:nil];
-    [UIView setAnimationDuration:0.5];
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-    self.backGroundView.frame = CGRectMake(0, -30, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
+        
+        [UIView beginAnimations:@"animation" context:nil];
+        [UIView setAnimationDuration:0.5];
+        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+        self.backGroundView.frame = CGRectMake(0, -30, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
         [UIView commitAnimations];
+        
     }else if (textField.tag ==40) {
         
         [UIView beginAnimations:@"animation" context:nil];
@@ -172,23 +179,29 @@
    
     [textField resignFirstResponder];
     if(textField.tag ==42){
+        
         [UIView beginAnimations:@"animation" context:nil];
         [UIView setAnimationDuration:0.5];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         self.backGroundView.frame = CGRectMake(0, 0, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
         [UIView commitAnimations];
+        
     }else if (textField.tag ==40) {
+        
         [UIView beginAnimations:@"animation" context:nil];
         [UIView setAnimationDuration:0.3];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         self.backGroundView.frame = CGRectMake(0, 0, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
         [UIView commitAnimations];
+        
     }else {
+        
         [UIView beginAnimations:@"animation" context:nil];
         [UIView setAnimationDuration:0.3];
         [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
         self.backGroundView.frame = CGRectMake(0, 0, self.backGroundView.frame.size.width,self.backGroundView.frame.size.height );
         [UIView commitAnimations];
+        
     }
 
 
@@ -200,46 +213,65 @@
 - (NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
     if(pickerView.tag ==50){
+        
         return 2;
+        
     }else {
+        
         return 1;
+        
     }
 }
 
 - (NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
     if(pickerView.tag ==50){
+        
         switch (component) {
+                
             case 0:
                 return [timeArray count];
                 break;
+                
             case 1:
                 return [minuteArray count];;
                 break;
+                
             default:
                 return 0;
                 break;
+                
         }
     }else {
+        
        return  [peopleArray count];
+        
     }
 }
 - (NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
     if(pickerView.tag ==50){
+        
         switch (component) {
+                
             case 0:
                 return [[timeArray objectAtIndex:row] objectForKey:@"State"];
                 break;
+                
             case 1:
                 return  [minuteArray objectAtIndex:row];
+                break;
+                
             default:
                 return nil;
                 break;
+                
         }
     
     }else {
+        
         return [peopleArray objectAtIndex:row];
+        
     }
     
 }
@@ -267,12 +299,13 @@
 }
 -(void)nextStep:(id)sender
 { 
-   NSDate *today = [[NSDate alloc] init];
+   NSDate *today = [[[NSDate alloc] init] autorelease];
    NSTimeInterval date1 = [today timeIntervalSinceReferenceDate];
    
     NSTimeInterval date2 = [_date timeIntervalSinceReferenceDate]; 
+    
     double diff = date2 -date1;
-    NSLog(@"fff   %f",diff);
+    
     if (diff<60*30-20) {
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
@@ -438,7 +471,8 @@
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:centerLable];
 }
--(void)dateChanged:(id)sender{  
+-(void)dateChanged:(id)sender{
+    
     UIDatePicker* control = (UIDatePicker*)sender;  
      _date = [control.date retain];
     NSString * locationString=[dateformatter stringFromDate:_date];
@@ -507,35 +541,57 @@
     minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
     peopleArray = [[timeArray objectAtIndex:1]objectForKey:@"Cities"];
 
-    
+//****************************************************************
     NSDate *today = [[NSDate alloc] init]; 
     
-    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar]; 
+    NSCalendar *gregorian = [[NSCalendar alloc] initWithCalendarIdentifier:NSGregorianCalendar];
     
     NSDateComponents *offsetComponents = [[NSDateComponents alloc] init]; 
     // [offsetComponents setHour:1]; 
     [offsetComponents setMinute:30]; 
-    NSDate *endOfWorldWar3 = [gregorian dateByAddingComponents:offsetComponents toDate:today options:0]; 
+    
+    NSDate *endOfWorldWar3 = [gregorian dateByAddingComponents:offsetComponents toDate:today options:0];
     _date = [endOfWorldWar3  retain];
-    dateformatter=[[NSDateFormatter alloc] init];
+     dateformatter=[[NSDateFormatter alloc] init];
     [dateformatter setDateFormat:@"YYYY年MM月d日HH时mm分"];
+    
     NSString * locationString=[dateformatter stringFromDate:endOfWorldWar3];
     self.departureMinuteLable.text = locationString;
+    
     [today release];
     [offsetComponents release];
     [gregorian release];
+//*****************************************************************
+//    NSDateFormatter* todayformatter= [[NSDateFormatter alloc] init];
+//    [todayformatter setDateFormat:@"YYYY-MM-dd HH:mm"];
+//    
+//    NSString* todayData = [todayformatter stringFromDate:endOfWorldWar3];
+//    NSLog(@"xxxxxx  %@",todayData);
+//    
+//    NSString* todayNewData = [NSString stringWithFormat:@"%@:00 -0500",todayData];
+//    NSLog(@"%@",todayNewData);
+//    NSArray*timesArray = [todayNewData  componentsSeparatedByString:@" "];
+//    NSString* timeMis = [timesArray objectAtIndex:1];
+//    NSArray*timeMinArray = [timeMis componentsSeparatedByString:@":"];
+//    NSString*newTime = [timeMinArray objectAtIndex:0];
+//   
+//    int timenew = [newTime intValue];
+//    if (timenew >=12) {
+//        timenew-=12;
+//    }
+//    todayNewData = [NSString stringWithFormat:@"%@ %d:%@:00 -0500",[timesArray objectAtIndex:0],timenew,[timeMinArray objectAtIndex:1]];
+//    NSLog(@"xinde  %@",todayNewData);
+//******************************************************************
     
-    
-    datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];  
+    datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0.0f, 200.0f, 320.0f, 216.0f)];
     datePicker.datePickerMode =UIDatePickerModeDateAndTime;   
     datePicker.alpha = 0;
-    NSDate* minDate = [[NSDate alloc]initWithString:@"1900-01-01 00:00:00 -0500"];    
     NSDate* maxDate = [[NSDate alloc]initWithString:@"2099-01-01 00:00:00 -0500"];    
-    [datePicker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged ];
-    datePicker.minimumDate = minDate;    
+    [datePicker addTarget:self action:@selector(dateChanged:) forControlEvents:UIControlEventValueChanged];
+    [datePicker setMinimumDate:endOfWorldWar3];
     datePicker.maximumDate = maxDate;  
     [self.view addSubview:datePicker]; 
-    [minDate release];
+  
     [maxDate release];
     
     UIButton *rigthPickbutton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -588,7 +644,6 @@
 -(void)dealloc
 {
     [self.getCoupon_request closeConnection];
-    
     [couponInforView release];
     [contactInforView release];
     [bookInforView release];

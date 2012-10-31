@@ -694,7 +694,9 @@
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
                  self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d元都是些啊啊啊啊啊、 ",total];
+                
             }else{
+                
                 endLable.text=@"目的地在六环外加收:20元";
                 endAddional= 20;
                 int total = endAddional+price+additional;
@@ -702,8 +704,10 @@
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
                  self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,110.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+                
             }
         }else {
+            
             int mHour = [travelTime.text intValue];
             if(mHour >= 21 || (mHour >= 0 && mHour <8)){
                 
@@ -715,7 +719,9 @@
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 333.0f, costRect.size.width, costRect.size.height);
                  self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,130.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+                
             }else{
+                
                 endLable.text=@"目的地在六环外加收:20元";
                 endAddional= 20;
                 int total =endAddional+price+additional;
@@ -724,6 +730,7 @@
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 333.0f, costRect.size.width, costRect.size.height);
                  self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width,130.0f);
                 self.totalCostLable.text = [NSString stringWithFormat:@"费用合计:%d",total];
+                
             }
         }
         

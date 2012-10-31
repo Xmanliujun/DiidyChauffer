@@ -38,13 +38,19 @@
     CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
     CGSize size2 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
     if (size.height>22&&size2.height>22) {
+        
         return size.height+size2.height;
+        
     }else if(size.height<22&&size2.height>22){
         
         return 22.0+size2.height;
+        
     }else if(size.height>22&&size2.height<22){
+        
         return size.height+22;
+        
     }else {
+        
         return 44;
     }
     
@@ -103,9 +109,13 @@
     UILabel * nameLable = (UILabel *)[cell.contentView viewWithTag:81];
    
     if (size1.height>22) {
+        
         nameLable.frame = CGRectMake(50,0, 270,size1.height);
+        
     }else {
+        
          nameLable.frame = CGRectMake(50,0, 270,22);
+        
     }
      nameLable.text = cityName;
     
@@ -113,9 +123,13 @@
     UILabel * addressLable = (UILabel*)[cell.contentView viewWithTag:82];
     
     if (size.height <22) {
+        
         addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 270,22);
+        
     }else {
+        
          addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 270,size.height);
+        
     }
    
     addressLable.text = addressd;

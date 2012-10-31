@@ -198,9 +198,7 @@
     [self.view addSubview:landingLable];
     [landingLable release];
     
-    
     UIView *feedBackView =[[UIView alloc] initWithFrame: CGRectMake(6.0f, 40.f, 308.0f, 120.0f)];
-
     feedBackView.backgroundColor=[UIColor whiteColor];
     [[feedBackView layer] setShadowOffset:CGSizeMake(1, 1)];
     [[feedBackView layer] setShadowRadius:5];

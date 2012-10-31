@@ -307,6 +307,7 @@
     centerLable.textAlignment = UITextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:14.0];
     [self.view addSubview:centerLable];
+   
     UIImageView * promptImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"transparent.png"]];
     promptImageView.frame = CGRectMake(0, 0, 320, 40);
     [promptImageView addSubview:centerLable];

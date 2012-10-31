@@ -298,7 +298,7 @@
         self.couponLable.text = couString;
         
     }
-    
+    [couString release];
     
     CGSize size = [self.couponLable.text sizeWithFont:[UIFont systemFontOfSize:13.0] constrainedToSize:CGSizeMake(272, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
    
@@ -363,6 +363,10 @@
 }
 -(void)dealloc
 {
+    [orderPreView release];
+    [inforPreView release];
+    [couponView release];
+    
     [centerLable release];
     [couponArray release];
     [contactLable release];
