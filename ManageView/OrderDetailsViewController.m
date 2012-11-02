@@ -65,7 +65,6 @@
         
        
     }
-
     self.contactLable.text =self.diidyModel.contactName;
     self.mobilNumberLable.text = self.diidyModel.contactMobile;
     self.couponLable.text =self.diidyModel.coupon;
@@ -210,6 +209,7 @@
         [billingDetailButton addTarget:self action:@selector(billingDetailView:) forControlEvents:UIControlEventTouchUpInside];
         [self.clearingView addSubview:billingDetailButton];
         [self.view addSubview:self.clearingView];
+        
     }else {
         
         self.leftDepartureTimeLable.text = @"出发时间:";

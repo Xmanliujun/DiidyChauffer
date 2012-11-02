@@ -50,7 +50,7 @@
     centerLable.text = @"订 单 列 表";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:centerLable];
     
@@ -91,6 +91,7 @@
 -(void)creatHaveOrderView
 {
     CGRect rect;
+    
     if (100*[listOrderArray count]>400) {
         
         rect =self.view.bounds;
@@ -101,13 +102,13 @@
         
     }
     
-    
     UITableView * orderTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
     orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     //orderTableView.backgroundColor = [UIColor whiteColor];
     orderTableView.backgroundView=nil;
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
+    
     if (100*[listOrderArray count]>400) {
         
         orderTableView.scrollEnabled = YES;
@@ -145,6 +146,8 @@
 #pragma mark-HTTPDown
 
 -(void)requFinish:(NSString *)requestString order:(int)nOrder{
+    
+    NSLog(@"%@",requestString);
     
     if ([requestString length]==0) {
         
@@ -203,19 +206,21 @@
     }
     
     if (sqlitArray.count!=0) {
+        
         sqlitBool = YES;
         DIIdyModel*diiModel = [sqlitArray objectAtIndex:0];
-        if (![diiModel.startTime isEqualToString:@""]) {
-            
-            baseUrl = [NSString stringWithFormat:ORDERNUMBERSTARTTIME,ShareApp.mobilNumber,diiModel.startTime];
-            
-        }else {
+        
+        if (diiModel.startTime ==NULL||[diiModel.startTime length]==0) {
             
             baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
             
+        }else {
+            
+            baseUrl = [NSString stringWithFormat:ORDERNUMBERSTARTTIME,ShareApp.mobilNumber,diiModel.startTime];
+        
         }
         
-        if (![diiModel.orderID isEqualToString:@""]) {
+        if (!(diiModel.orderID==NULL||[diiModel.orderID length]==0)) {
             
             baseUrl = [baseUrl stringByAppendingFormat:@"/%@",diiModel.orderID];
             
@@ -260,7 +265,7 @@
 {
     [self.HUD removeFromSuperview];
     [self.HUD release];
-    self.HUD = nil;
+     self.HUD = nil;
     
 }
 
@@ -273,7 +278,6 @@
         HUD = nil;
     }
     
-      
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
     [alertView show];
     [alertView release];
@@ -285,15 +289,17 @@
 -(void)parseStringJson:(NSString *)str
 {
     
-    
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
     }
 
     NSArray* jsonParser =[str objectFromJSONString];
+    
     int a;
+    
     if (sqlitBool) {
         
         a=1;
@@ -332,8 +338,12 @@
             diidy.status = @"已取消";
             
         }
+       
+            
         [ShareApp.mDatabase insertItemWithFMDB:diidy];
-        if (a==0) {
+            
+
+       if (a==0) {
             
             [listOrderArray addObject:diidy];
             
@@ -374,12 +384,14 @@
 -(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSString * cellID = @"cellID";
+    
     ManageTableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    
     if(cell ==nil)
     {
         cell = [[[ManageTableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
         cell.contentView.backgroundColor = [UIColor whiteColor];
-
+        
     }
     DIIdyModel * diidy = [listOrderArray objectAtIndex:indexPath.row];
     
@@ -391,7 +403,7 @@
     }else if([diidy.status isEqualToString:@"完成"]){
         
         cell.statusLable.textColor = [UIColor greenColor];
-        cell.statusLable.text = [NSString stringWithFormat:@"以%@>",diidy.status];
+        cell.statusLable.text = [NSString stringWithFormat:@"已%@>",diidy.status];
         
     }else {
         
@@ -427,11 +439,11 @@
    
     sqlitBool = YES;
     listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
+   
     [self setTheNavigationBar];
     [self goToTheDownLoadPage];
     
 }
-
 
 -(void)viewWillDisappear:(BOOL)animated
 {

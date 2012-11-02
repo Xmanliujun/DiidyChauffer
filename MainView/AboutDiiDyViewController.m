@@ -143,6 +143,7 @@ char* getlf(char* s)
 {
 
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
@@ -195,8 +196,10 @@ char* getlf(char* s)
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     if (buttonIndex==1) {
+        
         NSString *webLink = @"itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=4574";
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:webLink]];
+        
     }else
     {
         
@@ -240,6 +243,7 @@ char* getlf(char* s)
                                                  otherButtonTitles:nil ];
             [alert show];
             [alert release];
+            
         }else{
 
             [self parseStringJson:requestString];

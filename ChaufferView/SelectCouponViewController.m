@@ -101,6 +101,9 @@
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        NSIndexPath *willDeleteIndexPath = [NSIndexPath indexPathForRow:indexPath.row inSection:indexPath.section];
+        [useSelectCouponArray addObject:willDeleteIndexPath];
+
         
     }else {
         
@@ -120,7 +123,9 @@
     for (NSIndexPath *ip in useSelectCouponArray) {
         
         if (ip.section == indexPath.section && ip.row == indexPath.row) {
+            
             [useSelectCouponArray removeObject:ip];
+            
             break;
         }
     }
@@ -142,10 +147,17 @@
 -(void)nextStep:(id)sender
 {
     if(!self.mark){
-        
+        if ([useSelectCouponArray count]>number) {
+            
+            [delegate selectedCoupon:nil];
+            [self.navigationController popViewControllerAnimated:YES];
+            
+        }else{
+            
         NSLog(@"%d",[useSelectCouponArray count]);
         [delegate selectedCoupon:useSelectCouponArray];
-        [self.navigationController popViewControllerAnimated:YES];
+            [self.navigationController popViewControllerAnimated:YES];
+        }
         
     }else {
         

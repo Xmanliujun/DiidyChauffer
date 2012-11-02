@@ -23,6 +23,7 @@
 #import "MoreViewController.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import <QuartzCore/QuartzCore.h>
 
 @implementation LandingViewController
 @synthesize couponArray;
@@ -38,43 +39,52 @@
 
 -(void)creatInPutBox
 {
-    UILabel * inputLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 60.0f, 51.0f)];
+    
+    
+    UIView* landView = [[UIView alloc] initWithFrame: CGRectMake(10.0f, 40.0f, 300.0,102.0f)];
+    landView.backgroundColor = [UIColor whiteColor];
+    [[landView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[landView layer] setShadowRadius:5];
+    [[landView layer] setShadowOpacity:1];
+    [[landView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[landView layer] setCornerRadius:7];
+    [[landView layer] setBorderWidth:1];
+    [[landView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [self.view addSubview:landView];
+    
+    UIImageView*lineImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u721_line.png"]];
+    lineImage.frame = CGRectMake(0, 51, 300, 3);
+    [landView addSubview:lineImage];
+    [lineImage release];
+    
+    UILabel * inputLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 70.0f,51.0f)];
     inputLable.text = @"手机号:";
     inputLable.backgroundColor = [UIColor clearColor];
     inputLable.textAlignment = NSTextAlignmentCenter;
-    inputLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:15.0f];
+    inputLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:16.0f];
     
-    inputNumberText = [[UITextField alloc] initWithFrame:CGRectMake(60.0f, 5.0f, 200.0f,45.0f)];
+    inputNumberText = [[UITextField alloc] initWithFrame:CGRectMake(70.0f, 2.0f, 200.0f,51.0f)];
     inputNumberText.backgroundColor = [UIColor clearColor];
     inputNumberText.keyboardType = UIKeyboardTypePhonePad;
-    inputNumberText.font = [UIFont fontWithName:@"Arial" size:15.0f];
+    inputNumberText.clearButtonMode = UITextFieldViewModeWhileEditing;
+    inputNumberText.font = [UIFont fontWithName:@"Arial" size:16.0f];
     inputNumberText.borderStyle = UITextBorderStyleNone;
     inputNumberText.autocorrectionType = UITextAutocorrectionTypeYes;
     inputNumberText.placeholder = @"请输入手机号";
     inputNumberText.returnKeyType = UIReturnKeyDone;
     inputNumberText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
-    
-    UIImage * inputImage = [UIImage imageNamed:@"u70_normal.png"];
-    UIImageView* inputImageView = [[UIImageView alloc] initWithImage:inputImage];
-    inputImageView.frame = CGRectMake(10.0f, 40.0f, inputImage.size.width, inputImage.size.height);
-    inputImageView.userInteractionEnabled = YES;
-    [inputImageView addSubview:inputNumberText];
-    [inputImageView addSubview:inputLable];
-    [self.view addSubview:inputImageView];
-   
-    [inputLable release];
-    [inputImageView release];
-    
-    UILabel * passWordLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0f, 0.0f, 40.0f, 51.0f)];
+       
+    UILabel * passWordLable = [[UILabel alloc] initWithFrame:CGRectMake(10.0f, 51.0f, 70.0f, 51.0f)];
     passWordLable.text = @"密码:";
     passWordLable.backgroundColor = [UIColor clearColor];
     passWordLable.textAlignment = NSTextAlignmentLeft;
-    passWordLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:15.0f];
+    passWordLable.font = [UIFont fontWithName:@"Helvetica-Bold" size:16.0f];
     
-    passWordText = [[UITextField alloc] initWithFrame:CGRectMake(45.0f, 5.0f, 200.0f,45.0f)];
+    passWordText = [[UITextField alloc] initWithFrame:CGRectMake(70.0f, 51.0f, 200.0f,51.0f)];
     passWordText.backgroundColor = [UIColor clearColor];
     passWordText.keyboardType = UIKeyboardTypeDefault;
-    passWordText.font = [UIFont fontWithName:@"Arial" size:15.0f];
+    passWordText.clearButtonMode = UITextFieldViewModeWhileEditing;
+    passWordText.font = [UIFont fontWithName:@"Arial" size:16.0f];
     passWordText.borderStyle = UITextBorderStyleNone;
     passWordText.autocorrectionType = UITextAutocorrectionTypeYes;
     passWordText.placeholder = @"请输入密码";
@@ -83,16 +93,14 @@
     passWordText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     passWordText.delegate = self;
     
-    UIImage * passWordImage = [UIImage imageNamed:@"u72_normal.png"];
-    UIImageView* passWordImageView = [[UIImageView alloc] initWithImage:passWordImage];
-    passWordImageView.frame = CGRectMake(10.0f, 86.0f, passWordImage.size.width, passWordImage.size.height);
-    passWordImageView.userInteractionEnabled = YES;
-    
-    [passWordImageView addSubview:passWordText];
-    [passWordImageView addSubview:passWordLable];
-    [self.view addSubview:passWordImageView];
+    [landView addSubview:inputNumberText];
+    [landView addSubview:inputLable];
+    [landView addSubview:passWordText];
+    [landView addSubview:passWordLable];
+    [self.view addSubview:landView];
+    [inputLable release];
     [passWordLable release];
-    [passWordImageView release];
+    [landView release];
     
 }
 
@@ -441,28 +449,28 @@
     [self.view addSubview:landingLable];
     [landingLable release];
     
-    UIImage * landedImage =[UIImage imageNamed:@"u14_normal.png" ];
+    UIImage * landedImage =[UIImage imageNamed:@"land.png" ];
     UIButton*landedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    landedButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    landedButton.frame=CGRectMake(15.0f, 150.0f, landedImage.size.width, landedImage.size.height);
+   
+    landedButton.frame=CGRectMake(9.0f, 150.0f, landedImage.size.width,40);
     [landedButton setBackgroundImage:landedImage forState:UIControlStateNormal];
-    [landedButton setTitle:@"登陆" forState:UIControlStateNormal];
+    
     [landedButton addTarget:self action:@selector(clientLandedPage:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:landedButton];
     
     UIButton * registerButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    registerButton.frame = CGRectMake(20.0f, 185.0f, 80.0f, 30.0f);
+    registerButton.frame = CGRectMake(20.0f, 190.0f, 80.0f, 30.0f);
     [registerButton setTitle:@"还没注册>" forState:UIControlStateNormal];
     [registerButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    registerButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    registerButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:16.0f];
     [registerButton addTarget:self action:@selector(registeredUsers:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:registerButton];
     
     UIButton * forgotButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    forgotButton.frame = CGRectMake(220.0f, 185.0f,80.0f, 30.0f);
+    forgotButton.frame = CGRectMake(220.0f, 190.0f,80.0f, 30.0f);
     [forgotButton setTitle:@"忘记密码 >" forState:UIControlStateNormal];
     [forgotButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
-    forgotButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    forgotButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:16.0f];
     [forgotButton addTarget:self action:@selector(forgotPassword:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:forgotButton];
     

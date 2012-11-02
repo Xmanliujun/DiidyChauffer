@@ -21,6 +21,7 @@
     
     self = [super init];
     if(self){
+        
         CLLocationCoordinate2D theCoordinate;
         theCoordinate.latitude = lat;
         theCoordinate.longitude = lng;

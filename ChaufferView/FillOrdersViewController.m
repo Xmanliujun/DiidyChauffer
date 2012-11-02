@@ -409,33 +409,35 @@
 -(void)selectedCoupon:(NSArray*)couponArray{
     
     self.couponaArray = couponArray;
-     NSMutableString * couString = [[[NSMutableString alloc]initWithCapacity:0]autorelease ];
+   //  NSMutableString * couString = [[[NSMutableString alloc]initWithCapacity:0]autorelease ];
     
-    if ([self.couponaArray count]==0) {
-        self.couponLable.text = @"";
-
-    }
+    self.couponLable.text = [NSString stringWithFormat:@"您一共选择了%d张优惠劵",[couponArray count]];
     
-    
-    if ([self.couponaArray count]>=2) {
-        
-        for (int i=0; i<[self.couponaArray count]-1; i++) {
-            
-            NSIndexPath* diidyMbdelPath = [self.couponaArray objectAtIndex:i];
-            DIIdyModel *diidyModel = [dataArry objectAtIndex:diidyMbdelPath.section];
-            [couString appendFormat:@"%@,",diidyModel.name];
-            
-        }
-        
-    }
-    if ([self.couponaArray count]>=1) {
-        
-        NSIndexPath* lastdiidyPath = [self.couponaArray objectAtIndex:[self.couponaArray count]-1];
-        DIIdyModel * lastDiidy = [dataArry objectAtIndex:lastdiidyPath.section];
-        [couString appendFormat:@"%@",lastDiidy.name];
-        self.couponLable.text = couString;
-        
-    }
+//    if ([self.couponaArray count]==0) {
+//        self.couponLable.text = @"";
+//
+//    }
+//    
+//    
+//    if ([self.couponaArray count]>=2) {
+//        
+//        for (int i=0; i<[self.couponaArray count]-1; i++) {
+//            
+//            NSIndexPath* diidyMbdelPath = [self.couponaArray objectAtIndex:i];
+//            DIIdyModel *diidyModel = [dataArry objectAtIndex:diidyMbdelPath.section];
+//            [couString appendFormat:@"%@,",diidyModel.name];
+//            
+//        }
+//        
+//    }
+//    if ([self.couponaArray count]>=1) {
+//        
+//        NSIndexPath* lastdiidyPath = [self.couponaArray objectAtIndex:[self.couponaArray count]-1];
+//        DIIdyModel * lastDiidy = [dataArry objectAtIndex:lastdiidyPath.section];
+//        [couString appendFormat:@"%@",lastDiidy.name];
+//        self.couponLable.text = couString;
+//        
+//    }
 
 }
 

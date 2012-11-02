@@ -27,14 +27,17 @@
 }
 
 -(NSString *)title{
+    
     return @"位置";
 }
 
 -(NSString *)subtitle{
+    
     return self.address;
 }
 
 -(void)dealloc{
+    
 	[address release];
 	[super dealloc];
 }

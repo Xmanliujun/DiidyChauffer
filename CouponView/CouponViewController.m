@@ -81,6 +81,7 @@
 -(void)timerFired:(NSTimer *)timer{
     
     if (page>4) {
+        
         page=-1;
     }
     couponPage.currentPage = page;
@@ -216,7 +217,9 @@
         [couponTableView release];
         
     }else {
+        
         messgeLable.text = NOMESSAGE;
+        
     }
     
 
@@ -483,17 +486,22 @@
     giftNumberLable.text = @"赠送给(手机号) :";
     giftNumberLable.backgroundColor = [UIColor clearColor];
     giftNumberLable.textAlignment = NSTextAlignmentCenter;
-    giftNumberLable.font = [UIFont fontWithName:@"Arial" size:13.0];
+    giftNumberLable.font = [UIFont fontWithName:@"Arial" size:15.0];
+    giftNumberLable.textColor = [UIColor whiteColor];
     
     UIImage * giftImage = [UIImage imageNamed:@"u84_line.png"];
     UIImageView * giftLineImage = [[UIImageView alloc] initWithImage:giftImage];
     giftLineImage.frame = CGRectMake(0.0, 45.0, 300.0, giftImage.size.height);
-
-    giftNumberText = [[UITextView alloc] initWithFrame:CGRectMake(110.0, 7.0,160.0, 40.0)];
-    giftNumberText.textColor = [UIColor blackColor];
-    giftNumberText.text = @"";
+    
+    giftNumberText = [[UITextField alloc] initWithFrame:CGRectMake(124.0, 6.0,160.0, 40.0)];
+    giftNumberText.backgroundColor = [UIColor clearColor];
+    giftNumberText.textColor = [UIColor whiteColor];
+    giftNumberText.placeholder = @"请输入亲友号码";
+    giftNumberText.clearButtonMode = UITextFieldViewModeWhileEditing;
+    giftNumberText.contentVerticalAlignment =  UIControlContentVerticalAlignmentCenter;
     giftNumberText.returnKeyType = UIReturnKeyDefault;
-    giftNumberText.font = [UIFont fontWithName:@"Arial" size:16.0];
+    giftNumberText.autocorrectionType = UITextAutocorrectionTypeYes;
+    giftNumberText.font = [UIFont fontWithName:@"Arial" size:15.0];
     giftNumberText.keyboardType = UIKeyboardTypePhonePad;
     [giftNumberText becomeFirstResponder];
     
@@ -520,7 +528,8 @@
     UILabel * contentLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0,55.0, 290.0, 70.0)];
     contentLable.text = content;
     contentLable.numberOfLines = 0;
-    contentLable.backgroundColor = [UIColor grayColor];
+    contentLable.textColor = [UIColor whiteColor];
+    contentLable.backgroundColor = [UIColor lightGrayColor];
     [contentLable.layer setCornerRadius:4.0f];
     [contentLable.layer setMasksToBounds:YES];
     contentLable.textAlignment = NSTextAlignmentLeft;
@@ -529,14 +538,14 @@
     
     giftFrientView = [[UIView alloc] initWithFrame:CGRectMake(10.0,5.0, 300.0, 190.0)];
     
-    giftFrientView.backgroundColor=[UIColor whiteColor];
+    giftFrientView.backgroundColor=[UIColor grayColor];
     [[giftFrientView layer] setShadowOffset:CGSizeMake(1, 1)];
     [[giftFrientView layer] setShadowRadius:5];
     [[giftFrientView layer] setShadowOpacity:1];
     [[giftFrientView layer] setShadowColor:[UIColor whiteColor].CGColor];
     [[giftFrientView layer] setCornerRadius:7];
-    [[giftFrientView layer] setBorderWidth:1];
-    [[giftFrientView layer] setBorderColor:[UIColor grayColor].CGColor];
+    [[giftFrientView layer] setBorderWidth:2];
+    [[giftFrientView layer] setBorderColor:[UIColor whiteColor].CGColor];
     
     [giftFrientView addSubview:contentLable];
     [giftFrientView addSubview:cancelButton];
@@ -574,12 +583,15 @@
         NSString * baseUrl = [NSString stringWithFormat:GIFTCOUPONS,ShareApp.mobilNumber,giftNumberText.text,couponID];
         baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         NSURL * url = [NSURL URLWithString:baseUrl];
-    
+
         ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
         [request setTimeOutSeconds:15.0f];
         [request setDelegate:self];
         [request setTag:100];
-        [request startAsynchronous];}
+        [request startAsynchronous];
+        
+    }
+    
     
 }
 
@@ -609,7 +621,7 @@
 {
     if ([request responseString]==NULL||[[request responseString] length]==0) {
         
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"赠送失败"
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"请求失败"
                                                        message:@"请检查网络是否连接"
                                                       delegate:nil
                                              cancelButtonTitle:@"OK"
@@ -620,6 +632,7 @@
         
     }else{
         if (request.tag==110) {
+            
             [self creatScrollView:[request responseString]];
             
         }else{

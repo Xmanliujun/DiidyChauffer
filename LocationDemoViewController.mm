@@ -70,6 +70,15 @@
         }
         
         UpdateUserLocation = YES;
+        
+        item = [[MapPointAnnotion alloc]init];
+        
+        item.coordinate = result.geoPt;
+        item.title =@"我的位置";
+        item.subtitle= result.strAddr;
+        [_mapView addAnnotation:item];
+        [item release];
+        
         if (firstMenue) {
             [self glassMenuWithContent:self.nowCityName];
             firstMenue = NO;
@@ -146,6 +155,7 @@
             pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
             
             if(firstCreat){
+                
                 [self createMarker];
                 if(location.latitude == 0 && location.longitude == 0) return;
                 [self searchAddress:userLocation.location.coordinate];
@@ -153,7 +163,7 @@
             }            
         }else
         {
-            NSLog(@"222222");
+            NSLog(@"dddddd");
             CLLocationCoordinate2D center;
             center.latitude = userLocation.location.coordinate.latitude;
             center.longitude = userLocation.location.coordinate.longitude;
@@ -503,6 +513,7 @@
     _mapView.delegate = self;
 	_mapView.exclusiveTouch = YES;
 	_mapView.showsUserLocation = YES;
+    _mapView.userInteractionEnabled = YES;
     [_mapView setZoomEnabled: YES];
     [_mapView setScrollEnabled:YES];
     

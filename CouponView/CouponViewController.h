@@ -11,7 +11,8 @@
 #import "HTTPRequest.h"
 #import "ASIHTTPRequest.h"
 @interface CouponViewController : UIViewController
-<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate,UITextViewDelegate,ASIHTTPRequestDelegate,UIAlertViewDelegate>
+<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate,
+ASIHTTPRequestDelegate,UIAlertViewDelegate>
 {
    // UIImageView* leftImage;
     UIPageControl * couponPage;
@@ -25,7 +26,7 @@
     NSTimer *couponTimer;
     MBProgressHUD *HUD;
     
-    UITextView * giftNumberText;
+    UITextField * giftNumberText;
     UIView * giftFrientView;
    
 }

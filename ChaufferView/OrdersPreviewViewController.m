@@ -44,7 +44,7 @@
 }
 -(void)submitOrders:(id)sender
 {
-    UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+    UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"确认提交订单" 
                                                    message:nil                                                 
                                                   delegate:self 
                                          cancelButtonTitle:@"取消" 
@@ -300,7 +300,8 @@
     }
     [couString release];
     
-    CGSize size = [self.couponLable.text sizeWithFont:[UIFont systemFontOfSize:13.0] constrainedToSize:CGSizeMake(272, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    CGSize size = [self.couponLable.text sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(272, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    self.couponLable.frame = CGRectMake(self.couponLable.frame.origin.x, self.couponLable.frame.origin.y, self.couponLable.frame.size.width, size.height);
    
     self.couponView.frame = CGRectMake(self.couponView.frame.origin.x, self.couponView.frame.origin.y, self.couponView.frame.size.width, size.height+20.0f);
     self.couponView.backgroundColor=[UIColor whiteColor];

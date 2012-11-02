@@ -40,7 +40,7 @@
 }
 -(void)submitOrders:(id)sender
 {
-    UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+    UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"确认提交订单" 
                                                    message:nil                                                 
                                                   delegate:self 
                                          cancelButtonTitle:@"取消" 

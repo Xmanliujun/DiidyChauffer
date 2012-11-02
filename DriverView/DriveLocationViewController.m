@@ -264,6 +264,7 @@
     _mapView.delegate = self;
     //_mapView.exclusiveTouch = YES;
 	_mapView.showsUserLocation = YES;
+    _mapView.userInteractionEnabled = YES;
    // [_mapView setZoomEnabled: YES];
     [_mapView setScrollEnabled:YES];
     [self.view addSubview:_mapView];

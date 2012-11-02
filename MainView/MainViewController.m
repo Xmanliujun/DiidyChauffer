@@ -151,22 +151,24 @@
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
-//    if (result==0) {
-//        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送取消" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-//        [alert show];
-//        [alert release];
-//    }else if (result==1)
-//    {
-//        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-//        [alert show];
-//        [alert release];
-//    
-//    }else if (result==2){
-//    
-//        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送失败" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-//        [alert show];
-//        [alert release];
-//   }
+    if (result==0) {
+        
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送取消" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+        
+    }else if (result==1)
+    {
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+    
+    }else if (result==2){
+    
+        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送失败" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
+        [alert show];
+        [alert release];
+   }
     [self dismissModalViewControllerAnimated:NO];
 }
 

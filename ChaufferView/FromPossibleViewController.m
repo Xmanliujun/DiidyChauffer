@@ -187,7 +187,8 @@
 {
     [super viewDidLoad];
 	
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    //self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.hidesBackButton = YES;
     
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
@@ -213,7 +214,7 @@
     CGRect rect;
     if ([self.possibleCityArray count]*44.0<416.0) {
         
-        rect = CGRectMake(0.0, 0.0, 320.0, [self.possibleCityArray count]*44.0+44);
+        rect = CGRectMake(0.0, 0.0, 320.0, [self.possibleCityArray count]*44.0);
         
     }else {
         

@@ -161,6 +161,7 @@
 
 #pragma Message Sender
 - (void)displaySMSComposerSheet {
+    
     MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
     picker.messageComposeDelegate = self;
     
@@ -183,10 +184,14 @@
     [self dismissModalViewControllerAnimated:YES];
     
     if (result == MessageComposeResultCancelled)
-        NSLog(@"Message cancelled");
-        else if (result == MessageComposeResultSent)
+        
+            NSLog(@"Message cancelled");
+    
+    else if (result == MessageComposeResultSent)
+        
             NSLog(@"Message sent");
-            else 
+    
+    else 
             NSLog(@"Message failed") ; 
 }
 #pragma DownLoad Parson
@@ -208,13 +213,15 @@
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     
     if([returenNews isEqualToString:@"s"]){
+        
         NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:@"成功",@"status",nil];
         
         [[NSNotificationCenter defaultCenter] postNotificationName:@"ChangeTheme" object:self userInfo:dict];
 
-      [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popViewControllerAnimated:YES];
 
     }else {
+        
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送失败，请重试" delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil];
         [alert show];
         [alert release];

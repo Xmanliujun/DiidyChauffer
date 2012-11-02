@@ -10,15 +10,18 @@
 
 @implementation ManageTableViewCell
 @synthesize departureLable,startTimeLable,orderNumberLable,statusLable;
+
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {
     self = [super initWithStyle:style reuseIdentifier:reuseIdentifier];
     if (self) {
+        
         [self setSelectionStyle:UITableViewCellEditingStyleNone];
         
          NSArray* orderArray = [NSArray arrayWithObjects:@"订单编号 :",@"出发时间 :",@"出发地 :", nil];
          
         for(int i = 0; i<3;i++){
+            
             UILabel * firstOrderLable = [[UILabel alloc] initWithFrame:CGRectMake(15.0, 5.0+30.0*i, 60.0, 30)];
             firstOrderLable.backgroundColor = [UIColor clearColor];
             firstOrderLable.text = [orderArray objectAtIndex:i];
@@ -26,6 +29,7 @@
             firstOrderLable.font = [UIFont fontWithName:@"Arial" size:13.0];
             [self.contentView addSubview:firstOrderLable];
             [firstOrderLable release];
+            
         }
         orderNumberLable = [[UILabel alloc] init];
         orderNumberLable.frame = CGRectMake(75, 5, 140, 30);
