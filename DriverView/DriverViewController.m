@@ -75,9 +75,10 @@
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
-        HUD = nil;
+         HUD = nil;
     }
     
 
@@ -99,6 +100,7 @@
         
         NSString* mobile =[jsonParserDict objectForKey:@"mobile"];
         NSString*leader = [jsonParserDict objectForKey:@"leader"];
+      
         if(![status isEqualToString:@""])
         {
             driverStatus = YES;
@@ -136,12 +138,19 @@
             NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
                 
             NSString* currentStatus = [diidyDict objectForKey:@"status"];
+            
             if([currentStatus floatValue]>=1.0&&[currentStatus floatValue]<=4.0){
+                
                 status = @"已受理";
+                
             }else if ([currentStatus floatValue]==5.0) {
+                
                 status = @"完成";
+                
             }else {
+                
                 status = @"已取消";
+                
         }
 
     }
@@ -149,8 +158,15 @@
     
         [self getDriverStatus];
         
-        
     }else {
+        
+        if (HUD){
+            
+            [HUD removeFromSuperview];
+            [HUD release];
+            HUD = nil;
+        }
+        
         driverStatus = NO;
         centerLable.text = @"您目前尚未预约代驾司机";
     }
@@ -177,8 +193,11 @@
             [self parseStringJson:requestString];
             
         }else if(nOrder ==101) {
+            
             [self parseStatusStringJson:requestString];
+            
         }else {
+            
             [self parseStatusStringJson:requestString];
             
         }
@@ -280,16 +299,24 @@
     topCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:topCenterLable];
     [topCenterLable release];
+  
+   
     
     driveMap =[[DriveLocationViewController alloc] init];
     driveMap.view.frame = CGRectMake(0.0f, 5.0f, 320.0f, 360.0f);
     [self.view addSubview:driveMap.view];
     
+    
+    UIImageView * backgroundImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"driveBackGround.png"]];
+    backgroundImageView.frame = CGRectMake(0.0, 365.0, 320.0, 51.0);
+    [self.view addSubview:backgroundImageView];
+    
     UIButton * seeDriversButton = [UIButton buttonWithType:UIButtonTypeCustom];
     seeDriversButton.titleLabel.font =[UIFont fontWithName:@"Arial" size:14.0f];
     seeDriversButton.frame=CGRectMake(100.0f,375.f, 120.0f, 32.0f);
     [seeDriversButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-    [seeDriversButton  setBackgroundImage:[UIImage imageNamed:@"u56_normal.png.png"] forState:UIControlStateNormal];
+    [seeDriversButton  setBackgroundImage:[UIImage imageNamed:@"orderDetail1.png"] forState:UIControlStateNormal];
+    [seeDriversButton  setBackgroundImage:[UIImage imageNamed:@"orderDetail2.png"] forState:UIControlStateSelected];
     [seeDriversButton setTitle:@"看司机" forState:UIControlStateNormal];
     [seeDriversButton  addTarget:self action:@selector(seeDrivers:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:seeDriversButton];
@@ -313,6 +340,8 @@
     [promptImageView addSubview:centerLable];
     [self.view addSubview:promptImageView];
     [promptImageView release];
+    
+   
     
     [self getExecutionOrderStatus];
 }

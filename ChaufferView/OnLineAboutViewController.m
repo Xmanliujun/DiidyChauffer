@@ -147,7 +147,8 @@
     [self.view addSubview:startButton];
     
 }
--(BOOL) respondsToSelector:(SEL)aSelector {  
+-(BOOL) respondsToSelector:(SEL)aSelector {
+    
     printf("SELECTOR: %s\n", [NSStringFromSelector(aSelector) UTF8String]);  
     return [super respondsToSelector:aSelector];  
 }  

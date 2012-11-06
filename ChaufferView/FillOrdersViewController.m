@@ -12,6 +12,7 @@
 #import "OrdersPreviewViewController.h"
 #import "OrdersPreviewTwoViewController.h"
 #import "LandingViewController.h"
+#import "EditDestinationViewController.h"
 #import "CONST.h"
 #import "AppDelegate.h"
 #import "SBJson.h"
@@ -25,10 +26,12 @@
 
 @implementation FillOrdersViewController
 @synthesize departureLable,numberPeopleLable,newsImangeView,backGroundView;
-@synthesize destinationField,nameField,telNumberField;
+@synthesize nameField,telNumberField;
 @synthesize couponView,departureMinuteLable,couponLable,landed;
 @synthesize couponaArray;
 @synthesize bookInforView,couponInforView,contactInforView;
+@synthesize destinationLable;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -44,6 +47,7 @@
     {
         departure = [departureString retain];
         location = centers;
+        NSLog(@"lay   %f",centers.latitude);
     }
     
     return self;
@@ -283,15 +287,21 @@
 #pragma mark-Button
 -(void)selectOK:(id)sender
 {
-    [UIView beginAnimations:@"animation" context:nil];
-    [UIView setAnimationDuration:0.5];
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+  
     datePicker.alpha = 0;
     pickImageView.alpha = 0;
     peoplePickView.alpha = 0;
-    [UIView commitAnimations];
 }
+-(void)selectCancel:(id)sender
+{
+    
+    
+    datePicker.alpha = 0;
+    pickImageView.alpha = 0;
+    peoplePickView.alpha = 0;
+   
 
+}
 -(void)returnMainView:(id)sender
 {
     [self dismissModalViewControllerAnimated:NO];
@@ -306,54 +316,70 @@
     
     double diff = date2 -date1;
     
-    if (diff<60*30-20) {
+    if ([self.departureLable.text isEqualToString:@"未读取到位置信息，请手动编辑修改!"]) {
         
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
-                                                       message:@"出发时间需要在当前时间30分以后"
-                                                      delegate:nil 
-                                             cancelButtonTitle:@"取消" 
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"请填写出发地"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"取消"
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
         
-    }else {
-        if (!self.landed) {
-            
-            LandingViewController * landedController = [[LandingViewController alloc] init];
-            UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:landedController];
-            NSLog(@"%@",self.departureMinuteLable.text);
-            landedController.couponArray = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
-            [self presentModalViewController:landNa animated:NO];
-            [landedController release];
-            [landNa release];
-            
-        }else {
-            
-            if ([self.couponaArray count]==0) {
-                
-                 NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
-                
-                OrdersPreviewTwoViewController * orderPre = [[OrdersPreviewTwoViewController alloc] init];
-                orderPre.orderArray = ayy;
-                [self.navigationController pushViewController:orderPre animated:YES];
-                [orderPre release];
-                
-                
-            }else{
-            
-                OrdersPreviewViewController * orderController = [[OrdersPreviewViewController alloc] init];
-                NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
-                orderController.orderArray = ayy;
-                orderController.useCouponArray = self.couponaArray;
-                orderController.selectArray = dataArry;
-                [self.navigationController pushViewController:orderController animated:YES];
-                [orderController release];
-            }
-        }
-
-    }
+    }else{
     
+        if (diff<60*30-20) {
         
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
+                                                       message:@"出发时间需要在当前时间30分以后"
+                                                      delegate:nil 
+                                             cancelButtonTitle:@"取消" 
+                                             otherButtonTitles:nil ];
+            [alert show];
+            [alert release];
+        
+        }else {
+        
+        
+            if (!self.landed) {
+            
+                LandingViewController * landedController = [[LandingViewController alloc] init];
+                UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:landedController];
+        
+                landedController.couponArray = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationLable.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+            
+                [self presentModalViewController:landNa animated:NO];
+                [landedController release];
+                [landNa release];
+            
+            }else {
+            
+                if ([self.couponaArray count]==0) {
+                
+                    NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationLable.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+                
+                    OrdersPreviewTwoViewController * orderPre = [[OrdersPreviewTwoViewController alloc] init];
+                    orderPre.orderArray = ayy;
+                    orderPre.markPre = YES;
+                    [self.navigationController pushViewController:orderPre animated:YES];
+                    [orderPre release];
+                
+                
+                }else{
+            
+                    OrdersPreviewViewController * orderController = [[OrdersPreviewViewController alloc] init];
+                    NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationLable.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+                    orderController.orderArray = ayy;
+                    orderController.useCouponArray = self.couponaArray;
+                    orderController.selectArray = dataArry;
+                    [self.navigationController pushViewController:orderController animated:YES];
+                    [orderController release];
+                }
+            }
+
+        }
+    
+    }
        
 }
 -(IBAction)selectDeparture:(id)sender{
@@ -368,31 +394,36 @@
 }
 -(IBAction)selectDepartureTime:(id)sender{
    
-    [UIView beginAnimations:@"animation" context:nil];
-    [UIView setAnimationDuration:0.5];
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+   
     datePicker.alpha = 1;
     pickImageView.alpha = 1;
     peoplePickView.alpha = 0;
-    [UIView commitAnimations];
+   
+
+}
+-(IBAction)selectDestination:(id)sender
+{
+    EditDestinationViewController*destion = [[EditDestinationViewController alloc] init];
+    destion.destinationNSSString = self.destinationLable.text;
+    destion.DestionDelegate = self;
+    [self.navigationController pushViewController:destion animated:YES];
 
 }
 -(IBAction)selectNumberPeople:(id)sender{
     
-    [UIView beginAnimations:@"animation" context:nil];
-    [UIView setAnimationDuration:0.5];
-    [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
+  
     peoplePickView.alpha = 1;
     pickImageView.alpha = 1;
     datePicker.alpha = 0;
-    [UIView commitAnimations];
+    
 }
 
 -(IBAction)useCoupon:(id)sender
 {
-    NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationField.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
-    SelectCouponViewController * selectCoupon = [[SelectCouponViewController alloc]init];
+    NSArray* ayy   = [NSArray arrayWithObjects:self.departureLable.text,self.departureMinuteLable.text,self.numberPeopleLable.text,self.destinationLable.text,self.nameField.text,self.telNumberField.text,self.couponLable.text,nil];
+    SelectCouponViewController * selectCoupon = [[SelectCouponViewController alloc] init];
     selectCoupon.selectCouponAray = dataArry;
+    selectCoupon.indexAray = self.couponaArray;
     selectCoupon.orderPreArray= ayy;
     selectCoupon.delegate = self;
     selectCoupon.rowNumber = total;
@@ -405,14 +436,26 @@
 {
     self.departureLable.text = placeDeparture;
 }
+-(void)selectThePlaceOfDestion:(NSString*)placeDestion
+{
+   
+    self.destinationLable.text= placeDestion;
 
+}
 -(void)selectedCoupon:(NSArray*)couponArray{
     
     self.couponaArray = couponArray;
-   //  NSMutableString * couString = [[[NSMutableString alloc]initWithCapacity:0]autorelease ];
+       if ([couponArray count]==0) {
+        
+        self.couponLable.text = @"您没有使用优惠劵";
+
+    }else{
+        
+        self.couponLable.text = [NSString stringWithFormat:@"您一共选择了%d张优惠劵",[couponArray count]];
+
+    }
     
-    self.couponLable.text = [NSString stringWithFormat:@"您一共选择了%d张优惠劵",[couponArray count]];
-    
+        
 //    if ([self.couponaArray count]==0) {
 //        self.couponLable.text = @"";
 //
@@ -515,30 +558,32 @@
     [self.couponView sendSubviewToBack:self.couponInforView];
     
 }
+-(void)returnEachView:(NSNotification *)notify {
+    
+    self.landed = YES;
+    [self downLoadTheCouponData];
+    
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(returnEachView:) name:@"LAND" object:nil];
+    
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-
-    self.destinationField.delegate = self;
     self.nameField.delegate = self;
     self.telNumberField.delegate = self;
     self.couponView.hidden = YES;
     self.departureLable.text = departure;
     self.departureLable.numberOfLines = 0;
-    
+    self.destinationLable.numberOfLines=0;
     [self creatView];
-    if (ShareApp.mobilNumber.length!=0) {
-        
-        self.telNumberField.text = ShareApp.mobilNumber;
-    }
     
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
     
     [self setTheNavigationBar];
-
-    [self downLoadTheCouponData];
-       
+   [self downLoadTheCouponData];
+  
     timeArray = [[NSArray alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"ProvincesAndCities.plist" ofType:nil]];
     minuteArray   = [[timeArray objectAtIndex:0] objectForKey:@"Cities"];
     peopleArray = [[timeArray objectAtIndex:1]objectForKey:@"Cities"];
@@ -550,7 +595,7 @@
     
     NSDateComponents *offsetComponents = [[NSDateComponents alloc] init]; 
     // [offsetComponents setHour:1]; 
-    [offsetComponents setMinute:30]; 
+    [offsetComponents setMinute:35];
     
     NSDate *endOfWorldWar3 = [gregorian dateByAddingComponents:offsetComponents toDate:today options:0];
     _date = [endOfWorldWar3  retain];
@@ -597,9 +642,20 @@
     [maxDate release];
     
     UIButton *rigthPickbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthPickbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
-    rigthPickbutton.frame=CGRectMake(280.0,0.0, 42.0, 42.0);
+    [rigthPickbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    rigthPickbutton.frame=CGRectMake(260.0,7.0, 50.0, 30.0);
+    rigthPickbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthPickbutton setTitle:@"完成" forState:UIControlStateNormal];
     [rigthPickbutton addTarget:self action:@selector(selectOK:) forControlEvents:UIControlEventTouchUpInside];
+
+    
+    UIButton *cancelbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cancelbutton setBackgroundImage:[UIImage imageNamed:@"button-3.png"] forState:UIControlStateNormal];
+    cancelbutton.frame=CGRectMake(8.0,7.0, 50.0, 30.0);
+    cancelbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [cancelbutton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelbutton addTarget:self action:@selector(selectCancel:) forControlEvents:UIControlEventTouchUpInside];
+    
     
     UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];
     travelTimeLableq.text = @"选择出发时间";
@@ -613,6 +669,7 @@
     pickImageView.alpha = 0;
     pickImageView.userInteractionEnabled = YES;
     [pickImageView addSubview:travelTimeLableq];
+    [pickImageView addSubview:cancelbutton];
     [pickImageView addSubview:rigthPickbutton];
     [self.view addSubview:pickImageView];
     [travelTimeLableq release];
@@ -628,6 +685,12 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
+    
+    if (ShareApp.mobilNumber.length!=0&&(self.telNumberField.text==NULL||[self.telNumberField.text length]==0)) {
+        
+        self.telNumberField.text = ShareApp.mobilNumber;
+    }
+
     [super viewWillDisappear:animated];
     topImageView.hidden = NO;
     returnButton.hidden =NO;
@@ -656,7 +719,7 @@
     [couponLable release];
     [departure release];
     [departureLable release];
-    [destinationField release];
+    [destinationLable release];
     [dataArry release];
     [departureMinuteLable release];
     [numberPeopleLable release];

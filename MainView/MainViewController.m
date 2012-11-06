@@ -151,6 +151,8 @@
 
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
+    
+    NSLog(@"%d",result);
     if (result==0) {
         
         UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送取消" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
@@ -181,6 +183,7 @@
         if (messageClass != nil) {
             // Check whether the current device is configured for sending SMS messages
             if ([messageClass canSendText]) {
+                
                 [self displaySMSComposerSheet];
             }
             else {
@@ -457,9 +460,10 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     server = YES;
     price = YES;
-   
+    
     UIImageView *mainImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_bg.png"]];
     mainImageView.frame = self.view.bounds;
     [self.view addSubview:mainImageView];

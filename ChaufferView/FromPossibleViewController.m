@@ -35,8 +35,8 @@
     NSString * cityName =bmn.name;
     NSString* addressd = bmn.address;
     
-    CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
-    CGSize size2 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    CGSize size2 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(260, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
     if (size.height>22&&size2.height>22) {
         
         return size.height+size2.height;
@@ -63,8 +63,10 @@
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath{
+   
     NSString * cellID = @"cellID";
     UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+   
     if(cell ==nil)
     {
         cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:cellID] autorelease];
@@ -72,11 +74,11 @@
         
         UIImageView * startImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"start.png"]];
         startImageView.tag = 80;
-        startImageView.frame = CGRectMake(10, 0, 30, 44);
+        startImageView.frame = CGRectMake(10.0, 0.0, 30.0, 44.0);
         [cell.contentView addSubview:startImageView];
         [startImageView release];
         
-        UILabel * nameLable = [[UILabel alloc] initWithFrame:CGRectMake(50, 0, 270,22 )];
+        UILabel * nameLable = [[UILabel alloc] initWithFrame:CGRectMake(50.0, 0.0, 260.0,22.0)];
         nameLable.numberOfLines = 0;
        // nameLable.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
         nameLable.backgroundColor =[UIColor clearColor];
@@ -86,12 +88,12 @@
         [cell.contentView addSubview:nameLable];
         [nameLable release];
         
-        UILabel * addressLable = [[UILabel alloc] initWithFrame:CGRectMake(50,22, 270,22)];
+        UILabel * addressLable = [[UILabel alloc] initWithFrame:CGRectMake(50.0,22.0, 245.0,22.0)];
         addressLable.numberOfLines = 0;
        // addressLable.backgroundColor =  [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
         addressLable.backgroundColor = [UIColor clearColor];
         addressLable.font = [UIFont fontWithName:@"Arial" size:12];
-        addressLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
+        addressLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
         addressLable.tag = 82;
         [cell.contentView addSubview:addressLable];
         [addressLable release];
@@ -99,12 +101,13 @@
         cell.contentView.backgroundColor = [UIColor whiteColor];
     }
     
+    cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
     NSString * cityName =bmn.name;
     NSString* addressd = bmn.address;
     
-     CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
-    CGSize size1 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(245, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    CGSize size1 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(260, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
     
     UILabel * nameLable = (UILabel *)[cell.contentView viewWithTag:81];
    
@@ -117,58 +120,45 @@
          nameLable.frame = CGRectMake(50,0, 270,22);
         
     }
-     nameLable.text = cityName;
+         nameLable.text = cityName;
     
     
     UILabel * addressLable = (UILabel*)[cell.contentView viewWithTag:82];
     
     if (size.height <22) {
         
-        addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 270,22);
+        addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 245,22);
         
     }else {
         
-         addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 270,size.height);
+         addressLable.frame = CGRectMake(50,nameLable.frame.size.height, 245,size.height);
         
     }
    
-    addressLable.text = addressd;
+        addressLable.text = addressd;
   
-    return cell;
+        return cell;
 }
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     
-   
     BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
     CLLocationCoordinate2D ptCenter = bmn.pt;
     NSString * cityName =bmn.name;
   
-
     TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
     ShareApp.pageManageMent = @"chauffer";
     
     UINavigationController * na = [[[UINavigationController alloc] initWithRootViewController:chau] autorelease];
-    // UITabBarItem * tabBar = [[UITabBarItem alloc]init];
-    //  UITabBarItem * tabBar = [[UITabBarItem alloc]initWithTitle:@"首页" image:[UIImage imageNamed:@"navigationbar_home.png"] tag:1];
-    
-    //tabBar.title = @"retur";
-    // tabBar.badgeValue = @"News";
-    // na.tabBarItem = tabBar;
-    
     OnLineAboutViewController * online = [[[OnLineAboutViewController alloc] init] autorelease];
-    // online.title = @"在线约";
     online.possible = NO;
     online.possibleLocation = ptCenter;
     online.cityName = cityName;
     UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
     
     MathViewController *math = [[[MathViewController alloc] init] autorelease];
-    // math.title = @"算算看";
     UINavigationController * mathNa = [[[UINavigationController alloc] initWithRootViewController:math] autorelease];
-    // mathNa.tabBarController.tabBar.tintColor = [UIColor redColor];
-    
-    
+        
     NSArray *viewControllerArray = [[[NSArray alloc] initWithObjects:na,onlineNa, mathNa, nil] autorelease];
     
     custom_tabbar * tabController  = [[custom_tabbar alloc] init];
@@ -224,8 +214,9 @@
     
     UITableView * possibleTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
     possibleTableView.separatorColor =  [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
-   // possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+  // possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     possibleTableView.backgroundColor = [UIColor clearColor];
+   
     if ([self.possibleCityArray count]*44.0<416.0) {
    
         possibleTableView.scrollEnabled = NO;
@@ -237,8 +228,6 @@
         
     }
 
-    
-    
     possibleTableView.delegate = self;
     possibleTableView.dataSource = self;
     [self.view addSubview: possibleTableView];

@@ -26,16 +26,20 @@
 
 -(void)makeACall:(id)sender
 {
-    UIActionSheet *menu = [[[UIActionSheet alloc]
-                           initWithTitle:nil
-                           delegate:self
-                           cancelButtonTitle:@"取消"
-                           destructiveButtonTitle:@"400 696 0666"
-                           otherButtonTitles:nil] autorelease];
-    [menu showInView:[UIApplication sharedApplication].keyWindow];
-
-
-
+//    UIActionSheet *menu = [[[UIActionSheet alloc]
+//                           initWithTitle:nil
+//                           delegate:self
+//                           cancelButtonTitle:@"取消"
+//                           destructiveButtonTitle:@"400 696 0666"
+//                           otherButtonTitles:nil] autorelease];
+//    [menu showInView:[UIApplication sharedApplication].keyWindow];
+    
+    UIWebView*callWebview =[[UIWebView alloc] init];
+    NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
+    [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
+    //记得添加到view上
+    [self.view addSubview:callWebview];
+    [callWebview release];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
@@ -44,13 +48,7 @@
     
     if(buttonIndex==0){
         
-        UIWebView*callWebview =[[UIWebView alloc] init];
-        NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
-        [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
-        //记得添加到view上
-        [self.view addSubview:callWebview]; 
-        [callWebview release];
-       // [actionSheet release];
+             // [actionSheet release];
     }else {
        // [actionSheet release];
     }
@@ -81,7 +79,7 @@
     centerLable.font = [UIFont fontWithName:@"Arial" size:17];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text = @"电 话 约";
     self.navigationItem.titleView = centerLable;
     [centerLable release]; 
@@ -98,12 +96,27 @@
     UIBarButtonItem* nextItem = [[UIBarButtonItem alloc] initWithCustomView:rigthBarbutton];
     self.navigationItem.rightBarButtonItem = nextItem;
     [nextItem release];
+//    
+//    UILabel *cententLable = [[UILabel alloc] initWithFrame:CGRectMake(20, 160, 280, 60)];
+//    cententLable.numberOfLines = 0;
+//    cententLable.font = [UIFont fontWithName:@"Arial" size:15];
+//    cententLable.textColor = [UIColor blackColor];
+//    cententLable.backgroundColor = [UIColor clearColor];
+//    cententLable.textAlignment = NSTextAlignmentLeft;
+//    cententLable.text = @"欢迎拨打400电话预约嘀嘀代驾,嘀嘀会为您选择最合适的司机";
+//    [self.view addSubview:cententLable];
+//    [centerLable release];
+//
     
-    UIImage * telImage = [UIImage imageNamed:@"call_btn_d.png"];
+    UIImage * telImage = [UIImage imageNamed:@"orderDetail2.png"];
+    UIImage*telImage2 = [UIImage imageNamed:@"orderDetail1.png"];
+   
     UIButton * telButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-    telButton.frame=CGRectMake(80.0, 270.0, 160.0, 40.0);
+    telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:16.0f];
+    telButton.frame=CGRectMake(87.0, 270.0, 146.0, 40.0);
+    [telButton setTitle:@"4006 960 666" forState:UIControlStateNormal];
     [telButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
+    [telButton setBackgroundImage:telImage2 forState:UIControlStateSelected];
     [telButton setBackgroundImage:telImage forState:UIControlStateNormal];
     [telButton addTarget:self action:@selector(makeACall:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:telButton];

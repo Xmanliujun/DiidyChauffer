@@ -283,7 +283,7 @@
         for (int i=0; i<[useCouponArray count]-1; i++) {
             
             NSIndexPath* diidyMbdelPath = [useCouponArray objectAtIndex:i];
-            DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section];
+            DIIdyModel *diidyModel = [selectArray objectAtIndex:diidyMbdelPath.section-1];
              [couString appendFormat:@"%@,",diidyModel.name];
             
         }
@@ -293,7 +293,7 @@
     if ([useCouponArray count]>=1) {
         
         NSIndexPath* lastdiidyPath = [useCouponArray objectAtIndex:[useCouponArray count]-1];
-        DIIdyModel * lastDiidy = [selectArray objectAtIndex:lastdiidyPath.section];
+        DIIdyModel * lastDiidy = [selectArray objectAtIndex:lastdiidyPath.section-1];
         [couString appendFormat:@"%@",lastDiidy.name];
         self.couponLable.text = couString;
         
@@ -334,6 +334,13 @@
     self.contactLable.text = [self.orderArray objectAtIndex:4];//联系人
     self.mobilNumberLable.text = [self.orderArray objectAtIndex:5];//手机号码
    
+    
+    if (self.mobilNumberLable.text==NULL||[self.mobilNumberLable.text length]==0) {
+        
+        self.mobilNumberLable.text = ShareApp.mobilNumber;
+        
+    }
+
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"orderPre.png"] forState:UIControlStateNormal];
     [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];

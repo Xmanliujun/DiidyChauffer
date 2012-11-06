@@ -11,9 +11,9 @@
 #import "AppDelegate.h"
 #import "CONST.h"
 #import "SBJson.h"
-#import "Landing_DownLoadView.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import <QuartzCore/QuartzCore.h>
 @interface RegisteredViewController ()
 
 @end
@@ -30,23 +30,38 @@
 }
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
+    if (alertView.tag==31) {
+        
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        
+    }else if (alertView.tag==33){
     
-    veriFicationImageView.hidden = YES;
-    SettingViewController * set = [[SettingViewController alloc] initWithRegisteredOrForgot:registerIsTrue];
-    set.mobilNumber = inputNumberText.text;
-    if([registerIsTrue isEqualToString:@"TRUE"]){
-        set.optype = @"register";
-    }else {
-        set.optype = @"password";
+        [self.navigationController popToRootViewControllerAnimated:YES];
+        
+    }else{
+        
+        veriFicationImageView.hidden = YES;
+        SettingViewController * set = [[SettingViewController alloc] initWithRegisteredOrForgot:registerIsTrue];
+        set.mobilNumber = inputNumberText.text;
+        if([registerIsTrue isEqualToString:@"TRUE"]){
+            
+            set.optype = @"register";
+            
+        }else {
+            
+            set.optype = @"password";
+            
+        }
+        [self.navigationController pushViewController:set animated:YES];
+            [set release];
     }
-    [self.navigationController pushViewController:set animated:YES];
-    [set release];
     
 }
 #pragma mark-HTTP
 -(void)parseStringJson:(NSString *)str
 {
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
@@ -64,6 +79,7 @@
                                                          delegate:self 
                                                 cancelButtonTitle:@"确定" 
                                                 otherButtonTitles:nil];
+           alert.tag = 30;
            [alert show];
            [alert release];
    
@@ -81,9 +97,10 @@
 
            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                           message:@"您已经注册账号" 
-                                                         delegate:nil 
+                                                         delegate:self
                                                 cancelButtonTitle:@"确定" 
                                                 otherButtonTitles:nil];
+           alert.tag = 31;
            [alert show];
            [alert release];
 
@@ -96,6 +113,7 @@
                                                          delegate:self 
                                                 cancelButtonTitle:@"确定" 
                                                 otherButtonTitles:nil];
+           alert.tag =32;
            [alert show];
            [alert release];
            
@@ -112,9 +130,10 @@
            
            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                           message: @"请您先注册账号" 
-                                                         delegate:nil
+                                                         delegate:self
                                                 cancelButtonTitle:@"确定" 
                                                 otherButtonTitles:nil];
+           alert.tag=33;
            [alert show];
            [alert release];
         }
@@ -191,10 +210,13 @@
 -(void)nextStep:(id)sender
 {
     ShareApp.mobilNumber = inputNumberText.text;
+  
     [inputNumberText resignFirstResponder];
     
     Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    
     if ([r currentReachabilityStatus]==0) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
                                                       delegate:nil
@@ -202,9 +224,10 @@
                                              otherButtonTitles:nil];
         [alert show];
         [alert release];
+        
     }else{
 
-        if (inputNumberText.text !=NULL) {
+        if (inputNumberText.text !=NULL &&[inputNumberText.text length]!=0) {
         
             if([registerIsTrue isEqualToString:@"TRUE"]){
             
@@ -329,44 +352,40 @@
     [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
     
-    UILabel * telNumberLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 60.0f, 40.0f)];
-    telNumberLable.text = @"手机号码";
-    telNumberLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    UILabel * telNumberLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 80.0f, 51.0f)];
+    telNumberLable.text = @"手机号码 :";
+    telNumberLable.font = [UIFont fontWithName:@"Arial" size:16.0f];
     telNumberLable.backgroundColor = [UIColor clearColor];
     telNumberLable.textAlignment = NSTextAlignmentCenter;
     
-    UIImage* telNumberImage = [UIImage imageNamed:@"u30_normal.png"];
-    UIImageView * telNumberImageView = [[UIImageView alloc] initWithImage:telNumberImage];
-    telNumberImageView.frame = CGRectMake(10.0f, 10.0f, telNumberImage.size.width, telNumberImage.size.height);
-    [telNumberImageView addSubview:telNumberLable];
-    [self.view addSubview:telNumberImageView];
-    [telNumberLable release];
-    [telNumberImageView release];
-    
-    UIImage* lineImage = [UIImage imageNamed:@"u54_line.png"];
-    UIImageView * lineImageView = [[UIImageView alloc] initWithImage:lineImage];
-    lineImageView.frame = CGRectMake(112.0f, 13.0f, lineImage.size.width, lineImage.size.height);
-    [self.view addSubview:lineImageView];
-    [lineImageView release];
-    
-    inputNumberText = [[UITextField alloc] initWithFrame:CGRectMake(5.0f, 0.0f, 160.0f,46.0f)];
+    inputNumberText = [[UITextField alloc] initWithFrame:CGRectMake(85.0f, 0.0f, 160.0f,51.0f)];
     inputNumberText.backgroundColor = [UIColor clearColor];
     inputNumberText.keyboardType = UIKeyboardTypePhonePad;
-    inputNumberText.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    inputNumberText.font = [UIFont fontWithName:@"Arial" size:16.0f];
     inputNumberText.borderStyle = UITextBorderStyleNone;
     inputNumberText.autocorrectionType = UITextAutocorrectionTypeYes;
     inputNumberText.placeholder = @"请输入注册手机号";
     inputNumberText.returnKeyType = UIReturnKeyDone;
     inputNumberText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
+    [inputNumberText becomeFirstResponder];
     
-    UIImage* enterNumberImage = [UIImage imageNamed:@"u28_normal.png"];
-    UIImageView * enterNumberImageView = [[UIImageView alloc] initWithImage:enterNumberImage];
-    enterNumberImageView.frame = CGRectMake(111.0f, 10.0f, enterNumberImage.size.width, enterNumberImage.size.height);
-    enterNumberImageView.userInteractionEnabled = YES;
-    [enterNumberImageView addSubview:inputNumberText];
-    [self.view addSubview:enterNumberImageView];
-    [enterNumberImageView release];
+    UIView* registView = [[UIView alloc] initWithFrame: CGRectMake(10.0f, 20.0f, 300.0f,51.0f)];
+    registView.backgroundColor = [UIColor whiteColor];
+    [[registView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[registView layer] setShadowRadius:5];
+    [[registView layer] setShadowOpacity:1];
+    [[registView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[registView layer] setCornerRadius:7];
+    [[registView layer] setBorderWidth:1];
+    [[registView layer] setBorderColor:[UIColor grayColor].CGColor];
+   
+    [registView addSubview:telNumberLable];
+    [registView addSubview:inputNumberText];
+    [self.view addSubview:registView];
     
+    [telNumberLable release];
+    [registView release];
+
     [self creatVeriFicationCodeView];
 }
 

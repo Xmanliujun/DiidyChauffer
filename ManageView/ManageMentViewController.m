@@ -197,8 +197,11 @@
 {
     NSArray * sqlitArray = [ShareApp.mDatabase readDataWithFMDB];
     
+    
     if (listOrderArray) {
+        
         [listOrderArray removeAllObjects];
+        
     }else
     {
         listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
@@ -208,8 +211,8 @@
     if (sqlitArray.count!=0) {
         
         sqlitBool = YES;
-        DIIdyModel*diiModel = [sqlitArray objectAtIndex:0];
-        
+        DIIdyModel*diiModel = [sqlitArray objectAtIndex:[sqlitArray count]-1];
+        NSLog(@"%@",diiModel.startTime);
         if (diiModel.startTime ==NULL||[diiModel.startTime length]==0) {
             
             baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
@@ -310,8 +313,8 @@
         
     }
     
-    for(int i=0 ;i<[jsonParser count]-a;i++){
-        
+    for(int i=[jsonParser count]-1-a;i>=0;i--){
+        NSLog(@"dddd");
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
         diidy.orderID = [diidyDict objectForKey:@"orderid"];

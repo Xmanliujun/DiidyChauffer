@@ -13,7 +13,6 @@
 		<array key="IBDocument.IntegratedClassDependencies">
 			<string>IBProxyObject</string>
 			<string>IBUIButton</string>
-			<string>IBUIImageView</string>
 			<string>IBUILabel</string>
 			<string>IBUISlider</string>
 			<string>IBUIView</string>
@@ -44,7 +43,7 @@
 						<string key="NSFrame">{{28, 26}, {70, 32}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="508251228"/>
+						<reference key="NSNextKeyView"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<bool key="IBUIOpaque">NO</bool>
 						<bool key="IBUIClipsSubviews">YES</bool>
@@ -274,25 +273,10 @@
 						<reference key="IBUIFontDescription" ref="195091448"/>
 						<reference key="IBUIFont" ref="402108778"/>
 					</object>
-					<object class="IBUIImageView" id="508251228">
-						<reference key="NSNextResponder" ref="191373211"/>
-						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{93, 24}, {123, 34}}</string>
-						<reference key="NSSuperview" ref="191373211"/>
-						<reference key="NSWindow"/>
-						<reference key="NSNextKeyView" ref="954876392"/>
-						<string key="NSReuseIdentifierKey">_NS:9</string>
-						<bool key="IBUIUserInteractionEnabled">NO</bool>
-						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
-						<object class="NSCustomResource" key="IBUIImage">
-							<string key="NSClassName">NSImage</string>
-							<string key="NSResourceName">u599_normal.png</string>
-						</object>
-					</object>
 					<object class="IBUIButton" id="954876392">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{224, 20}, {37, 38}}</string>
+						<string key="NSFrame">{{218, 23}, {37, 38}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="946792619"/>
@@ -515,10 +499,24 @@
 					<object class="IBUIView" id="769182840">
 						<reference key="NSNextResponder" ref="191373211"/>
 						<int key="NSvFlags">292</int>
-						<string key="NSFrame">{{7, 14}, {306, 203}}</string>
+						<string key="NSFrame">{{7, 20}, {306, 203}}</string>
 						<reference key="NSSuperview" ref="191373211"/>
 						<reference key="NSWindow"/>
 						<reference key="NSNextKeyView" ref="849965776"/>
+						<string key="NSReuseIdentifierKey">_NS:9</string>
+						<object class="NSColor" key="IBUIBackgroundColor">
+							<int key="NSColorSpace">3</int>
+							<bytes key="NSWhite">MQA</bytes>
+							<reference key="NSCustomColorSpace" ref="976294047"/>
+						</object>
+						<string key="targetRuntimeIdentifier">IBCocoaTouchFramework</string>
+					</object>
+					<object class="IBUIView" id="416736496">
+						<reference key="NSNextResponder" ref="191373211"/>
+						<int key="NSvFlags">292</int>
+						<string key="NSFrame">{{106, 26}, {100, 32}}</string>
+						<reference key="NSSuperview" ref="191373211"/>
+						<reference key="NSWindow"/>
 						<string key="NSReuseIdentifierKey">_NS:9</string>
 						<object class="NSColor" key="IBUIBackgroundColor">
 							<int key="NSColorSpace">3</int>
@@ -672,6 +670,14 @@
 					<int key="connectionID">63</int>
 				</object>
 				<object class="IBConnectionRecord">
+					<object class="IBCocoaTouchOutletConnection" key="connection">
+						<string key="label">timeInforView</string>
+						<reference key="source" ref="372490531"/>
+						<reference key="destination" ref="416736496"/>
+					</object>
+					<int key="connectionID">67</int>
+				</object>
+				<object class="IBConnectionRecord">
 					<object class="IBCocoaTouchEventConnection" key="connection">
 						<string key="label">updateValue:</string>
 						<reference key="source" ref="926934926"/>
@@ -763,8 +769,6 @@
 							<reference ref="510237434"/>
 							<reference ref="732277460"/>
 							<reference ref="849965776"/>
-							<reference ref="508251228"/>
-							<reference ref="954876392"/>
 							<reference ref="946792619"/>
 							<reference ref="309543959"/>
 							<reference ref="198742463"/>
@@ -776,8 +780,10 @@
 							<reference ref="498954208"/>
 							<reference ref="688016823"/>
 							<reference ref="926934926"/>
-							<reference ref="769182840"/>
 							<reference ref="967361592"/>
+							<reference ref="416736496"/>
+							<reference ref="954876392"/>
+							<reference ref="769182840"/>
 						</array>
 						<reference key="parent" ref="0"/>
 					</object>
@@ -848,11 +854,6 @@
 						<reference key="parent" ref="191373211"/>
 					</object>
 					<object class="IBObjectRecord">
-						<int key="objectID">34</int>
-						<reference key="object" ref="508251228"/>
-						<reference key="parent" ref="191373211"/>
-					</object>
-					<object class="IBObjectRecord">
 						<int key="objectID">35</int>
 						<reference key="object" ref="954876392"/>
 						<reference key="parent" ref="191373211"/>
@@ -901,6 +902,12 @@
 					<object class="IBObjectRecord">
 						<int key="objectID">62</int>
 						<reference key="object" ref="769182840"/>
+						<array class="NSMutableArray" key="children"/>
+						<reference key="parent" ref="191373211"/>
+					</object>
+					<object class="IBObjectRecord">
+						<int key="objectID">66</int>
+						<reference key="object" ref="416736496"/>
 						<reference key="parent" ref="191373211"/>
 					</object>
 				</array>
@@ -922,7 +929,6 @@
 				<string key="28.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="29.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="30.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
-				<string key="34.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="35.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="37.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<real value="0.0" key="37.IBUIButtonInspectorSelectedStateConfigurationMetadataKey"/>
@@ -934,12 +940,13 @@
 				<string key="59.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="62.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 				<string key="64.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
+				<string key="66.IBPluginDependency">com.apple.InterfaceBuilder.IBCocoaTouchPlugin</string>
 			</dictionary>
 			<dictionary class="NSMutableDictionary" key="unlocalizedProperties"/>
 			<nil key="activeLocalization"/>
 			<dictionary class="NSMutableDictionary" key="localizations"/>
 			<nil key="sourceID"/>
-			<int key="maxID">65</int>
+			<int key="maxID">67</int>
 		</object>
 		<object class="IBClassDescriber" key="IBDocument.Classes">
 			<array class="NSMutableArray" key="referencedPartialClassDescriptions">
@@ -983,6 +990,7 @@
 						<string key="informationView">UIView</string>
 						<string key="startLable">UILabel</string>
 						<string key="time">UILabel</string>
+						<string key="timeInforView">UIView</string>
 						<string key="totalCostLable">UILabel</string>
 						<string key="travelTimeLable">UILabel</string>
 						<string key="travelTimeSlider">UISlider</string>
@@ -1036,6 +1044,10 @@
 							<string key="name">time</string>
 							<string key="candidateClassName">UILabel</string>
 						</object>
+						<object class="IBToOneOutletInfo" key="timeInforView">
+							<string key="name">timeInforView</string>
+							<string key="candidateClassName">UIView</string>
+						</object>
 						<object class="IBToOneOutletInfo" key="totalCostLable">
 							<string key="name">totalCostLable</string>
 							<string key="candidateClassName">UILabel</string>
@@ -1068,7 +1080,6 @@
 			<string key="btmbtn12.png">{105, 58}</string>
 			<string key="btmbtn13.png">{98, 58}</string>
 			<string key="btmbtn14.png">{98, 57}</string>
-			<string key="u599_normal.png">{122, 35}</string>
 			<string key="u601_normal.png">{24, 24}</string>
 		</dictionary>
 		<string key="IBCocoaTouchPluginVersion">1929</string>

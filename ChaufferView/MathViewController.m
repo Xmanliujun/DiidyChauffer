@@ -18,6 +18,7 @@
 @synthesize totalCostLable;
 @synthesize travelTimeLable,time,cost;
 @synthesize travelTimeSlider,informationView,feeInforView;
+@synthesize timeInforView;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -479,6 +480,13 @@
     
 }
 
+-(void)selectCancel:(id)sender
+{
+    pickImageView.hidden = YES;
+    timePickerView.alpha = 0;
+
+
+}
 -(IBAction)selectDeparture:(UIButton *)sender
 {
    
@@ -761,6 +769,17 @@
     [[self.feeInforView layer] setBorderWidth:1];
     [[self.feeInforView layer] setBorderColor:[UIColor grayColor].CGColor];
     [self.view sendSubviewToBack: self.feeInforView];
+    
+    self.timeInforView.backgroundColor=[UIColor lightGrayColor];
+    [[self.timeInforView layer] setShadowOffset:CGSizeMake(1, 1)];
+    [[self.timeInforView layer] setShadowRadius:5];
+    [[self.timeInforView layer] setShadowOpacity:1];
+    [[self.timeInforView layer] setShadowColor:[UIColor whiteColor].CGColor];
+    [[self.timeInforView layer] setCornerRadius:7];
+    [[self.timeInforView layer] setBorderWidth:1];
+    [[self.timeInforView layer] setBorderColor:[UIColor grayColor].CGColor];
+   
+
 }
 
 
@@ -840,10 +859,19 @@
     self.time.text = [NSString stringWithFormat:@"出发时间:  %@点%@分",[timesArray objectAtIndex:0],[timesArray objectAtIndex:1]];
     
     UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"btn_020@2x.png"] forState:UIControlStateNormal];
-    rigthbutton.frame=CGRectMake(270.0,0.0, 42.0, 42.0);
-   // [rigthbutton setTitle:@"完成" forState:UIControlStateNormal];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    rigthbutton.frame=CGRectMake(260.0,7.0, 50.0, 30.0);
+    rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [rigthbutton setTitle:@"完成" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(selectOK:) forControlEvents:UIControlEventTouchUpInside];
+    
+    
+    UIButton *cancelbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [cancelbutton setBackgroundImage:[UIImage imageNamed:@"button-3.png"] forState:UIControlStateNormal];
+    cancelbutton.frame=CGRectMake(8.0,7.0, 50.0, 30.0);
+     cancelbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    [cancelbutton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelbutton addTarget:self action:@selector(selectCancel:) forControlEvents:UIControlEventTouchUpInside];
     
     UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];
     travelTimeLableq.text = @"选择出发时间";
@@ -858,6 +886,7 @@
     pickImageView.userInteractionEnabled = YES;
     [pickImageView addSubview:travelTimeLableq];
     [pickImageView addSubview:rigthbutton];
+    [pickImageView addSubview:cancelbutton];
     [self.view addSubview:pickImageView];
     [travelTimeLableq release];
     
@@ -880,6 +909,10 @@
 
 -(void)dealloc
 {
+    [feeInforView release];
+    [informationView release];
+    [timeInforView release];
+    
     [cost release];
     [endLable release];
     [dateformatter release];

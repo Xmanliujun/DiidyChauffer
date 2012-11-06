@@ -47,7 +47,9 @@
         }
         
         CGRect rect;
+        
         if ([addressinformationArray count]*44<246) {
+            
             rect = CGRectMake(0, 170, 320, [addressinformationArray count]*44);
             
         }else {
@@ -55,8 +57,8 @@
             rect = CGRectMake(0, 170, 320, 460-44-170);
             
         }
-        orderTableView.frame = rect;
-        [orderTableView reloadData];
+            orderTableView.frame = rect;
+            [orderTableView reloadData];
 	}
 }
 
@@ -65,6 +67,7 @@
    
     NSLog(@"%f %f ",self.locationDe.latitude,self.locationDe.longitude);
     BOOL flag = [_search reverseGeocode:self.locationDe];
+  
     if (!flag) {
         
 		NSLog(@"search failed!");
@@ -81,6 +84,7 @@
     
     CGSize size = [addressd sizeWithFont:[UIFont systemFontOfSize:12.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
     CGSize size2 = [cityName sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(270, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+   
     if (size.height>22&&size2.height>22) {
         
         return size.height+size2.height;
@@ -147,7 +151,7 @@
         
         cell.contentView.backgroundColor = [UIColor whiteColor];
     }
-   
+   // cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
     
     BMKPoiInfo* moreNes =[addressinformationArray objectAtIndex:indexPath.row];
     
@@ -215,11 +219,25 @@
 
 -(void)nextStep:(id)sender
 {
-    departure = [departureView.text retain];
+    
+    if(departureView.text==NULL||[departureView.text length]==0)
+    {
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                       message:@"出发地不能为空"
+                                                      delegate:nil
+                                             cancelButtonTitle:@"确定"
+                                             otherButtonTitles:nil ];
+        [alert show];
+        [alert release];
+        
+    }else{
+        
+        departure = [departureView.text retain];
 
-    [DepartureDelegate selectThePlaceOfDeparture:departure];
-    [self.navigationController popViewControllerAnimated:YES];
-
+        [DepartureDelegate selectThePlaceOfDeparture:departure];
+        [self.navigationController popViewControllerAnimated:YES];
+    }
 }
 
 #pragma mark - System Approach
@@ -242,7 +260,7 @@
     centerLable.font = [UIFont systemFontOfSize:17];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text =@"编 辑 出 发 地";
     [self.navigationController.navigationBar addSubview:centerLable];
    
@@ -279,7 +297,15 @@
     [departureLable release];
     
     departureView = [[UITextView alloc] initWithFrame:CGRectMake(10, 40, 300, 80)];
-    departureView.text = self.departureName;
+    if ([self.departureName isEqualToString:@"未读取到位置信息，请手动编辑修改!"]) {
+        
+        departureView.text = @"";
+   
+    }else{
+
+        departureView.text = self.departureName;
+    }
+
     departureView.delegate = self;
     departureView.returnKeyType = UIReturnKeyDone;
     departureView.font = [UIFont fontWithName:@"Arial" size:14.0];

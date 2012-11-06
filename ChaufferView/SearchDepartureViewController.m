@@ -135,7 +135,8 @@
     startAddrSearchBar.autocorrectionType = UITextAutocorrectionTypeNo;  
     startAddrSearchBar.autocapitalizationType = UITextAutocapitalizationTypeNone;  
     startAddrSearchBar.placeholder = @"您也可以在此搜索出发地....";
-    startAddrSearchBar.keyboardType =  UIKeyboardTypeDefault; 
+    startAddrSearchBar.keyboardType =  UIKeyboardTypeDefault;
+    [startAddrSearchBar becomeFirstResponder];
   //  startAddrSearchBar.showsCancelButton = YES;
     
     // [[startAddrSearchBar.subviews objectAtIndex:0]removeFromSuperview];只剩下 边框

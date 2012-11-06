@@ -46,6 +46,12 @@
    // _mapView.showsUserLocation=YES;
     [_mapView setRegion:region animated:YES];
     
+    item = [[MapPointAnnotion alloc]init];
+    item.coordinate =location;
+    item.title =@"我的位置";
+    [_mapView addAnnotation:item];
+    [item release];
+    
 }
 
 -(void)cantLocateAlert:(NSString *)errorMsg{
@@ -61,6 +67,7 @@
 - (void)onGetAddrResult:(BMKAddrInfo*)result errorCode:(int)error
 {
     
+    newLocation = result.geoPt;
     if (!self.possible) {
         
         NSLog(@"fanzhuan  %f %f",result.geoPt.latitude,result.geoPt.longitude);
@@ -71,39 +78,52 @@
         
         UpdateUserLocation = YES;
         
-        item = [[MapPointAnnotion alloc]init];
-        
-        item.coordinate = result.geoPt;
-        item.title =@"我的位置";
-        item.subtitle= result.strAddr;
-        [_mapView addAnnotation:item];
-        [item release];
+//        item = [[MapPointAnnotion alloc]init];
+//        
+//        item.coordinate = result.geoPt;
+//        item.title =@"我的位置";
+//        item.subtitle= result.strAddr;
+//        [_mapView addAnnotation:item];
+//        [item release];
         
         if (firstMenue) {
+            
             [self glassMenuWithContent:self.nowCityName];
             firstMenue = NO;
 
         }else{
         
             if ([result.poiList count]!=0) {
+                
                 BMKPoiInfo * info= [result.poiList objectAtIndex:0];
                 [self glassMenuWithContent:info.name];
+                
             }else{
+                
                 [self glassMenuWithContent:result.strAddr];
+                
             }
         }
 
     }else{
+        
        if (error == 0) {
+           
            CLLocationCoordinate2D center;
            center = result.geoPt;
            if (!UpdateUserLocation) {
+               
                if (firstMenue) {
+                   
                    if ([result.poiList count]!=0) {
+                       
                        BMKPoiInfo * info= [result.poiList objectAtIndex:0];
                        [self glassMenuWithContent:info.name];
+                       
                    }else{
+                       
                        [self glassMenuWithContent:result.strAddr];
+                       
                    }
                        firstMenue = NO;
                }
@@ -114,12 +134,19 @@
                item.title =@"我的位置";
                item.subtitle= result.strAddr;
                [_mapView addAnnotation:item];
-               [item release];            } else {
+               [item release];
+               
+           } else {
+               
                 if ([result.poiList count]!=0) {
+                    
                     BMKPoiInfo * info= [result.poiList objectAtIndex:0];
                     [self glassMenuWithContent:info.name];
+                    
                 }else{
+                    
                     [self glassMenuWithContent:result.strAddr];
+                    
                 }
                 
             }             
@@ -208,6 +235,7 @@
     
    
 	if ([annotation isKindOfClass:[BMKPointAnnotation class]]) {
+        
 		BMKPinAnnotationView *newAnnotation = [[[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:@"myAnnotation"]autorelease];  
         //newAnnotation.frame = CGRectMake(0, 0, 30, 30);
         newAnnotation.draggable = NO;
@@ -216,6 +244,7 @@
 		newAnnotation.draggable = YES;
         return newAnnotation;   
 	}
+    
 	return nil;
 }
 - (void)mapViewDidStopLocatingUser:(BMKMapView *)mapView{
@@ -232,9 +261,12 @@
 
     if(!firstLoaded) return;
     if(location.latitude != 0 && location.longitude != 0){
+        
         [_glassMenuView removeFromSuperview];
         _glassMenuView = nil;
+        
         if(mapAnnon != nil){
+            
             [mapAnnon release], mapAnnon = nil;
         }
     }
@@ -297,6 +329,7 @@
 }
 -(void)glassMenuWithLoadingStyle{
     if(_glassMenuView) {
+        
         [_glassMenuView removeFromSuperview];
         _glassMenuView = nil;
     }
@@ -436,13 +469,13 @@
 -(void)noSelectTheCurrentLocation:(id)sender
 {
 
-    [LocationDelegate selectTheCurrentLocationOnLine:@"未读取到位置信息，请手动编辑修改!" CLLocation:location];
+    [LocationDelegate selectTheCurrentLocationOnLine:@"未读取到位置信息，请手动编辑修改!" CLLocation:newLocation];
 
 }
 
 -(void)selectTheCurrentLocation:(id)sender
 {
-    [LocationDelegate selectTheCurrentLocationOnLine:textLabel.text CLLocation:location];
+    [LocationDelegate selectTheCurrentLocationOnLine:textLabel.text CLLocation:newLocation];
     
 }
 
@@ -485,7 +518,8 @@
 }
 - (id) initWithPossible:(BOOL)possibleM withLocation:(CLLocationCoordinate2D )Latitudelong withCityName:(NSString *)cityNa
 {
-    if ([super init]) {
+    self = [super init];
+    if (self) {
         
         self.possibleLoca = Latitudelong;
         self.possible = possibleM;
@@ -524,8 +558,8 @@
     if (!self.possible) {
         
         BMKCoordinateSpan span;
-        span.latitudeDelta = 0.1f; //zoom level
-        span.longitudeDelta = 0.1f; //zoom level
+        span.latitudeDelta = 0.01f; //zoom level
+        span.longitudeDelta = 0.01f; //zoom level
         
         BMKCoordinateRegion region;
         region.span = span;

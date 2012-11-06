@@ -52,6 +52,7 @@
     [regainbutton setTitle:verifcationCodeTime forState:UIControlStateNormal];
 
     if(currentTime==0){
+        
         regainbutton.userInteractionEnabled = YES;
         [time invalidate];
         [regainbutton setBackgroundImage:[UIImage imageNamed:@"u175_normal.png"] forState:UIControlStateNormal];
@@ -158,9 +159,11 @@
         }else {
             
             if (HUD){
+                
                 [HUD removeFromSuperview];
                 [HUD release];
                 HUD = nil;
+                
             }
 
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
@@ -187,6 +190,7 @@
     NSDictionary * jsonAgainParser =[againStr objectFromJSONString];
     NSString * returnAgainString = [jsonAgainParser objectForKey:@"r"];
     if ([returnAgainString isEqualToString:@"s"]) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"获取验证码成功!"
                                                       delegate:nil
@@ -196,6 +200,7 @@
         
         [alert show];
         [alert release];
+        
     }else if ([returnAgainString isEqualToString:@"f"])
     {
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
@@ -229,6 +234,7 @@
 {
    
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
@@ -292,6 +298,7 @@
             [alert release];
 
        }else{
+           
            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                           message: @"您修改密码失败,请重试"
                                                          delegate:nil
@@ -332,7 +339,9 @@
 {
     
     if ([requestString length]==0) {
+        
         if([_judge isEqualToString:@"TRUE"]){
+            
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"注册失败"
                                                            message:@"请检查网络是否连接"
                                                           delegate:nil
@@ -340,7 +349,9 @@
                                                  otherButtonTitles:nil ];
             [alert show];
             [alert release];
+            
         }else{
+            
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"修改密码失败"
                                                            message:@"请检查网络是否连接"
                                                           delegate:nil
@@ -355,7 +366,9 @@
         
     }else{
         if (nOrder==102) {
+            
             [self parseAgainStringJson:requestString];
+            
         }else{
             
             [self parseStringJson:requestString];

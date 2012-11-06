@@ -30,6 +30,7 @@
     UIImageView                     *_markerShadow;
     CLLocationCoordinate2D          location;
     CLLocationCoordinate2D         choseLocation;
+    CLLocationCoordinate2D         newLocation;
     UILabel                         *textLabel;
     UIView                          *_glassMenuView;
 

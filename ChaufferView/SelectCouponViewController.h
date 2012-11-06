@@ -14,6 +14,7 @@
     NSArray * selectCouponAray;
     int rowNumber;
     NSMutableArray * useSelectCouponArray;
+    NSMutableArray*dearSecationArray;
     id<CouponDelegate>delegate;
    
     UIButton*returnButton;
@@ -24,9 +25,8 @@
 }
 @property(nonatomic,assign)id<CouponDelegate>delegate;
 @property(nonatomic,retain)NSArray * selectCouponAray;//存放数据类
+@property(nonatomic,retain)NSArray * indexAray;//存放数据类
 @property(nonatomic,assign)int  rowNumber;
 @property(nonatomic,assign)BOOL mark;
 @property(nonatomic,retain)NSArray * orderPreArray;//填写内容
-
-
 @end

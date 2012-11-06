@@ -70,9 +70,11 @@
     UIButton * diidyButton=[UIButton buttonWithType:UIButtonTypeCustom];
     [diidyButton setBackgroundImage:[UIImage imageNamed:@"button_down.png"] forState:UIControlStateNormal];
     if ([self.noviceGuidan isEqualToString:@"main"]) {
+        
         [diidyButton setTitle:@"返回主页" forState:UIControlStateNormal];
         
     }else {
+        
         [diidyButton setTitle:@"返回更多" forState:UIControlStateNormal];
     }
     
@@ -131,6 +133,7 @@
         
         
     }else {
+        
         topImageView.hidden = YES;
         returnButton.hidden = YES;
         centerLable.hidden = YES;

@@ -14,7 +14,6 @@
 #import "SBJson.h"
 #import "CouponViewController.h"
 #import "ManageMentViewController.h"
-#import "Landing_DownLoadView.h"
 #import "DIIdyModel.h"
 #import "SelectCouponViewController.h"
 #import "OrdersPreviewViewController.h"
@@ -40,8 +39,7 @@
 -(void)creatInPutBox
 {
     
-    
-    UIView* landView = [[UIView alloc] initWithFrame: CGRectMake(10.0f, 40.0f, 300.0,102.0f)];
+    UIView* landView = [[UIView alloc] initWithFrame: CGRectMake(10.0f, 15.0f, 300.0,102.0f)];
     landView.backgroundColor = [UIColor whiteColor];
     [[landView layer] setShadowOffset:CGSizeMake(1, 1)];
     [[landView layer] setShadowRadius:5];
@@ -50,7 +48,6 @@
     [[landView layer] setCornerRadius:7];
     [[landView layer] setBorderWidth:1];
     [[landView layer] setBorderColor:[UIColor grayColor].CGColor];
-    [self.view addSubview:landView];
     
     UIImageView*lineImage = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"u721_line.png"]];
     lineImage.frame = CGRectMake(0, 51, 300, 3);
@@ -140,6 +137,7 @@
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
@@ -172,8 +170,11 @@
     [inputNumberText resignFirstResponder];
     [passWordText resignFirstResponder];
     
+    
+    ShareApp.mobilNumber = inputNumberText.text;
     Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
     if ([r currentReachabilityStatus]==0) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
                                                       delegate:nil
@@ -218,7 +219,7 @@
            
             NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName];
             baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-            NSLog(@"%@",baseUrl);
+        
             HTTPRequest *request = [[HTTPRequest alloc] init];
             request.forwordFlag = 500;
             self.land_request = request;
@@ -249,8 +250,9 @@
 
 #pragma mark-Http
 -(void)parseCouponStringJson:(NSString*)str
-{   
-   int total = 0;
+{
+    
+    int total = 0;
    [dataArry removeAllObjects];
     NSArray* jsonParser =[str objectFromJSONString];
     
@@ -284,6 +286,7 @@
         
         OrdersPreviewTwoViewController * orderPre = [[OrdersPreviewTwoViewController alloc] init];
         ShareApp.mobilNumber = inputNumberText.text;
+        orderPre.markPre=NO;
         orderPre.orderArray = self.couponArray;
         [self.navigationController pushViewController:orderPre animated:YES];
         [orderPre release];
@@ -293,12 +296,13 @@
 -(void)parseStringJson:(NSString *)str
 {
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
     }
 
-    
+ 
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     ShareApp.logInState = returenNews;
@@ -320,7 +324,12 @@
     
     if([returenNews isEqualToString:@"s"])
     {
+        
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:@"land",@"STATUS", nil];
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"LAND" object:self userInfo:dict];
+        
         returnButton.hidden = YES;
+        
         if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
             
             CouponViewController * cou = [[CouponViewController alloc] init];
@@ -420,11 +429,12 @@
 }
 
 #pragma mark - System Approach
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
-	self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
     
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
@@ -441,25 +451,25 @@
     [returnButton addTarget:self action:@selector(returnMainView:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
-    UILabel * landingLable = [[UILabel alloc] initWithFrame:CGRectMake(15.0f, 10.0f, 70.0f, 30.0f)];
-    landingLable.text = @"用户登陆";
-    landingLable.textColor = [UIColor orangeColor];
+    UILabel * landingLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f,0.0f,160.0f,44.0f)];
+    landingLable.text = @"用 户 登 录";
+    landingLable.textAlignment =NSTextAlignmentCenter;
+    landingLable.textColor = [UIColor whiteColor];
     landingLable.backgroundColor = [UIColor clearColor];
-    landingLable.font = [UIFont fontWithName:@"Arial" size:16.0f];
-    [self.view addSubview:landingLable];
+    landingLable.font = [UIFont fontWithName:@"Arial" size:18.0f];
+    [self.navigationController.navigationBar addSubview:landingLable];
     [landingLable release];
+
     
     UIImage * landedImage =[UIImage imageNamed:@"land.png" ];
     UIButton*landedButton = [UIButton buttonWithType:UIButtonTypeCustom];
-   
-    landedButton.frame=CGRectMake(9.0f, 150.0f, landedImage.size.width,40);
+    landedButton.frame=CGRectMake(9.0f, 130.0f,landedImage.size.width,40);
     [landedButton setBackgroundImage:landedImage forState:UIControlStateNormal];
-    
     [landedButton addTarget:self action:@selector(clientLandedPage:) forControlEvents:UIControlEventTouchUpInside];
     [self.view addSubview:landedButton];
     
     UIButton * registerButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    registerButton.frame = CGRectMake(20.0f, 190.0f, 80.0f, 30.0f);
+    registerButton.frame = CGRectMake(20.0f, 173.0f, 80.0f, 30.0f);
     [registerButton setTitle:@"还没注册>" forState:UIControlStateNormal];
     [registerButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     registerButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:16.0f];
@@ -467,7 +477,7 @@
     [self.view addSubview:registerButton];
     
     UIButton * forgotButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    forgotButton.frame = CGRectMake(220.0f, 190.0f,80.0f, 30.0f);
+    forgotButton.frame = CGRectMake(220.0f, 173.0f,80.0f, 30.0f);
     [forgotButton setTitle:@"忘记密码 >" forState:UIControlStateNormal];
     [forgotButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     forgotButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:16.0f];
@@ -477,6 +487,7 @@
     [self creatInPutBox];
     
 }
+
 
 -(void)viewDidDisappear:(BOOL)animated
 {

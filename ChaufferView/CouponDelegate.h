@@ -13,4 +13,7 @@
 -(void)selectedCoupon:(NSArray*)couponArray;
 -(void)selectTheCurrentLocationOnLine:(NSString *)text CLLocation:(CLLocationCoordinate2D)centers;
 -(void)selectThePlaceOfDeparture:(NSString*)placeDeparture;
+-(void)selectThePlaceOfDestion:(NSString*)placeDestion;
+
+
 @end

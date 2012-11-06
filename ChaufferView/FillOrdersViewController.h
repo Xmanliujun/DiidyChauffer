@@ -39,13 +39,15 @@
 }
 
 @property(nonatomic,retain)NSArray*couponaArray;//存放选择的优惠劵
+
 @property(nonatomic,assign) BOOL landed;
-@property(nonatomic,retain)IBOutlet UITextField *destinationField;
+
 @property(nonatomic,retain)IBOutlet UITextField *nameField;
 @property(nonatomic,retain)IBOutlet UITextField *telNumberField;
 @property(nonatomic,retain)IBOutlet UIView *backGroundView;
 @property(nonatomic,retain)IBOutlet UIImageView *newsImangeView;
 @property(nonatomic,retain)IBOutlet UILabel *departureLable;//出发地
+@property(nonatomic,retain)IBOutlet UILabel *destinationLable;
 @property(nonatomic,retain)IBOutlet UILabel *departureMinuteLable;//出发时间
 @property(nonatomic,retain)IBOutlet UILabel *numberPeopleLable;//人数
 @property(nonatomic,retain)IBOutlet UIView *couponView;
@@ -55,6 +57,7 @@
 @property(nonatomic,retain)IBOutlet UIView *contactInforView;
 @property(nonatomic,retain)IBOutlet UIView *couponInforView;
 -(IBAction)selectDeparture:(id)sender;
+-(IBAction)selectDestination:(id)sender;
 -(IBAction)selectDepartureTime:(id)sender;
 -(IBAction)selectNumberPeople:(id)sender;
 -(IBAction)useCoupon:(id)sender;

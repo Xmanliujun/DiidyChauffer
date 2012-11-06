@@ -16,6 +16,11 @@
 #import "QFDatabase.h"
 #import "FMDatabase.h"
 #import "FMDatabasePool.h"
+
+//#import<CoreTelephony/CTTelephonyNetworkInfo.h>
+//
+//#import<CoreTelephony/CTCarrier.h>
+
 @implementation AppDelegate
 UIBackgroundTaskIdentifier backgroundTask;//写成成员
 @synthesize reachable;
@@ -61,7 +66,6 @@ UIBackgroundTaskIdentifier backgroundTask;//写成成员
 }
 
 
-
 -(void)getDeviceInformation{
     
     self.uniqueString = [[NSProcessInfo processInfo] globallyUniqueString];//标识号
@@ -69,9 +73,9 @@ UIBackgroundTaskIdentifier backgroundTask;//写成成员
     self.deviceName = [[UIDevice currentDevice] name];
     float  verion = [[[UIDevice currentDevice] systemVersion] floatValue];//操作系统
     self.phoneVerion = verion;
-    
     Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
     switch ([r currentReachabilityStatus]) {
+            
         case NotReachable:
             self.reachable = @"没有网络连接";
             break;
@@ -79,11 +83,21 @@ UIBackgroundTaskIdentifier backgroundTask;//写成成员
         case ReachableViaWiFi:
             self.reachable = @"使用WiFi网络";
             break;
+            
         case ReachableViaWWAN:
             self.reachable = @"使用3G/GPRS网络";
             break;
             
     }
+    
+    
+    
+//    
+//     CTTelephonyNetworkInfo *info = [[CTTelephonyNetworkInfo alloc] init];
+//    CTCarrier *carrier = info.subscriberCellularProvider;
+//    NSLog(@"carrier:%@",[carrier description]);
+    
+       
     
 }
 -(void)ShowHelpNavigation
@@ -108,9 +122,9 @@ UIBackgroundTaskIdentifier backgroundTask;//写成成员
     //获取完整路径
     NSString *documentsDirectory = [paths objectAtIndex:0];
     NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"test.plist"];
-    NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *dictplist = [[[NSMutableDictionary alloc] init] autorelease];
     //定义第一个插件的属性
-    NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
+    NSMutableDictionary *plugin1 = [[[NSMutableDictionary alloc]init] autorelease];
     [plugin1 setObject:@"r"forKey:@"status"];
     [plugin1 setObject:@"" forKey:@"telephone"];
     //设置属性值
@@ -127,13 +141,16 @@ UIBackgroundTaskIdentifier backgroundTask;//写成成员
     [self umengTrack];
     [self creatDatabase];
     
+   
     
     _mapManager = [[BMKMapManager alloc]init];
     // 如果要关注网络及授权验证事件，请设定generalDelegate参数
 	BOOL ret = [_mapManager start:@"0620AE5E420F347628B96739E458B4293E377EAE" generalDelegate:self];
     
 	if (!ret) {
+        
 		NSLog(@"manager start failed!");
+        
 	}
     
     [self getDeviceInformation];

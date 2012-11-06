@@ -50,4 +50,5 @@
 -(IBAction)selectDestination:(UIButton *)sender;
 @property(nonatomic,retain)IBOutlet UIView *informationView;
 @property(nonatomic,retain)IBOutlet UIView *feeInforView;
+@property(nonatomic,retain)IBOutlet UIView *timeInforView;
 @end

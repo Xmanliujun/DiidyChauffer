@@ -123,7 +123,7 @@
     rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
     rigthbutton.tag = 200;
     rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
-    [rigthbutton setTitle:@"登陆" forState:UIControlStateNormal];
+    [rigthbutton setTitle:@"登录" forState:UIControlStateNormal];
     [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(returnORLandingView:) forControlEvents:UIControlEventTouchUpInside];

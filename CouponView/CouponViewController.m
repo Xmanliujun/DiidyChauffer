@@ -23,6 +23,7 @@
 
 @implementation CouponViewController
 @synthesize order_request,detailCoupon,couponID;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -140,6 +141,7 @@
     self.couponID =diidyModel.ID;
     self.detailCoupon= diidyModel.name;
     
+   
     [self creatGiftToFriendView];
 //    DetailPageViewController * detail = [[DetailPageViewController alloc] init];
 //    detail.couponID =diidyModel.ID;
@@ -523,9 +525,9 @@
     [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
     [cancelButton addTarget:self action:@selector(cancelSender:) forControlEvents:UIControlEventTouchUpInside];
     
-    NSString * content = [NSString stringWithFormat:@"您的朋友%@送您1张%@，喝酒了疲劳了不想开车了，记着找嘀嘀！记住电话4006960666,客户端约代驾更方便，+wap嘀嘀代驾客户端下载地址。",ShareApp.mobilNumber,self.detailCoupon];
+   NSString * content = [NSString stringWithFormat:@"您的朋友(%@)送您1张%@，喝酒了疲劳了不想开车了，记着找嘀嘀！记住电话4006960666,客户端约代驾更方便，下载地址http://wap.diidy.com",ShareApp.mobilNumber,self.detailCoupon];
     
-    UILabel * contentLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0,55.0, 290.0, 70.0)];
+    UILabel* contentLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0,55.0, 290.0, 70.0)];
     contentLable.text = content;
     contentLable.numberOfLines = 0;
     contentLable.textColor = [UIColor whiteColor];
@@ -537,7 +539,6 @@
 
     
     giftFrientView = [[UIView alloc] initWithFrame:CGRectMake(10.0,5.0, 300.0, 190.0)];
-    
     giftFrientView.backgroundColor=[UIColor grayColor];
     [[giftFrientView layer] setShadowOffset:CGSizeMake(1, 1)];
     [[giftFrientView layer] setShadowRadius:5];
@@ -672,7 +673,8 @@
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.hidesBackButton = YES;
     [self setTheNavigationBar];
-     
+  
+
     page = -1;
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
 
@@ -686,7 +688,6 @@
     
     [self downCouponStat];
     [self showWithDetails];
-    
     couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
     
 }
@@ -708,7 +709,7 @@
 }
 -(void)dealloc
 {
-   
+
     [couponID release];
     [detailCoupon release];
     [giftFrientView release];

@@ -74,9 +74,10 @@
 {
    
     if (self.HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
-        HUD = nil;
+         HUD = nil;
     }
 
   
@@ -117,9 +118,10 @@
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
-        HUD = nil;
+         HUD = nil;
     }
     
     

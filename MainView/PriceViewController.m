@@ -49,14 +49,14 @@
     self.navigationItem.titleView = centerLable;
     [centerLable release];
     
-    UIImage *priceImage =[UIImage imageNamed:@"price.png"];
+    UIImage *priceImage =[UIImage imageNamed:@"pricenew.png"];
     priceImageView = [[UIImageView alloc] initWithImage:priceImage];
     priceImageView.userInteractionEnabled = YES;
     priceImageView.frame = CGRectMake(0.0f,0.0f, 320.0f, 416.0f);
     
     UIButton* telButton = [UIButton buttonWithType:UIButtonTypeCustom];
     telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    telButton.frame=CGRectMake(80.0f, 376.0f, 160.0f, 30.0f);
+    telButton.frame=CGRectMake(80.0f, 370.0f, 160.0f, 30.0f);
     [telButton setBackgroundImage:[UIImage imageNamed:@"call_up.png"] forState:UIControlStateNormal];
     [telButton addTarget:self action:@selector(telephoneInquiries:) forControlEvents:UIControlEventTouchUpInside];
     [priceImageView addSubview:telButton];
@@ -67,33 +67,35 @@
 -(void)telephoneInquiries:(id)sender
 {
     
+//    
+//    UIActionSheet *menu = [[[UIActionSheet alloc]
+//                            initWithTitle:nil
+//                            delegate:self
+//                            cancelButtonTitle:@"取消"
+//                            destructiveButtonTitle:@"400 696 0666"
+//                            otherButtonTitles:nil] autorelease];
+//    [menu showInView:self.view];
     
-    UIActionSheet *menu = [[[UIActionSheet alloc]
-                            initWithTitle:nil
-                            delegate:self
-                            cancelButtonTitle:@"取消"
-                            destructiveButtonTitle:@"400 696 0666"
-                            otherButtonTitles:nil] autorelease];
-    [menu showInView:self.view];
+    UIWebView*callWebview =[[UIWebView alloc] init];
+    NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
+    [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
+    [self.view addSubview:callWebview];
+    [callWebview release];
     
-    
-}
-- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    
-    
-    if(buttonIndex==0){
-        
-        UIWebView*callWebview =[[UIWebView alloc] init];
-        NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
-        [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
-        [self.view addSubview:callWebview];
-        [callWebview release];
-    }else {
-       
-    }
     
 }
+//- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
+//{
+//    
+//    
+//    if(buttonIndex==0){
+//        
+//       
+//    }else {
+//       
+//    }
+//    
+//}
 
 
 -(void)returnMainView:(id)sender

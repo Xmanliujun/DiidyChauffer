@@ -22,7 +22,8 @@
 
 @synthesize departureLable,departureTimeLable,numberOfPeopleLable,destinationLable,contactLable,mobilNumberLable,orderArray;
 @synthesize submit_request;
-@synthesize orderPreView,inforPreView;
+@synthesize orderPreView,inforPreView,markPre;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -35,8 +36,15 @@
 #pragma mark-Button
 -(void)returnFillOrderView:(id)sender
 {
-    [self.navigationController popViewControllerAnimated:YES];
-
+    if (self.markPre) {
+    
+         [self.navigationController popViewControllerAnimated:YES];
+        
+    }else{
+        
+        [self dismissModalViewControllerAnimated:NO];
+        
+    }
 }
 -(void)submitOrders:(id)sender
 {

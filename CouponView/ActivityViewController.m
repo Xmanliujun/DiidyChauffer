@@ -66,44 +66,40 @@
 
     [self setTheNavigationBar];
     
-     WebView  = [[UIWebView   alloc]initWithFrame: CGRectMake(0.0,0.0,320.0,416.0 )];
-    [WebView setUserInteractionEnabled: YES ];
+    WebView  = [[UIWebView  alloc]initWithFrame: CGRectMake(0.0f,0.0f,320.0f,416.0f)];
+    WebView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    [WebView setUserInteractionEnabled:YES];
     [WebView setDelegate: self];
     [WebView setOpaque: NO ];
     //WebView.scalesPageToFit = YES;
     [self.view addSubview:WebView];
      NSURL* url = [[NSURL alloc ]initWithString :self.coponurl];
-    [WebView loadRequest:[ NSURLRequest requestWithURL: url ]];
+    [WebView loadRequest:[NSURLRequest requestWithURL:url]];
     
-    
-    opaqueview = [[UIView  alloc]initWithFrame:CGRectMake(0.0,0.0,320.0,416.0)];
-    activityIndicator  = [[UIActivityIndicatorView  alloc]  initWithFrame: CGRectMake(0.0f,0.0f,60.0f,60.0f)];
-    [activityIndicator  setCenter :  opaqueview. center];
-    [activityIndicator  setActivityIndicatorViewStyle: UIActivityIndicatorViewStyleWhite];
-    [opaqueview  setBackgroundColor:[UIColor blackColor]];
+    opaqueview=[[UIView alloc]initWithFrame:CGRectMake(0.0f,0.0f,320.0f,416.0f)];
+    activityIndicator=[[UIActivityIndicatorView  alloc]initWithFrame:CGRectMake(0.0f,0.0f,60.0f,60.0f)];
+    [activityIndicator setCenter:opaqueview.center];
+    [activityIndicator setActivityIndicatorViewStyle: UIActivityIndicatorViewStyleWhite];
+    [opaqueview setBackgroundColor:[UIColor blackColor]];
     
     [opaqueview setAlpha:0.6];
-    [opaqueview  addSubview :activityIndicator];
-    [self.view  addSubview : opaqueview];
+    [opaqueview addSubview:activityIndicator];
+    [self.view addSubview:opaqueview];
     
 }
 
-- (void )webViewDidFinishLoad:(UIWebView *)webView {
+-(void)webViewDidFinishLoad:(UIWebView *)webView {
     
     [activityIndicator stopAnimating];
     opaqueview.hidden  = YES ;
 }
 
-
-
-- (void )webViewDidStartLoad:(UIWebView *)webView {
+-(void)webViewDidStartLoad:(UIWebView *)webView {
     
     [activityIndicator startAnimating ];
     opaqueview.hidden  = NO ;
     
 }
-
-
 -(void)returnCouponView:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
@@ -118,6 +114,8 @@
 }
 -(void)dealloc
 {
+    [opaqueview release];
+    [WebView release];
     [coponurl release];
     [centerLable release];
     [diidyTitle release];

@@ -33,6 +33,8 @@ ASIHTTPRequestDelegate,UIAlertViewDelegate>
 @property(nonatomic, retain)HTTPRequest *order_request;
 @property(nonatomic,retain)NSString* detailCoupon;
 @property(nonatomic,retain)NSString * couponID;
+//@property(nonatomic,retain)NSString * content;
+//@property(nonatomic,retain)UILabel * contentLable;
 
 
 @end
