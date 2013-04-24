@@ -11,10 +11,10 @@
 @interface PriceViewController : UIViewController
 //<UIActionSheetDelegate>
 {
-    UIImageView *priceImageView;
-
-    UIButton* returnButton;
-    NSMutableArray * dataArry;
-    UIImageView * topImageView;
+//    UIImageView *priceImageView;
+//
+//    UIButton* returnButton;
+//    NSMutableArray * dataArry;
+//    UIImageView * topImageView;
 }
 @end

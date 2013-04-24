@@ -14,9 +14,6 @@
 @interface MainViewController : UIViewController
 <UIActionSheetDelegate,MFMessageComposeViewControllerDelegate,UIAlertViewDelegate,ASIHTTPRequestDelegate,DownLoadDelegate>
 {   
-    BOOL price;
-    BOOL server;
-    UIImageView *priceImageView;
     AboutDiiDyViewController * aboutDiidy;
 }
 @property(nonatomic,assign)BOOL version;

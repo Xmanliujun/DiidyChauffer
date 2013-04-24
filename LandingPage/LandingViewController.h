@@ -7,7 +7,6 @@
 //
 
 #import <UIKit/UIKit.h>
-
 #import "MBProgressHUD.h"
 #import "HTTPRequest.h"
 @interface LandingViewController : UIViewController

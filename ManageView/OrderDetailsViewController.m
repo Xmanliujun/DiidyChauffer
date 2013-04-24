@@ -9,15 +9,16 @@
 #import "OrderDetailsViewController.h"
 #import "BillingDetailViewController.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 @interface OrderDetailsViewController()
 
 @end
 
 @implementation OrderDetailsViewController
-@synthesize orderNumberLable,orderStatusLable;
-@synthesize orderTimerLable,departureLable,departureTimeLable,numberOfPeopleLable,destinationLable,contactLable,mobilNumberLable,couponLable;
-@synthesize diidyModel,leftDepartureTimeLable;
-@synthesize statInforView,reservatInforView,clearingView;
+
+
+@synthesize clearingView,diidyModel;
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -29,51 +30,13 @@
 
 #pragma mark - Self Call
 
--(void)getOrderDetails
-{
-    
-    self.orderNumberLable.text = self.diidyModel.orderID;
-    self.orderStatusLable.text = self.diidyModel.status;
-    self.orderTimerLable.text = self.diidyModel.createTime;
-    self.departureLable.text = self.diidyModel.startAddr;
-    self.departureTimeLable.text = self.diidyModel.startTime;
-    self.numberOfPeopleLable.text = self.diidyModel.ordersNumber;
-    NSString * end = [NSString stringWithFormat:@"%@",self.diidyModel.endAddr];
-    
-    CGSize size = [self.departureLable.text sizeWithFont:[UIFont systemFontOfSize:13.0] constrainedToSize:CGSizeMake(214, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
-    if (size.height==16) {
-        
-    }else{
-        
-    self.departureLable.frame = CGRectMake(self.departureLable.frame.origin.x, self.departureLable.frame.origin.y, self.departureLable.frame.size.width, size.height);
-   
-    }
-    
-    if(![end isEqualToString:@"<null>"]){
-        
-        self.destinationLable.text = end;
 
-    }
-    
-    CGSize size2 = [self.destinationLable.text sizeWithFont:[UIFont systemFontOfSize:13.0] constrainedToSize:CGSizeMake(214, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
-    
-    if (size2.height==32) {
-        
-         self.destinationLable.frame = CGRectMake(self.destinationLable.frame.origin.x, self.destinationLable.frame.origin.y, self.destinationLable.frame.size.width, size2.height+5);
-        
-    }else{
-        
-       
-    }
-    self.contactLable.text =self.diidyModel.contactName;
-    self.mobilNumberLable.text = self.diidyModel.contactMobile;
-    self.couponLable.text =self.diidyModel.coupon;
-}
 -(void)setTheNavigationBar
 {
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
     topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
+    
     
     returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
@@ -96,127 +59,308 @@
 
 -(void)returnManageMentView:(id)sender
 {
-    [self.navigationController popViewControllerAnimated:YES];
-    
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:@"MANAGE",@"STATUS", nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"MANAGESTAT" object:self userInfo:dict];
+    [self.navigationController popToRootViewControllerAnimated:YES];
+   
 }
--(void)changeOrCancelTheOrder:(id)sender
-{
-    UIWebView*callWebview =[[UIWebView alloc] init];
-    NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
-    [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
-    //记得添加到view上
-    [self.view addSubview:callWebview]; 
-    [callWebview release];
-}
--(void)billingDetailView:(id)sender
-{
-    BillingDetailViewController * billing = [[BillingDetailViewController alloc] init];
-    billing.orderID= self.diidyModel.orderID;
-    [self.navigationController pushViewController:billing animated:YES];
-    [billing release];
 
-}
 
 #pragma mark - System Approach
 
--(void)setViewStatus{
-    
-    self.statInforView.backgroundColor=[UIColor whiteColor];
-    [[self.statInforView layer] setShadowOffset:CGSizeMake(1, 1)];
-    [[self.statInforView layer] setShadowRadius:5];
-    [[self.statInforView layer] setShadowOpacity:1];
-    [[self.statInforView layer] setShadowColor:[UIColor whiteColor].CGColor];
-    [[self.statInforView layer] setCornerRadius:7];
-    [[self.statInforView layer] setBorderWidth:1];
-    [[self.statInforView layer] setBorderColor:[UIColor grayColor].CGColor];
-    [self.view sendSubviewToBack:self.statInforView];
-    
-    self.reservatInforView.backgroundColor=[UIColor whiteColor];
-    [[self.reservatInforView layer] setShadowOffset:CGSizeMake(1, 1)];
-    [[self.reservatInforView layer] setShadowRadius:5];
-    [[self.reservatInforView layer] setShadowOpacity:1];
-    [[self.reservatInforView layer] setShadowColor:[UIColor whiteColor].CGColor];
-    [[self.reservatInforView layer] setCornerRadius:7];
-    [[self.reservatInforView layer] setBorderWidth:1];
-    [[self.reservatInforView layer] setBorderColor:[UIColor grayColor].CGColor];
-    [self.view sendSubviewToBack:self.reservatInforView];
 
-}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     // Do any additional setup after loading the view from its nib.
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
-    
-    self.departureLable.numberOfLines = 0;
-    self.destinationLable.numberOfLines= 0;
-    self.orderStatusLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];;
-    self.orderNumberLable.textColor =[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    self.orderTimerLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    self.departureLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    self.departureTimeLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    self.numberOfPeopleLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    self.destinationLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    self.contactLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    self.mobilNumberLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    self.couponLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-   // self.leftDepartureTimeLable.textColor=[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
-    
     [self setTheNavigationBar];
+  
+   UITableView*  orderTableView = [[UITableView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f) style:UITableViewStyleGrouped];
+    orderTableView.backgroundColor = [UIColor clearColor];
+    orderTableView.backgroundView=nil;
+    orderTableView.delegate = self;
+    orderTableView.dataSource = self;
+    [self.view addSubview:orderTableView];
+}
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
     
-    [self setViewStatus];
-   
+    
     if([self.diidyModel.status isEqualToString:@"已受理"]){
-    
-        self.leftDepartureTimeLable.text = @"出发时间:";
-        UIImage * changeOrderImage =[UIImage imageNamed:@"orderDetail1.png"];
-        UIImage * changeOrderImage2 =[UIImage imageNamed:@"orderDetail2.png"];
-        UIButton*changeOrderButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        [changeOrderButton setTitle:@"变更或取消订单拨打400电话" forState:UIControlStateNormal];
-        changeOrderButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
-        [changeOrderButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
-//        changeOrderButton.frame=CGRectMake(60.0, 365.0,changeOrderImage.size.width-118.0, changeOrderImage.size.height-25.0);
-        changeOrderButton.frame=CGRectMake(5.0, 365.0,310, changeOrderImage.size.height);
-        [changeOrderButton setBackgroundImage:changeOrderImage forState:UIControlStateNormal];
-         [changeOrderButton setBackgroundImage:changeOrderImage2 forState:UIControlStateSelected];
-        [changeOrderButton addTarget:self action:@selector(changeOrCancelTheOrder:) forControlEvents:UIControlEventTouchUpInside];
-        [self.view addSubview:changeOrderButton];
         
+        return 4;
+      
     }else if ([self.diidyModel.status isEqualToString:@"完成"]) {
         
-        self.leftDepartureTimeLable.text = @"开始时间:";
-      //  UIImage * billingDetailImage =[UIImage imageNamed:@"u148_normal.png" ];
+        return 4;
         
-        self.clearingView = [[UIView alloc] initWithFrame:CGRectMake(6.0, 365.0,308.0,40.0)];
+    }else
         
-        self.clearingView.backgroundColor=[UIColor whiteColor];
-        [[self.clearingView layer] setShadowOffset:CGSizeMake(1, 1)];
-        [[self.clearingView layer] setShadowRadius:5];
-        [[self.clearingView layer] setShadowOpacity:1];
-        [[self.clearingView layer] setShadowColor:[UIColor whiteColor].CGColor];
-        [[self.clearingView layer] setCornerRadius:7];
-        [[self.clearingView layer] setBorderWidth:1];
-        [[self.clearingView layer] setBorderColor:[UIColor grayColor].CGColor];
-      
-        UIButton*billingDetailButton = [UIButton buttonWithType:UIButtonTypeCustom];
-       billingDetailButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14];
+        return 3;
+
+    
+    
+}
+
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section==0) {
+       
+        return 44;
+    }else if (indexPath.section==1&&indexPath.row==1)
+    {
+        CGSize size1 = [self.diidyModel.startAddr sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(230, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+        if (size1.height==18.0||size1.height==0) {
+            return 44;
+        }else
+            return 30+size1.height-18;
         
-        billingDetailButton.frame=CGRectMake(0.0,0.0,310, 40);
-       // [billingDetailButton setBackgroundImage:billingDetailImage forState:UIControlStateNormal];
-        [billingDetailButton setTitle:@"结算明细                                                 >" forState:UIControlStateNormal];
-        [billingDetailButton setTitleColor:[UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1] forState:UIControlStateNormal];
-        [billingDetailButton addTarget:self action:@selector(billingDetailView:) forControlEvents:UIControlEventTouchUpInside];
-        [self.clearingView addSubview:billingDetailButton];
-        [self.view addSubview:self.clearingView];
+    }else if(indexPath.section==1&&indexPath.row==4)
+    {
         
-    }else {
         
-        self.leftDepartureTimeLable.text = @"出发时间:";
+        CGSize size2 = [self.diidyModel.endAddr sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(300, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+        
+        if (size2.height==18.0||size2.height==0) {
+            return 44;
+        }else
+            return 30+size2.height-18;
         
     }
+    return 44;
     
-       [self getOrderDetails];
+}
+
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    
+    if (section==0) {
+        
+        return 2;
+        
+    }else if(section==1)
+        
+        return 5;
+    else if(section==2){
+        
+        return 3;
+    }else
+        return 1;
+       
+}
+
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString * cellID = @"cellID";
+    
+    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    
+    if(cell ==nil)
+    {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID] autorelease];
+        [cell setSelectionStyle:UITableViewCellEditingStyleNone];
+        cell.backgroundColor = [UIColor whiteColor];
+        
+        
+        UILabel*  markLable = [[UILabel alloc] initWithFrame:CGRectMake(3.0f, 0.0f, 80.0f, 44.0f)];
+        markLable.font = [UIFont systemFontOfSize:14];
+        markLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
+        markLable.tag =60;
+        markLable.numberOfLines=0;
+        markLable.backgroundColor = [UIColor clearColor];
+        markLable.textAlignment = NSTextAlignmentLeft;
+        [cell.contentView addSubview:markLable];
+        [markLable release];
+        
+        UILabel*  messageLable = [[UILabel alloc] initWithFrame:CGRectMake(65.0f, 0.0f, 230.0f, 44.0f)];
+        messageLable.font = [UIFont systemFontOfSize:14];
+        messageLable.numberOfLines = 0;
+        messageLable.tag = 61;
+        messageLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+        messageLable.backgroundColor = [UIColor clearColor];
+        messageLable.textAlignment = NSTextAlignmentLeft;
+        [cell.contentView addSubview:messageLable];
+        [messageLable release];
+    }
+    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+    
+    UILabel*markLable =(UILabel*)[cell.contentView viewWithTag:60];
+    UILabel*  messageLable =(UILabel*)[cell.contentView viewWithTag:61];
+    
+    CGSize size1 = [self.diidyModel.startAddr sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(230, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    
+        CGSize size2 = [self.diidyModel.endAddr sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(300, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+
+    
+    if (indexPath.section==1&&indexPath.row==1) {
+        
+        if (size1.height==18.0||size1.height==0) {
+            messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f, 44);
+            
+        }else{
+            
+            messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f,30+size1.height-18);
+            
+        }
+        
+    }else if(indexPath.section==1&&indexPath.row==4){
+        
+        if (size2.height==18.0||size2.height==0) {
+            
+            messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f,44);
+            
+        }else{
+            
+            messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f,30+size2.height-18);
+            
+        }
+        
+    }else{
+    
+         messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f, 44);
+    
+    }
+   
+    if (indexPath.section==0&&indexPath.row==0) {
+        
+        markLable.text = @"订单编号:";
+        messageLable.text = self.diidyModel.orderID;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+    }else if (indexPath.section==0&&indexPath.row==1) {
+        markLable.text = @"订单状态:";
+        messageLable.text = self.diidyModel.status;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+        
+    }else if (indexPath.section==1&&indexPath.row==0) {
+        
+        markLable.text = @"下单时间:";
+        messageLable.text = self.diidyModel.createTime;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+    }else if (indexPath.section==1&&indexPath.row==1) {
+        
+        markLable.text = @"出发地:";
+        messageLable.text = self.diidyModel.startAddr;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+
+    }else if(indexPath.section==1&&indexPath.row==2)
+    {
+        markLable.text = @"开始时间:";
+        messageLable.text = self.diidyModel.startTime;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+        
+    }else if(indexPath.section==1&&indexPath.row==3){
+        
+        
+        markLable.text = @"人数:";
+        messageLable.text =self.diidyModel.ordersNumber;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+        
+    }else if(indexPath.section==1&&indexPath.row==4){
+        
+        markLable.text = @"目的地:";
+        messageLable.text =self.diidyModel.endAddr;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+
+    }else if(indexPath.section==2&&indexPath.row==0){
+        
+        markLable.text = @"联系人:";
+        messageLable.text =self.diidyModel.contactName;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+    }else if(indexPath.section==2&&indexPath.row==1){
+        
+        markLable.text = @"手机号码:";
+        messageLable.text =self.diidyModel.contactMobile;
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+
+        
+    }else if(indexPath.section==2&&indexPath.row==2){
+        
+        markLable.text = @"优惠劵:";
+        if (self.diidyModel.coupon ==NULL||[self.diidyModel.coupon length]==0) {
+            
+            messageLable.text = @"未使用";
+            
+        }else{
+            
+            messageLable.text =self.diidyModel.coupon;
+        }
+        
+        cell.backgroundColor = [UIColor whiteColor];
+        cell.accessoryType = UITableViewCellAccessoryNone;
+        
+        
+    }else if (indexPath.section==3&&indexPath.row==0)
+    {
+        if([self.diidyModel.status isEqualToString:@"已受理"]){
+            
+            markLable.text = @"";
+            messageLable.text =@"变更或取消订单拨打400电话";
+            cell.backgroundColor = [UIColor orangeColor];
+             cell.accessoryType = UITableViewCellAccessoryNone;
+          
+            
+        }else if ([self.diidyModel.status isEqualToString:@"完成"]) {
+
+       
+            markLable.text = @"结算明细";
+            messageLable.text =@"";
+             cell.backgroundColor = [UIColor whiteColor];
+            cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        }
+    }
+
+
+   return cell;
+    
+}
+-(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+{
+
+    if (indexPath.section==3&&indexPath.row==0)
+    {
+        if([self.diidyModel.status isEqualToString:@"已受理"]){
+            
+            [MobClick event:@"m04_o001_0001_0001"];
+            UIWebView*callWebview =[[UIWebView alloc] init];
+            NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
+            [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
+            //记得添加到view上
+            [self.view addSubview:callWebview];
+            [callWebview release];
+            
+        }else if ([self.diidyModel.status isEqualToString:@"完成"]) {
+            
+            [MobClick event:@"m04_o001_0001_0002"];
+
+            BillingDetailViewController * billing = [[BillingDetailViewController alloc] init];
+            billing.orderID= self.diidyModel.orderID;
+            [self.navigationController pushViewController:billing animated:YES];
+            [billing release];
+        }
+    }
+
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -235,24 +379,16 @@
     centerLable.hidden = YES;
 
 }
+
 -(void)dealloc
 {
+    
+    [super dealloc];
     [topImageView release];
     [centerLable release];
-    [leftDepartureTimeLable release];
     [diidyModel release];
-    [orderNumberLable release];
-    [orderStatusLable release];
-    [orderTimerLable release];
-    [departureLable release];
-    [departureTimeLable release];
-    [numberOfPeopleLable release];
-    [destinationLable release];
-    [contactLable release];
-    [mobilNumberLable release];
-    [couponLable release];
-    [super dealloc];
-
+   
+  
 }
 - (void)viewDidUnload
 {

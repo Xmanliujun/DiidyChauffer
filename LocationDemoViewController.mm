@@ -7,7 +7,7 @@
 
 #import "LocationDemoViewController.h"
 #import <QuartzCore/QuartzCore.h>
-
+#import "Reachability.h"
 #define NAV_BAR_HEIGHT          44.0
 #define NAV_BAR_BLANK_BUTTON    60.0
 #define NAV_BAR_BUTTON_MARGIN   7.0
@@ -32,29 +32,35 @@
 
 -(void)backToTheOriginalPosition
 {
-    BMKCoordinateSpan span;
-	
-    span.latitudeDelta = 0.01f; //zoom level
-    span.longitudeDelta = 0.01f; //zoom level
     
-    NSLog(@"%f",location.latitude);
-    NSLog(@"%f",location.longitude);
-    
-    BMKCoordinateRegion region;
-    region.span = span;
-    region.center = location;
-   // _mapView.showsUserLocation=YES;
-    [_mapView setRegion:region animated:YES];
-    
-    item = [[MapPointAnnotion alloc]init];
-    item.coordinate =location;
-    item.title =@"我的位置";
-    [_mapView addAnnotation:item];
-    [item release];
-    
+    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
+    if ([r currentReachabilityStatus]==0) {
+        
+        
+    }else{
+        
+        BMKCoordinateSpan span;
+        
+        span.latitudeDelta = 0.01f; //zoom level
+        span.longitudeDelta = 0.01f; //zoom level
+        
+        NSLog(@"%f",location.latitude);
+        NSLog(@"%f",location.longitude);
+        possible = YES;
+        BMKCoordinateRegion region;
+        region.span = span;
+        region.center = location;
+        _mapView.showsUserLocation=YES;
+        UpdateUserLocation = YES;
+        locationPeson = YES;
+        firstCreat = YES;
+        firstMenue = YES;
+
+    }
 }
 
 -(void)cantLocateAlert:(NSString *)errorMsg{
+    
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示信息" 
                                                         message:errorMsg 
                                                        delegate:self
@@ -66,7 +72,7 @@
 #pragma mark-reverseGeocode
 - (void)onGetAddrResult:(BMKAddrInfo*)result errorCode:(int)error
 {
-    
+    NSLog(@"cccccccccc   %@",result.strAddr);
     newLocation = result.geoPt;
     if (!self.possible) {
         
@@ -116,12 +122,12 @@
                if (firstMenue) {
                    
                    if ([result.poiList count]!=0) {
-                       
+                       NSLog(@"2");
                        BMKPoiInfo * info= [result.poiList objectAtIndex:0];
                        [self glassMenuWithContent:info.name];
                        
                    }else{
-                       
+                        NSLog(@"3");
                        [self glassMenuWithContent:result.strAddr];
                        
                    }
@@ -139,12 +145,12 @@
            } else {
                
                 if ([result.poiList count]!=0) {
-                    
+                     NSLog(@"4");
                     BMKPoiInfo * info= [result.poiList objectAtIndex:0];
                     [self glassMenuWithContent:info.name];
                     
                 }else{
-                    
+                     NSLog(@"5");
                     [self glassMenuWithContent:result.strAddr];
                     
                 }
@@ -154,7 +160,7 @@
     }
 }
 
-- (void)mapView:(BMKMapView *)mapView didUpdateUserLocation:(BMKUserLocation *)userLocation
+-(void)mapView:(BMKMapView *)mapView didUpdateUserLocation:(BMKUserLocation *)userLocation
 {
     
     NSLog(@"1111111");
@@ -180,9 +186,10 @@
             CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
             
             pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
-            
+           
+            [_mapView removeAnnotation:item];
             if(firstCreat){
-                
+                NSLog(@"eeee");
                 [self createMarker];
                 if(location.latitude == 0 && location.longitude == 0) return;
                 [self searchAddress:userLocation.location.coordinate];
@@ -273,8 +280,7 @@
 }
 - (void)mapView:(BMKMapView *)mapView regionDidChangeAnimated:(BOOL)animated{
 
-    
-    if (!UpdateUserLocation)return;
+       if (!UpdateUserLocation)return;
     if(!firstLoaded) return;
     else [self createMarker];
      
@@ -349,6 +355,7 @@
     [newButton setTitle:@"                                >" forState:UIControlStateNormal];
     [newButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [newButton addTarget:self action:@selector(noSelectTheCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
+    newButton.showsTouchWhenHighlighted =YES;
      [newinmage addSubview:newButton];
     
     textLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 5, _glassMenuView.frame.size.width - 50, 60)];
@@ -356,7 +363,7 @@
     textLabel.numberOfLines = 0;
     textLabel.font = [UIFont fontWithName:@"Arial" size:12];
     [textLabel setTextColor:[UIColor whiteColor]];
-    [textLabel setTextAlignment:UITextAlignmentCenter];
+    [textLabel setTextAlignment:NSTextAlignmentCenter];
     [textLabel setText:@"信息加载中..."];
     [newinmage addSubview:textLabel];
     [textLabel release];   
@@ -414,6 +421,7 @@
     [newButton setTitle:@"                                >" forState:UIControlStateNormal];
     [newButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     [newButton addTarget:self action:@selector(selectTheCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
+    newButton.showsTouchWhenHighlighted=YES;
     
     _glassMenuView = [[UIView alloc] initWithFrame:CGRectMake(f.origin.x + f.size.width/2-86-16, f.origin.y + f.size.height/2-53-16, 200, 60)];
     _glassMenuView.backgroundColor = [UIColor clearColor];
@@ -426,13 +434,14 @@
     [pickupLable setText:@"到这儿接我"];
     [newinmage addSubview:pickupLable];
     [pickupLable release];
+   
     textLabel = [[UILabel alloc] initWithFrame:CGRectMake(10,20, _glassMenuView.frame.size.width - 30, 30)];
     textLabel.backgroundColor = [UIColor clearColor];
     textLabel.numberOfLines = 0;
     textLabel.font = [UIFont fontWithName:@"Arial" size:12];
     [textLabel setTextColor:[UIColor whiteColor]];
     [textLabel setTextAlignment:NSTextAlignmentCenter];
-    [textLabel setText:text];
+    [textLabel setText:[NSString stringWithFormat:@"%@附近",text]];
     [newinmage addSubview:textLabel];
     [textLabel release];   
     [newinmage addSubview:newButton];

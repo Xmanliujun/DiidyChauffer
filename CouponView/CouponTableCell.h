@@ -12,10 +12,8 @@
 {
     UILabel *nameLable;
     UILabel * closeDataLable;
-    UILabel * presentationLable;
+    
 }
 @property(nonatomic,retain)UILabel *nameLable;
-@property(nonatomic,retain)UILabel * numberLable;
 @property(nonatomic,retain)UILabel *closeDataLable;
-//@property(nonatomic,retain)UILabel *presentationLable;
 @end

@@ -8,10 +8,10 @@
 
 #import "DriverViewController.h"
 #import "CONST.h"
-#import "SBJson.h"
 #import "AppDelegate.h"
 #import "JSONKit.h"
 #import "DriveLocationViewController.h"
+#import "MobClick.h"
 @interface DriverViewController ()
 
 @end
@@ -38,7 +38,6 @@
     HUD.square=YES;
     [HUD show:YES];
 
-    
     NSString * baseUrl = [NSString stringWithFormat:EXECORDERS,ShareApp.mobilNumber];
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
@@ -50,30 +49,27 @@
     [request release];
     
     [self.OrderStatus_request requestByUrlByGet:baseUrl];
-
-
 }
 
 -(void)getDriverStatus
 {
-    
     NSString * baseUrlb = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
     baseUrlb = [baseUrlb stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
    
     HTTPRequest *request = [[HTTPRequest alloc] init];
     request.forwordFlag = 101;
-    self.OrderStatus_request = request;
-    self.OrderStatus_request.m_delegate = self;
-    self.OrderStatus_request.hasTimeOut = YES;
+    self.DriverStatus_request = request;
+    self.DriverStatus_request.m_delegate = self;
+    self.DriverStatus_request.hasTimeOut = YES;
     [request release];
     
-    [self.OrderStatus_request requestByUrlByGet:baseUrlb];
+    [self.DriverStatus_request requestByUrlByGet:baseUrlb];
 }
 
 
 -(void)parseStatusStringJson:(NSString*)str
 {
-    
+
     if (HUD){
         
         [HUD removeFromSuperview];
@@ -81,60 +77,59 @@
          HUD = nil;
     }
     
-
-    NSArray* jsonParser =[str objectFromJSONString];
-
     
-    if ([jsonParser count]==5) {
+    NSString *firstStr = [str substringWithRange:NSMakeRange(0, 1)];
+    
+    NSArray* jsonParser =[str objectFromJSONString];
+   
+    orderNumber = [jsonParser count];
         
-        centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
-
-    }else {
-        
-        NSDictionary * jsonParserDict = [jsonParser objectAtIndex:0];
-        
-        NSString* status = [jsonParserDict objectForKey:@"status"];
-        
-        NSString* driver = [jsonParserDict objectForKey:@"driver"];
-        NSString* geo = [jsonParserDict objectForKey:@"geo"];
-        
-        NSString* mobile =[jsonParserDict objectForKey:@"mobile"];
-        NSString*leader = [jsonParserDict objectForKey:@"leader"];
-      
-        if(![status isEqualToString:@""])
-        {
-            driverStatus = YES;
-            NSArray * geoArray= [geo componentsSeparatedByString:@","];
-            double Latitude = [[geoArray objectAtIndex:1] doubleValue];
-            double Longtitude = [[geoArray objectAtIndex:0] doubleValue];
-            if (![leader isEqualToString:@""]) {
+        if ([firstStr isEqualToString:@"["]) {
+            
+            for (int i=0; i<[jsonParser count];i++) {
                 
-                centerLable.text =@"您的司机正在赶路，一会儿见";
-                [driveMap initWithTitle:driver withSubtitle:mobile withLatitude:Latitude  withLongtitude:Longtitude];
-                
-            }else {
-                
-                [driveMap  initWithTitle:@"带队司机" withSubtitle:mobile withLatitude:Latitude withLongtitude:Longtitude];
-                
+                NSDictionary * jsonParserDict = [jsonParser objectAtIndex:i];
+                NSString* status = [jsonParserDict objectForKey:@"status"];
+                //  NSString* driver = [jsonParserDict objectForKey:@"driver"];
+                NSString* geo = [jsonParserDict objectForKey:@"geo"];
+                NSString* mobile =[jsonParserDict objectForKey:@"mobile"];
+                NSString*leader = [jsonParserDict objectForKey:@"leader"];
+               
+                if(![status isEqualToString:@""])
+                {
+                    driverStatus = YES;
+                   
+                    if ([leader isEqualToString:@""]||[leader isEqualToString:@"0"]) {
+                        
+                        centerLable.text =@"您的司机正在赶路，一会儿见";
+                        [driveMap initWithTitle:@"嘀嘀师傅" withSubtitle:mobile withCLLocation:geo WithTag:i];
+                        
+                    }else {
+                        
+                        centerLable.text =@"您的司机正在赶路，一会儿见";
+                        [driveMap  initWithTitle:@"带队司机" withSubtitle:mobile withCLLocation:geo WithTag:i];
+                        
+                    }
+                    
+                }else {
+                    
+                    driverStatus = NO;
+                    centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
+                }
             }
-            
-        }else {
-            
-            driverStatus = NO;
+
+        }else{
+         
             centerLable.text = @"正在为您分派司机，目前暂时无法定位司机位置";
         }
-
-    }
-   
-   
 }
 -(void)parseStringJson:(NSString *)str
 {
-    
         NSString * status;
         NSArray* jsonParser =[str objectFromJSONString];
-    
+      
         for(int i = 0;i<[jsonParser count];i++){
+            
             NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
                 
             NSString* currentStatus = [diidyDict objectForKey:@"status"];
@@ -151,9 +146,10 @@
                 
                 status = @"已取消";
                 
-        }
+            }
 
-    }
+        }
+  
     if([status isEqualToString:@"已受理"]){
     
         [self getDriverStatus];
@@ -173,8 +169,6 @@
     
 }
 
-
-
 -(void)requFinish:(NSString *)requestString order:(int)nOrder{
 
     if ([requestString length]==0) {
@@ -188,6 +182,7 @@
         [alert release];
         
     }else{
+        
         if(nOrder ==100){
             
             [self parseStringJson:requestString];
@@ -202,19 +197,16 @@
             
         }
     }
-
-
-
 }
 -(void)closeConnection
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
     }
-    
     
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
     [alertView show];
@@ -225,9 +217,8 @@
 
 -(void)requesttimeout
 {
-  [self closeConnection];
+    [self closeConnection];
 }
-
 
 - (void)hudWasHidden:(MBProgressHUD *)hud
 {
@@ -245,22 +236,18 @@
 }
 -(void)seeDrivers:(id)sender
 {
-
-    if (driverStatus) {
-        NSString * baseUrlk = [NSString stringWithFormat:POSITIONDRIVER,ShareApp.mobilNumber];
-        baseUrlk = [baseUrlk stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        
-        HTTPRequest *request = [[HTTPRequest alloc] init];
-        request.forwordFlag = 110;
-        self.seeDrive_request= request;
-        self.seeDrive_request.m_delegate = self;
-        self.seeDrive_request.hasTimeOut = YES;
-        [request release];
-        
-        [self.OrderStatus_request requestByUrlByGet:baseUrlk];
-
-    }
+    [MobClick event:@"m06_m001"];
     
+    if (driverStatus) {
+        
+        [driveMap seeDrive:buttonMark];
+        buttonMark++;
+        
+        if (buttonMark==orderNumber) {
+            buttonMark=0;
+        }
+        
+    }
 }
 -(void)returnMainView:(id)sender
 {
@@ -273,6 +260,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    buttonMark=0;
     
     self.navigationController.navigationBar.tintColor = [UIColor grayColor];
     self.navigationItem.hidesBackButton = YES;
@@ -300,12 +288,9 @@
     [self.navigationController.navigationBar addSubview:topCenterLable];
     [topCenterLable release];
   
-   
-    
     driveMap =[[DriveLocationViewController alloc] init];
     driveMap.view.frame = CGRectMake(0.0f, 5.0f, 320.0f, 360.0f);
     [self.view addSubview:driveMap.view];
-    
     
     UIImageView * backgroundImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"driveBackGround.png"]];
     backgroundImageView.frame = CGRectMake(0.0, 365.0, 320.0, 51.0);
@@ -331,7 +316,7 @@
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(0.0, 0.0, 320.0, 40.0)];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:14.0];
     [self.view addSubview:centerLable];
    
@@ -341,21 +326,44 @@
     [self.view addSubview:promptImageView];
     [promptImageView release];
     
-   
-    
-    [self getExecutionOrderStatus];
 }
 
 -(void)viewWillDisappear:(BOOL)animated{
 
     [super viewWillDisappear:animated];
-    [self.OrderStatus_request closeConnection];
+
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [self getExecutionOrderStatus];
 
 }
 -(void)dealloc
 {
+    if (OrderStatus_request) {
+        
+         [self.OrderStatus_request closeConnection];
+         self.OrderStatus_request.m_delegate=nil;
+         self.OrderStatus_request=nil;
+        
+    }
    
-    [driveMap release];
+    if (DriverStatus_request) {
+        
+         [self.DriverStatus_request closeConnection];
+         self.DriverStatus_request.m_delegate=nil;
+         self.DriverStatus_request=nil;
+        
+    }
+    
+    if (seeDrive_request) {
+        
+        [self.seeDrive_request closeConnection];
+        self.seeDrive_request.m_delegate=nil;
+        self.seeDrive_request=nil;
+    }
+   
+   // [driveMap release];
     [centerLable release];
     [super dealloc];
     

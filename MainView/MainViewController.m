@@ -23,6 +23,7 @@
 #import "custom_tabbar.h"
 #import "PriceViewController.h"
 #import "Reachability.h"
+#import "MobClick.h"
 @interface MainViewController ()
 
 @end
@@ -42,7 +43,6 @@
 -(void)selectSctl2:(id)sender
 {
     
-    
     UISegmentedControl* sss = (UISegmentedControl*)sender;
     if(sss.selectedSegmentIndex==0){
         
@@ -54,49 +54,15 @@
         
     }
 }
--(void)pushPromptingView:(UIButton *)sender
-{ 
-    
-    UIImageView * footImageView = (UIImageView*)[self.view viewWithTag:300];
-    UIButton* serverButton= (UIButton *)[self.view viewWithTag:301];
-    if(server==YES){
-        
-        [UIView beginAnimations:@"animation" context:nil];
-        [UIView setAnimationDuration:1.0];
-        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        serverButton.frame = CGRectMake(235.0f, 400.0f, 70.0f, 56.0f);
-        [serverButton setBackgroundImage:[UIImage imageNamed:@"main_right.png"] forState:UIControlStateNormal];
-        footImageView.frame = CGRectMake(0.0f, 400.0f, 240.0f, 40.0f);
-        [UIView commitAnimations];
-        server= NO;
-        
-    }else {
-        
-        price = YES;
-        [UIView beginAnimations:@"animation" context:nil];
-        [UIView setAnimationDuration:1.0];
-        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        serverButton.frame = CGRectMake(0.0f, 400.0f, 70.0f, 56.0f);
-         priceImageView.frame = CGRectMake(37.0f,-316.0f , 246.0f, 316.0f);
-        [serverButton setBackgroundImage:[UIImage imageNamed:@"main_left.png"] forState:UIControlStateNormal];
-        footImageView.frame = CGRectMake(-240.0f, 400.0f, 240.0f, 40.0f);
-        [UIView commitAnimations];
-        server=YES;
-        
-    }
-    
-    
-}
+
 -(void)promptingView:(UIButton*)sender
 {
     if(sender.tag ==200)
     {
-        sender.selected = !sender.selected;
-       // [self pushPriceDescription];
-        
+        [MobClick event:@"m01"];
         PriceViewController * priceview = [[PriceViewController alloc] init];
         UINavigationController * prcieNa=[[UINavigationController alloc] initWithRootViewController:priceview];
-        [self presentModalViewController:prcieNa animated:NO];
+        [self presentViewController:prcieNa animated:NO completion:nil];
         [priceview release];
         [prcieNa release];
         
@@ -113,9 +79,9 @@
 
     }else {
         
-        
         if([ShareApp.logInState isEqualToString:@"s"]){
             
+            [MobClick event:@"m07_s003"];
             MoreViewController * more =[[MoreViewController alloc] init];
             more.whereLand = @"MainLand";
             UINavigationController * moreNav=[[UINavigationController alloc] initWithRootViewController:more];
@@ -133,18 +99,15 @@
             
         }
     }
-    
-    
-    
 }
 
 -(void)displaySMSComposerSheet
 {
     MFMessageComposeViewController *picker = [[MFMessageComposeViewController alloc] init];
     picker.messageComposeDelegate =self;
-    NSString *smsBody =[NSString stringWithFormat:@"我分享了文件给您，地址是"];
+    NSString *smsBody =[NSString stringWithFormat:@"嘀嘀代驾真不错,不打电话也能轻松找代驾。客户端下载地址: https://itunes.apple.com/us/app/di-di-dai-jia/id587269030?ls=1&mt=8 或拨打 4006960666"];
     picker.body=smsBody;
-    [self  presentModalViewController:picker animated:NO];
+    [self presentModalViewController:picker animated:NO];
     [picker release];
 }
 
@@ -152,32 +115,15 @@
 -(void)messageComposeViewController:(MFMessageComposeViewController *)controller didFinishWithResult:(MessageComposeResult)result
 {
     
-    NSLog(@"%d",result);
-    if (result==0) {
-        
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送取消" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-        
-    }else if (result==1)
-    {
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送成功" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-    
-    }else if (result==2){
-    
-        UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@"提示"message:@"短信发送失败" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
-        [alert show];
-        [alert release];
-   }
-    [self dismissModalViewControllerAnimated:NO];
+    [self dismissModalViewControllerAnimated:YES];
 }
 
 - (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     
     if(buttonIndex==0){
+        
+         [MobClick event:@"m08_sh01"];
         Class messageClass = (NSClassFromString(@"MFMessageComposeViewController"));
         
         if (messageClass != nil) {
@@ -187,6 +133,7 @@
                 [self displaySMSComposerSheet];
             }
             else {
+                
                 UIAlertView *alert=[[UIAlertView alloc] initWithTitle:@""message:@"设备不支持短信功能" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
                 [alert show];
                 [alert release];
@@ -204,8 +151,8 @@
 
 -(void)goNextView:(UIButton *)sender
 {
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-    if ([r currentReachabilityStatus]==0) {
+        
+    if (![ShareApp connectedToNetwork]) {
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
@@ -219,41 +166,38 @@
 
         if(sender.tag ==100){
           
+            NSLog(@"100");
+            
+            [MobClick event:@"m03"];
+
             TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
             ShareApp.pageManageMent = @"chauffer";
-        
             UINavigationController * na = [[[UINavigationController alloc] initWithRootViewController:chau] autorelease];
-            // UITabBarItem * tabBar = [[UITabBarItem alloc]init];
-            //  UITabBarItem * tabBar = [[UITabBarItem alloc]initWithTitle:@"首页" image:[UIImage imageNamed:@"navigationbar_home.png"] tag:1];
-
-            //tabBar.title = @"retur";
-            // tabBar.badgeValue = @"News";
-            // na.tabBarItem = tabBar;
         
             OnLineAboutViewController * online = [[[OnLineAboutViewController alloc] init] autorelease];
-            // online.title = @"在线约";
             online.possible = YES;
+            online.coupossible = YES;
             UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
         
             MathViewController *math = [[[MathViewController alloc] init] autorelease];
-            // math.title = @"算算看";
             UINavigationController * mathNa = [[[UINavigationController alloc] initWithRootViewController:math] autorelease];
-            // mathNa.tabBarController.tabBar.tintColor = [UIColor redColor];
-        
         
             NSArray *viewControllerArray = [[[NSArray alloc] initWithObjects:na,onlineNa, mathNa, nil] autorelease];
         
             custom_tabbar * tabController  = [[custom_tabbar alloc] init];
-       
             tabController.viewControllers = viewControllerArray;
             tabController.selectedIndex = 1;
             [ShareApp.window setRootViewController:tabController];
 
         }else if (sender.tag ==110) {
         
+            NSLog(@"110");
+
             if([ShareApp.logInState isEqualToString:@"s"]){
-            
+                
+                [MobClick event:@"m04"];
                 ManageMentViewController * mange = [[ManageMentViewController alloc] init];
+                mange.manageStat = YES;
                 UINavigationController * mangeNa =[[UINavigationController alloc] initWithRootViewController:mange];
                 [self presentModalViewController:mangeNa animated:NO];
                 [mange release];
@@ -271,9 +215,15 @@
             }
         }else if(sender.tag ==111){
         
+            NSLog(@"111");
+
             if([ShareApp.logInState isEqualToString:@"s"]){
+                
+                [MobClick event:@"m05"];
+
                 CouponViewController * coupon = [[CouponViewController alloc] init];
                 UINavigationController * couponNa = [[UINavigationController alloc] initWithRootViewController:coupon];
+                coupon.couponStat = YES;
                 [self presentModalViewController:couponNa animated:NO];
                 [coupon release];
                 [couponNa release];
@@ -290,8 +240,12 @@
             }
         }else {
        
-            if([ShareApp.logInState isEqualToString:@"s"]){
+            NSLog(@"112");
 
+            if([ShareApp.logInState isEqualToString:@"s"]){
+                
+                [MobClick event:@"m06"];
+                
                 DriverViewController * driver = [[DriverViewController alloc] init];
                 UINavigationController * driverNa = [[UINavigationController alloc] initWithRootViewController:driver];
                 [self presentModalViewController:driverNa animated:NO];
@@ -299,7 +253,9 @@
                 [driver release];
             
             }else {
-            
+                
+                [MobClick event:@"m09_u002"];
+
                 LandingViewController * land = [[LandingViewController alloc] init];
                 UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
                 ShareApp.pageManageMent = @"Driver";
@@ -312,41 +268,9 @@
     }
 }
 
--(void)telephoneInquiries:(id)sender
-{
-    
-    
-    UIActionSheet *menu = [[[UIActionSheet alloc]
-                           initWithTitle:nil
-                           delegate:self
-                           cancelButtonTitle:@"取消"
-                           destructiveButtonTitle:@"400 696 0666"
-                           otherButtonTitles:nil] autorelease];
-    [menu showInView:self.view];
-    
-    
-}
-
-
-
 
 #pragma mark-Self Call
--(void)creatPriceView
-{
-    UIImage *priceImage =[UIImage imageNamed:@"price.png"];
-    priceImageView = [[UIImageView alloc] initWithImage:priceImage];
-    priceImageView.userInteractionEnabled = YES;
-    priceImageView.frame = CGRectMake(0.0f,-380.0f, 320.0f, 380.0f);
-    
-    UIButton* telButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    telButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
-    telButton.frame=CGRectMake(80.0f, 340.0f, 160.0f, 30.0f);
-    [telButton setBackgroundImage:[UIImage imageNamed:@"call_up.png"] forState:UIControlStateNormal];
-    //[telButton setTitle:@"4 0 0 6  9 6 0  6 6 6" forState:UIControlStateNormal];
-    [telButton addTarget:self action:@selector(telephoneInquiries:) forControlEvents:UIControlEventTouchUpInside];
-    [priceImageView addSubview:telButton];
-    [self.view addSubview:priceImageView];
-}
+
 -(void)creatMainView
 {
     NSArray * promptingArray =[NSArray arrayWithObjects:@"价格",@"分享",@"更多", nil];
@@ -355,6 +279,7 @@
     
     for(int i = 0;i<2;i++)
         for(int j = 0;j<2;j++){
+            
             UIImage * mainImage = [UIImage imageNamed:[imageArray objectAtIndex:i*2+j]];
             UIImage * secondImage = [UIImage imageNamed:[secondArray objectAtIndex:i*2+j]];
             UIButton*  mainButton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -372,7 +297,6 @@
     NSArray * bottonImageArray = [NSArray arrayWithObjects:@"1-1.png",@"2-1.png",@"3-1.png",nil];
     NSArray * bSecondArray = [NSArray  arrayWithObjects:@"1-2.png",@"2-2.png",@"3-2.png", nil];
     
-    
     for(int i= 0;i<3;i++){
         
         UIImage * bottonImage = [UIImage imageNamed:[bottonImageArray objectAtIndex:i]];
@@ -383,11 +307,7 @@
         promptingButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
         promptingButton.frame=CGRectMake(40.0f+i*80.0f,390.0f,80.0f, 40.0f);
         [promptingButton setImage:bottonImage forState:UIControlStateNormal];
-        if (i==0) {
-             [promptingButton setImage:secondBottonImage forState:UIControlStateHighlighted];
-        }else{
-             [promptingButton setImage:secondBottonImage forState:UIControlStateHighlighted];
-        }
+        [promptingButton setImage:secondBottonImage forState:UIControlStateHighlighted];
         [promptingButton setTitle:[promptingArray objectAtIndex:i]forState:UIControlStateNormal];
         [promptingButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
         [promptingButton addTarget:self action:@selector(promptingView:) forControlEvents:UIControlEventTouchUpInside];
@@ -395,26 +315,6 @@
     }
 }
 
-
--(void)pushPriceDescription
-{
-    if(price ==YES){
-        [UIView beginAnimations:@"animation" context:nil];
-        [UIView setAnimationDuration:1.0];
-        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        priceImageView.frame = CGRectMake(0.0f,0.0f,320.0f,380.0f);
-        [UIView commitAnimations];
-        price = NO;
-    }else {
-        [UIView beginAnimations:@"animation" context:nil];
-        [UIView setAnimationDuration:1.0];
-        [UIView setAnimationCurve:UIViewAnimationCurveEaseInOut];
-        priceImageView.frame = CGRectMake(0.0f,-380.0f,320.0f,380.0f);
-        [UIView commitAnimations];
-        price = YES;
-        
-    }
-}
 -(void)checkForNewVersion{
 
     aboutDiidy = [[AboutDiiDyViewController alloc] init];
@@ -423,11 +323,11 @@
 }
 -(void)completeDownLoadVerson:(int)returenNews withVerson:(NSString *)newVerson
 {
-    NSLog(@"%d",returenNews);
-    
+   
     if (returenNews==0) {
         
     }else{
+        
         NSString * nerVer = [NSString stringWithFormat:@"检测到%@新版本",newVerson];
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:nerVer
@@ -445,8 +345,8 @@
 {
     if (buttonIndex==1) {
         
-           NSString *webLink = @"itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=46703830";//http://itunes.apple.com/cn/app/id333206289?mt=8
-           [[UIApplication sharedApplication] openURL:[NSURL URLWithString:webLink]];
+        NSString *webLink = @"http://itunes.apple.com/us/app/di-di-dai-jia/id587269030?ls=1&mt=8";
+        [[UIApplication sharedApplication] openURL:[NSURL URLWithString:webLink]];
         
     }else
     {
@@ -455,21 +355,17 @@
     }
 
 }
-
 #pragma mark - System Approach
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
-    server = YES;
-    price = YES;
-    
+
     UIImageView *mainImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"home_bg.png"]];
     mainImageView.frame = self.view.bounds;
     [self.view addSubview:mainImageView];
     [mainImageView release];
+   
     [self creatMainView];
-    [self creatPriceView];
    
     if (self.version) {
         
@@ -507,9 +403,7 @@
 -(void)dealloc
 {  
    
-    [priceImageView release];
     [super dealloc];
-    
     
 }
 - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation

@@ -55,20 +55,55 @@
 -(void)creatScrollView
 {
     UIImageView * firstImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"w01.png"]];
-    firstImageView .frame = CGRectMake(0.0f, 0.0f, 320.0f, 480.0f);
+    firstImageView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 480.0f);
     
     UIImageView * secondImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"w02.png"]];
-    secondImageView .frame = CGRectMake(320.0f, 0.0f, 320.0f, 480.0f);
+    secondImageView.frame = CGRectMake(320.0f, 0.0f, 320.0f, 480.0f);
     
 //    UIImageView * threeImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"w03.png"]];
 //    threeImageView.frame = CGRectMake(640.0f, 0.0f, 320.0f, 480.0f);
     
     UIImageView * fourImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"w04.png"]];
-    fourImageView .frame = CGRectMake(640.0f, 0.0f, 320.0f, 480.0f);
+    fourImageView.frame = CGRectMake(640.0f, 0.0f, 320.0f, 480.0f);
+   
+    UILabel * firstingLable = [[UILabel alloc] initWithFrame:CGRectMake(10.0f,60.0f,240.0f,44.0f)];
+    firstingLable.text = @"您在指尖轻点中,两步即可轻松";
+    firstingLable.textAlignment =NSTextAlignmentCenter;
+    firstingLable.textColor = [UIColor whiteColor];
+    firstingLable.backgroundColor = [UIColor clearColor];
+    firstingLable.font = [UIFont fontWithName:@"Arial" size:15.0f];
+   
+    UILabel * secondingLable = [[UILabel alloc] initWithFrame:CGRectMake(230.0f,60.0f,120.0f,44.0f)];
+    secondingLable.text = @"预约代驾";
+    secondingLable.textAlignment =NSTextAlignmentLeft;
+    secondingLable.textColor = [UIColor orangeColor];
+    secondingLable.backgroundColor = [UIColor clearColor];
+    secondingLable.font = [UIFont fontWithName:@"Arial" size:15.0f];
     
+    UILabel * threeLable = [[UILabel alloc] initWithFrame:CGRectMake(370.0f,60.0f,120.0f,44.0f)];
+    threeLable.text = @"预约后，随时知晓";
+    threeLable.textAlignment =NSTextAlignmentRight;
+    threeLable.textColor = [UIColor whiteColor];
+    threeLable.backgroundColor = [UIColor clearColor];
+    threeLable.font = [UIFont fontWithName:@"Arial" size:15.0f];
     
+    UILabel * fourLable = [[UILabel alloc] initWithFrame:CGRectMake(490.0f,60.0f,60.0f,44.0f)];
+    fourLable.text = @"司机位置";
+    fourLable.textAlignment =NSTextAlignmentLeft;
+    fourLable.textColor = [UIColor orangeColor];
+    fourLable.backgroundColor = [UIColor clearColor];
+    fourLable.font = [UIFont fontWithName:@"Arial" size:15.0f];
+    
+    UILabel * fiveLable = [[UILabel alloc] initWithFrame:CGRectMake(550.0f,60.0f,120.0f,44.0f)];
+    fiveLable.text = @", 踏实";
+    fiveLable.textAlignment =NSTextAlignmentLeft;
+    fiveLable.textColor = [UIColor whiteColor];
+    fiveLable.backgroundColor = [UIColor clearColor];
+    fiveLable.font = [UIFont fontWithName:@"Arial" size:15.0f];
+
     UIButton * diidyButton=[UIButton buttonWithType:UIButtonTypeCustom];
     [diidyButton setBackgroundImage:[UIImage imageNamed:@"button_down.png"] forState:UIControlStateNormal];
+   
     if ([self.noviceGuidan isEqualToString:@"main"]) {
         
         [diidyButton setTitle:@"返回主页" forState:UIControlStateNormal];
@@ -83,7 +118,6 @@
     
     [diidyButton addTarget:self action:@selector(goMainView:) forControlEvents:UIControlEventTouchUpInside];
     
-    
     UIScrollView * scrollView = [[UIScrollView alloc] init];
     scrollView.frame = CGRectMake(0.0f, 0.0f, 320.0f, 480.0f);
     scrollView.contentSize = CGSizeMake(320.0f*3,80.0f);
@@ -96,10 +130,21 @@
     [scrollView addSubview:firstImageView];
     [scrollView addSubview:secondImageView];
    // [scrollView addSubview:threeImageView];
+    
+    [scrollView addSubview:fiveLable];
     [scrollView addSubview:fourImageView];
+    [scrollView addSubview:firstingLable];
+    [scrollView addSubview:secondingLable];
+    [scrollView addSubview:threeLable];
+    [scrollView addSubview:fourLable];
     [scrollView addSubview:diidyButton];
     [self.view addSubview:scrollView];
     
+    [fiveLable release];
+    [fourLable release];
+    [threeLable release];
+    [firstingLable release];
+    [secondingLable release];
     [scrollView release];
     [firstImageView release];
     [secondImageView release];
@@ -107,7 +152,6 @@
     [fourImageView release];
     
     couponPage= [[UIPageControl alloc] init];
-    
     couponPage.frame = CGRectMake(150.0f, 400.0f, 30.0f, 20.0f);
     couponPage.numberOfPages = 3;
     couponPage.currentPage = 0;

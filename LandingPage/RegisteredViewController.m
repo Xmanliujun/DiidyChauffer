@@ -10,10 +10,11 @@
 #import "SettingViewController.h"
 #import "AppDelegate.h"
 #import "CONST.h"
-#import "SBJson.h"
+
 #import "JSONKit.h"
 #import "Reachability.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 @interface RegisteredViewController ()
 
 @end
@@ -167,6 +168,7 @@
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
@@ -206,16 +208,25 @@
     [self.navigationController pushViewController:set animated:YES];
     [set release];
 }
-
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if([registerIsTrue isEqualToString:@"TRUE"]){
+        
+        [MobClick event:@"m09_u001_0001"];
+        
+    }else{
+    
+        [MobClick event:@"m09_u003_0001"];
+    }
+    
+}
 -(void)nextStep:(id)sender
 {
     ShareApp.mobilNumber = inputNumberText.text;
   
     [inputNumberText resignFirstResponder];
     
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-    
-    if ([r currentReachabilityStatus]==0) {
+    if (![ShareApp connectedToNetwork]) {
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
@@ -323,7 +334,6 @@
     
 }
 
-
 #pragma mark - System Approach
 - (void)viewDidLoad
 {
@@ -345,9 +355,9 @@
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
-    rigthbutton.frame=CGRectMake(262.0f, 7.0f, 50.0f, 30.0f);
+    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 56.0f, 31.0f);
     
-    [rigthbutton setTitle:@"下一步 " forState:UIControlStateNormal];
+    [rigthbutton setTitle:@"下一步  " forState:UIControlStateNormal];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"button4.png"] forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
@@ -406,6 +416,13 @@
 }
 -(void)dealloc
 {
+    
+    if (registAndPassword_request) {
+        
+        [self.registAndPassword_request closeConnection];
+        self.registAndPassword_request.m_delegate=nil;
+        self.registAndPassword_request=nil;
+    }
     [contentLable release];
     [inputNumberText release];
     [promptLable release];

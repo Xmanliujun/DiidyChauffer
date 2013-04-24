@@ -20,9 +20,12 @@
     NSString * baseUrl;
     UIButton * rigthbutton;
     
+    UITableView * orderTableView;
+    
    
 
 }
-@property (nonatomic, retain) MBProgressHUD *HUD;
+//@property (nonatomic, retain) MBProgressHUD *HUD;
 @property(nonatomic, retain)HTTPRequest *m_request;
+@property(nonatomic,assign) BOOL manageStat;
 @end

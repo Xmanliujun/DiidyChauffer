@@ -8,7 +8,6 @@
 
 #import "CouponViewController.h"
 #import "DetailPageViewController.h"
-#import "SBJson.h"
 #import "CONST.h"
 #import "DIIdyModel.h"
 #import "AppDelegate.h"
@@ -16,13 +15,15 @@
 #import "ActivityViewController.h"
 #import "JSONKit.h"
 #import <QuartzCore/QuartzCore.h>
-#import "UIImageView+WebCache.h"
+#import "MobClick.h"
 @interface CouponViewController ()
 
 @end
 
 @implementation CouponViewController
-@synthesize order_request,detailCoupon,couponID;
+@synthesize order_request,detailCoupon,couponID,couponStat;
+@synthesize couponTimer,order_stat,order_send,order_number,verCoupon;
+@synthesize couponPage,timeString;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -35,39 +36,11 @@
 #pragma mark-Button Call
 -(void)viewActivity:(UIButton*)sender
 {
+    [MobClick event:@"m05_c001_0001_0002"];
     
     ActivityViewController * active = [[ActivityViewController alloc] init];
-    if (sender.tag==1) {
-        
-        active.diidyContent = HUNDREDYUAN;
-        active.diidyTitle = @"不计里程，百元两次";
-        active.coponurl = COUPONTITLE0;
-        
-    }else if (sender.tag ==2) {
-        
-        active.diidyContent = ENJOYCARD;
-        active.diidyTitle = @"代驾实惠无边，畅想会员特权！";
-         active.coponurl = COUPONTITLE1;
-        
-    }else if (sender.tag==3) {
-        
-        active.diidyContent = PREFERRNTIAL;
-        active.diidyTitle = @"0元用代驾！优惠无底线！";
-         active.coponurl = COUPONTITLE2;
-        
-    }else if (sender.tag==4) {
-        
-        active.diidyContent = STUDENTCARD;
-        active.diidyTitle = @"学生接送卡，准时接送，安全呵护。";
-         active.coponurl = COUPONTITLE3;
-        
-    }else if (sender.tag ==5) {
-        
-        active.diidyContent = REGISTERCARD;
-        active.diidyTitle = @"注册即送50元！";
-         active.coponurl = COUPONTITLE4;
-        
-    }
+    active.coponurl = [NSString stringWithFormat:@"http://coupon.diidy.com/coupon_%d.php",sender.tag-1];
+    
     [self.navigationController pushViewController:active animated:YES];
     [active release];
     
@@ -75,38 +48,50 @@
 
 -(void)returnMainView:(id)sender
 {
+    
+    if (couponTimer) {
+        
+        [self.couponTimer invalidate];
+        self.couponTimer=nil;
+    }
+
     [self dismissModalViewControllerAnimated:NO];
     
 }
 
 -(void)timerFired:(NSTimer *)timer{
     
-    if (page>4) {
+    NSString *pathDocuments=[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *createPath=[NSString stringWithFormat:@"%@/Image",pathDocuments];
+    
+    NSArray *tmplist = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:createPath error:nil];
+      page++;
+    if (page>=[tmplist count]) {
         
-        page=-1;
+        page=0;
     }
-    couponPage.currentPage = page;
-    page++;
+
+    self.couponPage.currentPage = page;
     CGRect frame=couponScrollView.frame;
     frame.origin.x=frame.size.width*page;
     frame.origin.y=0;
     [couponScrollView  scrollRectToVisible:frame animated:YES];
 }
 
-- (void)scrollViewDidScroll:(UIScrollView *)scrollView
-{
-    
-    CGFloat pageWidth = scrollView.frame.size.width;
-     page = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
-    couponPage.currentPage = page;
-    
-}
+//- (void)scrollViewDidScroll:(UIScrollView *)scrollView
+//{
+//
+//    CGFloat pageWidth = scrollView.frame.size.width;
+//    page = floor((scrollView.contentOffset.x - pageWidth / 2) / pageWidth) + 1;
+//    couponPage.currentPage = page;
+//    
+//}
 #pragma mark-TableView
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
    
     return [dataArry count];
-    
+        
 }
 
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -133,32 +118,99 @@
     return cell;
     
 }
-
-
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
     DIIdyModel * diidyModel = [dataArry objectAtIndex:indexPath.row];
     self.couponID =diidyModel.ID;
     self.detailCoupon= diidyModel.name;
     
-   
-    [self creatGiftToFriendView];
-//    DetailPageViewController * detail = [[DetailPageViewController alloc] init];
-//    detail.couponID =diidyModel.ID;
-//    detail.detailCoupon = diidyModel.name;
-//    [self.navigationController pushViewController:detail animated:YES];
-//    [detail release];
+    [MobClick event:@"m05_c001_0001"];
+    
+    if ([diidyModel.close_date isEqualToString:@"永久有效"]) {
+        
+        [self creatGiftToFriendView];
+        
+    }else{
+    
+        NSArray*origntime = [diidyModel.close_date componentsSeparatedByString:@"-"];
+        
+        NSArray*nowtime = [self.timeString componentsSeparatedByString:@"-"];
+       
+        if ([[nowtime objectAtIndex:0] intValue]>[[origntime objectAtIndex:0] intValue]) {
+            
+            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                           message:@"优惠劵已过期"
+                                                          delegate:nil
+                                                 cancelButtonTitle:@"确认"
+                                                 otherButtonTitles:nil ];
+            [alert show];
+            [alert release];
+            
+        }else if([[nowtime objectAtIndex:0] intValue]==[[origntime objectAtIndex:0] intValue]){
+            
+            if ([[nowtime objectAtIndex:1] intValue]>[[origntime objectAtIndex:1] intValue]) {
+                
+                UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                               message:@"优惠劵已过期"
+                                                              delegate:nil
+                                                     cancelButtonTitle:@"确认"
+                                                     otherButtonTitles:nil ];
+                [alert show];
+                [alert release];
+
+                
+            }else if ([[nowtime objectAtIndex:1] intValue]==[[origntime objectAtIndex:1] intValue]){
+            
+                if ([[nowtime objectAtIndex:1] intValue]>[[origntime objectAtIndex:1] intValue]) {
+                    
+                    UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
+                                                                   message:@"优惠劵已过期"
+                                                                  delegate:nil
+                                                         cancelButtonTitle:@"确认"
+                                                         otherButtonTitles:nil ];
+                    [alert show];
+                    [alert release];
+                    
+                }else{
+                
+                    [self creatGiftToFriendView];
+                }
+                
+            
+            }else{
+            
+                [self creatGiftToFriendView];
+
+            }
+            
+        }else{
+        
+            [self creatGiftToFriendView];
+        
+        }
+    }
+}
+
+-(void)setExtraCellLineHidden: (UITableView *)tableView
+{
+    UIView *view = [UIView new];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+    [view release];
 }
 #pragma mark-DownLoad Parsing
 -(void)parseStringJson:(NSString *)str
 {
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
     }
 
     NSArray* jsonParser =[str objectFromJSONString];
+    
     if (dataArry) {
         
         [dataArry removeAllObjects];
@@ -183,49 +235,132 @@
         [diidy release];
         
     }
-    CGRect rect;
+   //CGRect rect;
     if([jsonParser count]!=0){
         
         messgeLable.text = MESSAGE; 
-    
-        if (60*[jsonParser count]>276) {
-            
-            rect = CGRectMake(0.0, 150.0, 320.0, 276);
-            
-        }else {
-            
-             rect = CGRectMake(0.0, 150.0, 320.0, 60*[jsonParser count]+1);
-            
-        }
-        
-        UITableView * couponTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
-        couponTableView.contentInset = UIEdgeInsetsMake(1.0f, 0.0f, 0.0f, 0.0);
-        couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-        if (60*[jsonParser count]>276) {
-            
-            couponTableView.scrollEnabled = YES;
-            
-        }else {
-            
-            couponTableView.scrollEnabled=NO;
-            
-        }
-         couponTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
-       // couponTableView.separatorStyle = UITableViewCellEditingStyleNone;
-      
-        couponTableView.delegate = self;
-        couponTableView.dataSource = self;
-        [self.view addSubview:couponTableView];
-        [couponTableView release];
+        //rect = CGRectMake(0.0, 150.0, 320.0, 276);
+        //couponTableView.frame = rect;
+        [couponTableView reloadData];
         
     }else {
         
         messgeLable.text = NOMESSAGE;
         
     }
-    
+}
 
+- (void)downloadNewData:(NSString*)ur{
+
+
+    NSArray*numberArray = [ur componentsSeparatedByString:@"#"];
+        
+    NSFileManager *fileManager = [[NSFileManager alloc] init];
+    NSString *pathDocuments=[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *createPath=[NSString stringWithFormat:@"%@/Image",pathDocuments];
     
+    
+    if (![[NSFileManager defaultManager] fileExistsAtPath:createPath])
+    {
+        
+        [fileManager createDirectoryAtPath:createPath withIntermediateDirectories:YES attributes:nil error:nil];
+    }
+    else
+    {
+        NSLog(@"Have");
+    }
+    
+    
+    for(int i=0; i<[numberArray count];i++) {
+        
+        UIImage *img1=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat: @"http://www.diidy.com/android/client/coupon/coupon_%d.jpg",i]]]];
+        
+        NSData *imageData1 = UIImagePNGRepresentation(img1);
+        [imageData1 writeToFile:[createPath stringByAppendingPathComponent:[NSString stringWithFormat:@"coupon%d.png",i]] atomically:NO];
+        
+        NSLog(@"image   %@",imageData1);
+        
+    }
+   
+    
+    [self performSelectorOnMainThread:@selector(updateInformation) withObject:nil waitUntilDone:YES];
+    
+}
+-(void)updateInformation
+{
+
+    NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
+    NSString *documentsDirectory = [paths objectAtIndex:0];
+    NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"coupon.plist"];
+    NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
+    [plugin1 setObject:self.verCoupon forKey:@"couponImage"];
+    [dictplist setObject:plugin1 forKey:@"statusDict"];
+    [dictplist writeToFile:plistPath atomically:YES];
+    [dictplist release];
+    [plugin1 release];
+
+    NSString *pathDocuments=[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *createPath=[NSString stringWithFormat:@"%@/Image",pathDocuments];
+    
+    
+    NSArray *tmplist = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:createPath error:nil];
+    
+    if (couponScrollView) {
+        
+        [couponScrollView removeFromSuperview];
+        couponScrollView=nil;
+    }
+    couponScrollView = [[UIScrollView alloc] init];
+    couponScrollView.frame = CGRectMake(0.0, 0.0, 320.0, 90.0);
+    couponScrollView.contentSize = CGSizeMake(320.0*[tmplist count],80.0);
+    couponScrollView.backgroundColor = [UIColor grayColor];
+    couponScrollView.showsVerticalScrollIndicator = NO;
+    couponScrollView.showsHorizontalScrollIndicator = NO;
+    //couponScrollView.delegate = self;
+    couponScrollView.userInteractionEnabled = YES;
+    couponScrollView.pagingEnabled = YES;
+    couponScrollView.scrollEnabled = YES;
+    
+    for (int i=0; i<[tmplist count]; i++) {
+        
+        UIImage* im0 = [UIImage imageWithContentsOfFile:[createPath stringByAppendingPathComponent:[NSString stringWithFormat:@"coupon%d.png",i]]];
+        
+        UIImageView * zeroImageView = [[UIImageView alloc] initWithImage:im0];
+        zeroImageView.frame = CGRectMake(i*320, 0, 320, 90);
+        [couponScrollView addSubview:zeroImageView];
+        [zeroImageView release];
+        
+    }
+    for (int i=0; i<[tmplist count]; i++) {
+        
+        UIButton * couButton = [UIButton buttonWithType:UIButtonTypeCustom];
+        couButton.frame = CGRectMake(i*320, 0, 320, 90);
+        couButton.tag = i+1;
+        [couButton addTarget:self action:@selector(viewActivity:) forControlEvents:UIControlEventTouchUpInside];
+        [couponScrollView addSubview:couButton];
+        
+    }
+    [self.view addSubview:couponScrollView];
+    
+    UIPageControl*coupan = [[UIPageControl alloc] init];
+
+    self.couponPage=coupan;
+    self.couponPage.backgroundColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:0.6];
+    self.couponPage.alpha = 0.7;
+    self.couponPage.frame = CGRectMake(0.0, 90.0, 320.0, 20.0);
+    self.couponPage.numberOfPages = [tmplist count];
+    self.couponPage.currentPage = 0;
+    [self.view addSubview:self.couponPage];
+    
+    self.couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
+
+}
+-(void)parseImageStringJson:(NSString*)strrr
+{
+
+    [NSThread detachNewThreadSelector:@selector(downloadNewData:) toTarget:self withObject:strrr];
+
 }
 -(void)requesttimeout
 {
@@ -235,6 +370,8 @@
 
 -(void)requFinish:(NSString *)requestString order:(int)nOrder{
     
+    
+
     if ([requestString length]==0) {
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
@@ -246,9 +383,25 @@
         [alert release];
         
     }else{
+      
+        if (nOrder==70) {
+            
+             [self parseStringJson:requestString];
+            
+        }else if(nOrder==71){
         
-        [self parseStringJson:requestString];
+            [self creatScrollView:requestString];
+            
+        }else if(nOrder==72){
+            
+              [self parseGiftFrientStringJson:requestString];
         
+        }else if (nOrder==73){
+        
+            [self parseImageStringJson:requestString];
+
+        
+        }
     }
 }
 
@@ -256,7 +409,7 @@
 {
     [HUD removeFromSuperview];
     [HUD release];
-    HUD = nil;
+     HUD = nil;
 }
 
 #pragma Self Call
@@ -270,7 +423,7 @@
     centerLable.text = @"优 惠 劵 列 表";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:centerLable];
     
@@ -285,18 +438,22 @@
 }
 -(void)downCouponStat
 {
-    NSURL *url=[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon.txt"];
-    ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-    [request setTimeOutSeconds:15.0f];
-    [request setDelegate:self];
-    [request setTag:110];
-    [request startAsynchronous];
+ 
+    NSString*saturl= @"http://www.diidy.com/android/client/coupon.txt";
+    saturl = [saturl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+    HTTPRequest *request = [[HTTPRequest alloc] init];
+    request.forwordFlag = 71;
+    self.order_stat = request;
+    self.order_stat.m_delegate = self;
+    self.order_stat.hasTimeOut = YES;
+    [request release];
+    
+    [self.order_stat requestByUrlByGet:saturl];
 }
-
-
 
 -(void)creatScrollView:(NSString*)responseString
 {
+    self.verCoupon=responseString;
     NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
     //获取完整路径
     NSString *documentsDirectory = [paths objectAtIndex:0];
@@ -308,134 +465,92 @@
     NSFileManager *fileManager = [[NSFileManager alloc] init];
     NSString *pathDocuments=[NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
     NSString *createPath=[NSString stringWithFormat:@"%@/Image",pathDocuments];
-  
+    
+    
+    NSArray *tmplist = [[NSFileManager defaultManager] contentsOfDirectoryAtPath:createPath error:nil];
+    
+   
     if (![[NSFileManager defaultManager] fileExistsAtPath:createPath])
     {
         
         [fileManager createDirectoryAtPath:createPath withIntermediateDirectories:YES attributes:nil error:nil];
         
-        
-    }
-    else
+    }else
     {
         NSLog(@"Have");
     }
-
-    NSString *savedImagePath0 ;
-    NSString *savedImagePath1;
-    NSString *savedImagePath2;
-    NSString *savedImagePath3;
-    NSString *savedImagePath4;
-    
-    savedImagePath0 = [createPath stringByAppendingPathComponent:@"coupon0.png"];
-    savedImagePath1 = [createPath stringByAppendingPathComponent:@"coupon1.png"];
-    savedImagePath2 = [createPath stringByAppendingPathComponent:@"coupon2.png"];
-    savedImagePath3 = [createPath stringByAppendingPathComponent:@"coupon3.png"];
-   // savedImagePath4 = [createPath stringByAppendingPathComponent:@"coupon4.png"];
     
     if ([responseString isEqualToString:couponVer]) {
        
-        NSLog(@"相同");
+        if ([tmplist count]==0) {
+            
+           
+        }else{
+            
+            if (couponScrollView) {
+                
+                [couponScrollView removeFromSuperview];
+                 couponScrollView=nil;
+            }
+        couponScrollView = [[UIScrollView alloc] init];
+        couponScrollView.frame = CGRectMake(0.0, 0.0, 320.0, 90.0);
+        couponScrollView.contentSize = CGSizeMake(320.0*[tmplist count],80.0);
+        couponScrollView.backgroundColor = [UIColor grayColor];
+        couponScrollView.showsVerticalScrollIndicator = NO;
+        couponScrollView.showsHorizontalScrollIndicator = NO;
+        //couponScrollView.delegate = self;
+        couponScrollView.userInteractionEnabled = YES;
+        couponScrollView.pagingEnabled = YES;
+        couponScrollView.scrollEnabled = YES;
+        
+        for (int i=0; i<[tmplist count]; i++) {
+            
+            UIImage* im0 = [UIImage imageWithContentsOfFile:[createPath stringByAppendingPathComponent:[NSString stringWithFormat:@"coupon%d.png",i]]];
+            
+            UIImageView * zeroImageView = [[UIImageView alloc] initWithImage:im0];
+            zeroImageView.frame = CGRectMake(i*320, 0, 320, 90);
+            [couponScrollView addSubview:zeroImageView];
+            [zeroImageView release];
+            
+        }
+        for (int i=0; i<[tmplist count]; i++) {
+            
+            UIButton * couButton = [UIButton buttonWithType:UIButtonTypeCustom];
+            couButton.frame = CGRectMake(i*320, 0, 320, 90);
+            couButton.tag = i+1;
+            [couButton addTarget:self action:@selector(viewActivity:) forControlEvents:UIControlEventTouchUpInside];
+            [couponScrollView addSubview:couButton];
+            
+        }
+            [self.view addSubview:couponScrollView];
+        
+        }
+        
+        self.couponPage.numberOfPages = [tmplist count];
+
+        
+        self.couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
         
     }else{
-    
-        UIImage *img0=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_0.jpg"]]];
-        NSData *imageData0 = UIImagePNGRepresentation(img0);
-        [imageData0 writeToFile:savedImagePath0 atomically:NO];
         
+        NSString*numString = @"http://www.diidy.com/android/client/coupon/couponinfo.txt";
+        numString = [numString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+        HTTPRequest *request = [[HTTPRequest alloc] init];
+        request.forwordFlag = 73;
+        self.order_number = request;
+        self.order_number.m_delegate = self;
+        self.order_number.hasTimeOut = YES;
+        [request release];
         
-        UIImage *img1=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_1.jpg"]]];
-        NSData *imageData1 = UIImagePNGRepresentation(img1);
-        [imageData1 writeToFile:savedImagePath1 atomically:NO];
-        
-        UIImage *img2=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_2.jpg"]]];
-        NSData *imageData2 = UIImagePNGRepresentation(img2);
-        [imageData2 writeToFile:savedImagePath2 atomically:NO];
-        
-        
-        UIImage *img3=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_3.jpg"]]];
-        NSData *imageData3 = UIImagePNGRepresentation(img3);
-        [imageData3 writeToFile:savedImagePath3 atomically:NO];
-        
-       
-//        UIImage *img4=[UIImage imageWithData:[NSData dataWithContentsOfURL:[NSURL URLWithString:@"http://www.diidy.com/android/client/coupon/coupon_4.jpg"]]];
-//        NSData *imageData4 = UIImagePNGRepresentation(img4);
-//        [imageData4 writeToFile:savedImagePath4 atomically:NO];
-        
-          NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);
-          NSString *documentsDirectory = [paths objectAtIndex:0];
-          NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"coupon.plist"];
-          NSMutableDictionary *dictplist = [[NSMutableDictionary alloc] init];
-          NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
-          [plugin1 setObject:responseString forKey:@"couponImage"];
-          [dictplist setObject:plugin1 forKey:@"statusDict"];
-          [dictplist writeToFile:plistPath atomically:YES];
-          [dictplist release];
-          [plugin1 release];
-    }
-    
-    
-    UIImage* im0 = [UIImage imageWithContentsOfFile:savedImagePath0];
+        [self.order_number requestByUrlByGet:numString];
 
-    UIImageView * zeroImageView = [[UIImageView alloc] initWithImage:im0];
-    zeroImageView.frame = CGRectMake(0, 0, 320, 90);
-    
-    UIImage* im1 = [UIImage imageWithContentsOfFile:savedImagePath1];
-    UIImageView * firstImageView = [[UIImageView alloc] initWithImage:im1 ];
-    firstImageView.frame=CGRectMake(320, 0, 320, 90);
-    
-    UIImage* im2 = [UIImage imageWithContentsOfFile:savedImagePath2];
-    UIImageView * secondImageView = [[UIImageView alloc] initWithImage:im2];
-    secondImageView.frame = CGRectMake(640, 0, 320, 90);
-    
-    UIImage* im3 = [UIImage imageWithContentsOfFile:savedImagePath3];
-    UIImageView * threeImageView = [[UIImageView alloc] initWithImage:im3];
-    threeImageView.frame = CGRectMake(960, 0, 320, 90);
-    
-//    UIImage* im4 = [UIImage imageWithContentsOfFile:savedImagePath4];
-//    UIImageView * fourImageView = [[UIImageView alloc] initWithImage:im4];
-//    fourImageView.frame =CGRectMake(1280, 0, 320, 90);
-    
-    couponScrollView = [[UIScrollView alloc] init];
-    couponScrollView.frame = CGRectMake(0.0, 0.0, 320.0, 90.0);
-    couponScrollView.contentSize = CGSizeMake(320.0*4,80.0);
-    couponScrollView.backgroundColor = [UIColor grayColor];
-    couponScrollView.showsVerticalScrollIndicator = NO;
-    couponScrollView.showsHorizontalScrollIndicator = NO;
-    couponScrollView.delegate = self;
-    couponScrollView.userInteractionEnabled = YES;
-    couponScrollView.pagingEnabled = YES;
-    couponScrollView.scrollEnabled = YES;
-    [couponScrollView addSubview:zeroImageView];
-    [couponScrollView addSubview:firstImageView];
-    [couponScrollView addSubview:secondImageView];
-    [couponScrollView addSubview:threeImageView];
-  //  [couponScrollView addSubview:fourImageView];
-    
-    [zeroImageView release];
-    [firstImageView release];
-    [secondImageView release];
-    [threeImageView release];
- //   [fourImageView release];
-    
-    for (int i=0; i<4; i++) {
-        
-        UIButton * couButton = [UIButton buttonWithType:UIButtonTypeCustom];
-        couButton.frame = CGRectMake(i*320, 0, 320, 90);
-        couButton.tag = i+1;
-        [couButton addTarget:self action:@selector(viewActivity:) forControlEvents:UIControlEventTouchUpInside];
-        [couponScrollView addSubview:couButton];
-        
+        for (int i=0; i<[tmplist count]; i++) {
+            
+            NSString*pathhh = [NSString stringWithFormat:@"%@/coupon%d.png",createPath,i];
+              BOOL s=[[NSFileManager defaultManager] removeItemAtPath:pathhh error:nil];
+             NSLog(@"scs         %c",s);
+        }
     }
-    [self.view addSubview:couponScrollView];
-    
-    couponPage= [[UIPageControl alloc] init];
-    couponPage.backgroundColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:0.6];
-    couponPage.alpha = 0.7;
-    couponPage.frame = CGRectMake(0.0, 90.0, 320.0, 20.0);
-    couponPage.numberOfPages = 4;
-    couponPage.currentPage = 0;
-    [self.view addSubview:couponPage];
 }
 
 -(void)closeConnection
@@ -456,8 +571,6 @@
     [UIApplication sharedApplication].networkActivityIndicatorVisible = NO;
 }
 
-
-
 -(void)showWithDetails{
     
     HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
@@ -473,6 +586,7 @@
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
     
     HTTPRequest *request = [[HTTPRequest alloc] init];
+    request.forwordFlag = 70;
     self.order_request = request;
     self.order_request.m_delegate = self;
     self.order_request.hasTimeOut = YES;
@@ -509,20 +623,20 @@
     
     UIImage * determineImage = [UIImage imageNamed:@"u102_normal.png"];
     UIButton* determineButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    determineButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    determineButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     determineButton.frame=CGRectMake(15.0,135.0 , determineImage.size.width, determineImage.size.height);
     [determineButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [determineButton setBackgroundImage:determineImage forState:UIControlStateNormal];
-    [determineButton setTitle:@"确定" forState:UIControlStateNormal];
+    [determineButton setTitle:@"确 定" forState:UIControlStateNormal];
     [determineButton addTarget:self action:@selector(determineSender:) forControlEvents:UIControlEventTouchUpInside];
     
     UIImage *cancelImage = [UIImage imageNamed:@"u104_normal.png"];
     UIButton* cancelButton = [UIButton buttonWithType:UIButtonTypeCustom];
-    cancelButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:12.0f];
+    cancelButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     cancelButton.frame=CGRectMake(160.0,135.0 , determineImage.size.width, determineImage.size.height);
     [cancelButton setTitleColor:[UIColor blackColor] forState:UIControlStateNormal];
     [cancelButton setBackgroundImage:cancelImage forState:UIControlStateNormal];
-    [cancelButton setTitle:@"取消" forState:UIControlStateNormal];
+    [cancelButton setTitle:@"取 消" forState:UIControlStateNormal];
     [cancelButton addTarget:self action:@selector(cancelSender:) forControlEvents:UIControlEventTouchUpInside];
     
    NSString * content = [NSString stringWithFormat:@"您的朋友(%@)送您1张%@，喝酒了疲劳了不想开车了，记着找嘀嘀！记住电话4006960666,客户端约代驾更方便，下载地址http://wap.diidy.com",ShareApp.mobilNumber,self.detailCoupon];
@@ -537,7 +651,6 @@
     contentLable.textAlignment = NSTextAlignmentLeft;
     contentLable.font = [UIFont fontWithName:@"Arial" size:13.0];
 
-    
     giftFrientView = [[UIView alloc] initWithFrame:CGRectMake(10.0,5.0, 300.0, 190.0)];
     giftFrientView.backgroundColor=[UIColor grayColor];
     [[giftFrientView layer] setShadowOffset:CGSizeMake(1, 1)];
@@ -561,9 +674,9 @@
     [giftLineImage release];
 }
 
-
 -(void)cancelSender:(id)sender
 {
+    [MobClick event:@"m05_c001_0001_0003"];
     if (giftFrientView) {
         
         [giftFrientView removeFromSuperview];
@@ -573,7 +686,9 @@
 }
 -(void)determineSender:(id)sender
 {
-    if (giftNumberText.text==NULL||[giftNumberText.text length]==0||[giftNumberText.text isEqualToString:ShareApp.mobilNumber]) {
+    [MobClick event:@"m05_c001_0001_0001"];
+    int markInt = 0;
+    if (giftNumberText.text==NULL||[giftNumberText.text length]==0||[giftNumberText.text length]!=11) {
         
         UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"手机号为空或格式错误" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:nil];
         [alert show];
@@ -581,19 +696,49 @@
 
     }else{
     
-        NSString * baseUrl = [NSString stringWithFormat:GIFTCOUPONS,ShareApp.mobilNumber,giftNumberText.text,couponID];
-        baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-        NSURL * url = [NSURL URLWithString:baseUrl];
-
-        ASIHTTPRequest *request = [ASIHTTPRequest requestWithURL:url];
-        [request setTimeOutSeconds:15.0f];
-        [request setDelegate:self];
-        [request setTag:100];
-        [request startAsynchronous];
+        for (int i=0; i<[giftNumberText.text length];i++) {
+            
+            NSString *string2 = [giftNumberText.text substringWithRange:NSMakeRange(i, 1)];
         
+           
+            if ([string2 isEqualToString:@"1"]||[string2 isEqualToString:@"2"]||[string2 isEqualToString:@"3"]||[string2 isEqualToString:@"4"]||[string2 isEqualToString:@"5"]||[string2 isEqualToString:@"6"]||[string2 isEqualToString:@"7"]||[string2 isEqualToString:@"8"]||[string2 isEqualToString:@"9"]||[string2 isEqualToString:@"0"]) {
+              
+                markInt++;
+            }
+        }
+       
+        if (markInt!=11) {
+            
+            UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"手机号为空或格式错误" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:nil];
+            [alert show];
+            [alert release];
+            
+        }else{
+        
+            if ([giftNumberText.text isEqualToString:ShareApp.mobilNumber]) {
+            
+                UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"优惠券不能赠送给自己，请重新输入手机号码" delegate:nil cancelButtonTitle:@"取消" otherButtonTitles:nil];
+                [alert show];
+                [alert release];
+                      
+            }else{
+        
+                NSString * baseUrl = [NSString stringWithFormat:GIFTCOUPONS,ShareApp.mobilNumber,giftNumberText.text,couponID];
+                baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                   
+                HTTPRequest *request = [[HTTPRequest alloc] init];
+                request.forwordFlag = 72;
+                self.order_send = request;
+                self.order_send.m_delegate = self;
+                self.order_send.hasTimeOut = YES;
+                [request release];
+                
+                [self.order_send requestByUrlByGet: baseUrl];
+
+            }
+        
+        }
     }
-    
-    
 }
 
 -(void)parseGiftFrientStringJson:(NSString *)str
@@ -618,46 +763,13 @@
     
 }
 
--(void)requestFinished:(ASIHTTPRequest *)request
-{
-    if ([request responseString]==NULL||[[request responseString] length]==0) {
-        
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"请求失败"
-                                                       message:@"请检查网络是否连接"
-                                                      delegate:nil
-                                             cancelButtonTitle:@"OK"
-                                             otherButtonTitles:nil ];
-        [alert show];
-        [alert release];
-
-        
-    }else{
-        if (request.tag==110) {
-            
-            [self creatScrollView:[request responseString]];
-            
-        }else{
-        
-            [self parseGiftFrientStringJson:[request responseString]];
-        }
-    }
-}
-
--(void)requestFailed:(ASIHTTPRequest *)request
-{
-
-    UIAlertView *alert = [[UIAlertView alloc]initWithTitle:@"提示" message:@"赠送失败，请重试" delegate:nil cancelButtonTitle:@"关闭" otherButtonTitles:nil];
-    [alert show];
-    [alert release];
-
-}
 -(void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     
     if (giftFrientView) {
         
         [giftFrientView removeFromSuperview];
-        giftFrientView= nil;
+         giftFrientView= nil;
         
     }
 
@@ -666,30 +778,74 @@
 
 }
 #pragma mark - System Approach
-
+-(void)getStat:(NSNotification *)notify {
+    
+    self.couponStat = NO;
+}
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     self.view.backgroundColor = [UIColor whiteColor];
     self.navigationItem.hidesBackButton = YES;
-    [self setTheNavigationBar];
   
-
+    [MobClick event:@"m05_c001"];
+    [self setTheNavigationBar];
+    
+   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getStat:) name:@"COUPONSTAT" object:nil];
+   
     page = -1;
     dataArry = [[NSMutableArray alloc] initWithCapacity:0];
 
     messgeLable = [[UILabel alloc] init];
     messgeLable.frame = CGRectMake(0, 110, 320, 40);
     messgeLable.numberOfLines = 0;
+    messgeLable.text = NOMESSAGE;
     messgeLable.backgroundColor = [UIColor clearColor];
     messgeLable.font = [UIFont fontWithName:@"Arial" size:14];
     messgeLable.textColor = [UIColor orangeColor];
     [self.view addSubview:messgeLable];
     
-    [self downCouponStat];
-    [self showWithDetails];
-    couponTimer = [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(timerFired:) userInfo:nil repeats:YES];
+    couponScrollView = [[UIScrollView alloc] init];
+    couponScrollView.frame = CGRectMake(0.0, 0.0, 320.0, 90.0);
+    couponScrollView.contentSize = CGSizeMake(320.0,80.0);
+    couponScrollView.backgroundColor = [UIColor grayColor];
+    couponScrollView.showsVerticalScrollIndicator = NO;
+    couponScrollView.showsHorizontalScrollIndicator = NO;
+   // couponScrollView.delegate = self;
+    couponScrollView.userInteractionEnabled = YES;
+    couponScrollView.pagingEnabled = YES;
+    couponScrollView.scrollEnabled = YES;
     
+    UIImage* im0 = [UIImage imageNamed:@"corp-info-4.png"];
+       UIImageView * zeroImageView = [[UIImageView alloc] initWithImage:im0];
+    zeroImageView.frame = CGRectMake(0, 0, 320, 90);
+    [couponScrollView addSubview:zeroImageView];
+    [zeroImageView release];
+    [self.view addSubview:couponScrollView];
+    
+    self.couponPage= [[UIPageControl alloc] init];
+    self.couponPage.backgroundColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:0.6];
+    self.couponPage.alpha = 0.7;
+    self.couponPage.frame = CGRectMake(0.0, 90.0, 320.0, 20.0);
+    self.couponPage.numberOfPages = 1;
+       self.couponPage.currentPage = 0;
+    [self.view addSubview:self.couponPage];
+    
+    NSDate *today = [[NSDate alloc] init];
+    NSDateFormatter* dateformatter=[[NSDateFormatter alloc] init];
+    [dateformatter setDateFormat:@"YYYY-MM-d"];
+    self.timeString=[dateformatter stringFromDate:today];
+    
+    CGRect rect =CGRectMake(0.0, 150.0, 320.0, 276);
+    couponTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
+    couponTableView.contentInset = UIEdgeInsetsMake(1.0f, 0.0f, 0.0f, 0.0);
+    couponTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    couponTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
+    couponTableView.delegate = self;
+    couponTableView.dataSource = self;
+    [self.view addSubview:couponTableView];
+    [self setExtraCellLineHidden:couponTableView];
+   
 }
 
 -(void)viewWillAppear:(BOOL)animated
@@ -705,23 +861,59 @@
     centerLable.hidden = YES;
     topImageView.hidden = YES;
     returnButton.hidden = YES;
-
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (self.couponStat) {
+        
+        [self downCouponStat];
+        [self showWithDetails];
+        
+    }
 }
 -(void)dealloc
 {
+    
+    if (order_send) {
+        
+        [self.order_send closeConnection];
+        self.order_send.m_delegate = nil;
+        self.order_send=nil;
+    }
+    if (order_stat) {
+        
+        [self.order_stat closeConnection];
+        self.order_stat.m_delegate = nil;
+        self.order_stat=nil;
+    }
 
+    if (order_request) {
+        
+        [self.order_request closeConnection];
+        self.order_request.m_delegate=nil;
+        self.order_request=nil;
+    }
+    
+    if (order_number) {
+        
+        [self.order_number closeConnection];
+        self.order_number.m_delegate=nil;
+        self.order_number=nil;
+    }
+       
+    self.verCoupon=nil;
+    self.timeString=nil;
+    self.couponPage=nil;
     [couponID release];
     [detailCoupon release];
-    [giftFrientView release];
-    
-    [couponPage release];
     [couponScrollView release];
     [topImageView release];
     [centerLable release];
     [messgeLable release];
     [dataArry release];
     [super dealloc];
-    
 }
 - (void)viewDidUnload
 {

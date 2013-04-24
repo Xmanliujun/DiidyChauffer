@@ -11,7 +11,6 @@
 #import "AppDelegate.h"
 #import "NSString+Hashing.h"
 #import "CONST.h"
-#import "SBJson.h"
 #import "CouponViewController.h"
 #import "ManageMentViewController.h"
 #import "DIIdyModel.h"
@@ -23,6 +22,7 @@
 #import "JSONKit.h"
 #import "Reachability.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 
 @implementation LandingViewController
 @synthesize couponArray;
@@ -100,8 +100,6 @@
     [landView release];
     
 }
-
-
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [passWordText resignFirstResponder];
@@ -110,6 +108,7 @@
 #pragma mark-Button
 -(void)registeredUsers:(id)sender
 {
+    [MobClick event:@"m09_u001"];
     RegisteredViewController * registered = [[RegisteredViewController alloc] init];
     registered.registerIsTrue = @"TRUE";
     returnButton.hidden = YES;
@@ -117,9 +116,9 @@
     [registered release];
     
 }
-
 -(void)forgotPassword:(id)sender
 {
+    [MobClick event:@"m09_u003"];
     RegisteredViewController * registered = [[RegisteredViewController alloc] init];
     registered.registerIsTrue = @"NO";
     returnButton.hidden = YES;
@@ -143,7 +142,6 @@
         HUD = nil;
     }
     
-       
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
     [alertView show];
     [alertView release];
@@ -161,19 +159,19 @@
 {
     [HUD removeFromSuperview];
     [HUD release];
-    HUD = nil;
+     HUD = nil;
 }
 
 -(void)clientLandedPage:(id)sender
 {
-    
+    [MobClick event:@"m09_u002_0001"];
+
     [inputNumberText resignFirstResponder];
     [passWordText resignFirstResponder];
     
-    
     ShareApp.mobilNumber = inputNumberText.text;
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-    if ([r currentReachabilityStatus]==0) {
+    
+   if (![ShareApp connectedToNetwork]) {
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
@@ -185,7 +183,6 @@
         
     }else{
 
-    
         if(inputNumberText.text==NULL||[inputNumberText.text length]==0)
         {
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
@@ -218,6 +215,7 @@
             [HUD show:YES];
            
             NSString * baseUrl = [NSString stringWithFormat:LAND,inputNumberText.text,[passWordText.text MD5Hash],ShareApp.uniqueString,ShareApp.reachable,ShareApp.phoneVerion,ShareApp.deviceName];
+            NSLog(@"%@",baseUrl);
             baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
             HTTPRequest *request = [[HTTPRequest alloc] init];
@@ -256,7 +254,7 @@
    [dataArry removeAllObjects];
     NSArray* jsonParser =[str objectFromJSONString];
     
-    for (int i = 0; i<[jsonParser count]; i++) {
+    for (int i = 0; i<[jsonParser count];i++) {
         
             DIIdyModel * diidy = [[DIIdyModel alloc] init];
             NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
@@ -299,10 +297,9 @@
         
         [HUD removeFromSuperview];
         [HUD release];
-        HUD = nil;
+         HUD = nil;
     }
 
- 
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     ShareApp.logInState = returenNews;
@@ -314,17 +311,15 @@
     NSMutableDictionary *plugin1 = [[NSMutableDictionary alloc]init];
     [plugin1 setObject:returenNews forKey:@"status"];
     [plugin1 setObject:inputNumberText.text forKey:@"telephone"];
-    
     [dictplist setObject:plugin1 forKey:@"statusDict"];
-    
     [dictplist writeToFile:plistPath atomically:YES];
     [plugin1 release];
     [dictplist release];
     
-    
     if([returenNews isEqualToString:@"s"])
     {
-        
+        [MobClick event:@"m09_u002_0001_0001"];
+
         NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:@"land",@"STATUS", nil];
         [[NSNotificationCenter defaultCenter] postNotificationName:@"LAND" object:self userInfo:dict];
         
@@ -333,6 +328,7 @@
         if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
             
             CouponViewController * cou = [[CouponViewController alloc] init];
+            cou.couponStat = YES;
             ShareApp.mobilNumber = inputNumberText.text;
             [self.navigationController pushViewController:cou animated:YES];
             [cou release];
@@ -340,6 +336,7 @@
         }else if([ShareApp.pageManageMent isEqualToString:@"manage"]) {
             
             ManageMentViewController * manage = [[ManageMentViewController alloc] init];
+            manage.manageStat = YES;
             ShareApp.mobilNumber = inputNumberText.text;
             [self.navigationController pushViewController:manage animated:YES];
             [manage release];
@@ -366,6 +363,8 @@
             
         }
     }else if ([returenNews isEqualToString:@"f"]) {
+        
+        [MobClick event:@"m09_u002_0001_0002"];
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"登陆失败" 
                                                        message:@"请检查网络是否连接"
@@ -396,10 +395,7 @@
         [alert release];
         
     }
-    
 }
-
-
 -(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
     if ([requestString length]==0) {
@@ -422,9 +418,6 @@
             
             [self parseCouponStringJson:requestString];
         }
-        
-        
-        
     }
 }
 
@@ -433,7 +426,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.navigationItem.hidesBackButton = YES;
     
@@ -460,9 +452,9 @@
     [self.navigationController.navigationBar addSubview:landingLable];
     [landingLable release];
 
-    
     UIImage * landedImage =[UIImage imageNamed:@"land.png" ];
     UIButton*landedButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    [landedButton setTitle:@"登 陆" forState:UIControlStateNormal];
     landedButton.frame=CGRectMake(9.0f, 130.0f,landedImage.size.width,40);
     [landedButton setBackgroundImage:landedImage forState:UIControlStateNormal];
     [landedButton addTarget:self action:@selector(clientLandedPage:) forControlEvents:UIControlEventTouchUpInside];
@@ -478,7 +470,7 @@
     
     UIButton * forgotButton = [UIButton buttonWithType:UIButtonTypeCustom];
     forgotButton.frame = CGRectMake(220.0f, 173.0f,80.0f, 30.0f);
-    [forgotButton setTitle:@"忘记密码 >" forState:UIControlStateNormal];
+    [forgotButton setTitle:@"忘记密码>" forState:UIControlStateNormal];
     [forgotButton setTitleColor:[UIColor orangeColor] forState:UIControlStateNormal];
     forgotButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:16.0f];
     [forgotButton addTarget:self action:@selector(forgotPassword:) forControlEvents:UIControlEventTouchUpInside];
@@ -487,7 +479,6 @@
     [self creatInPutBox];
     
 }
-
 
 -(void)viewDidDisappear:(BOOL)animated
 {
@@ -503,7 +494,21 @@
 }
 
 -(void)dealloc
-{ 
+{
+    if (land_request) {
+        
+        [self.land_request closeConnection];
+        self.land_request.m_delegate=nil;
+        self.land_request=nil;
+    }
+    
+    if (CouponInformation_request) {
+        
+        [self.CouponInformation_request closeConnection];
+        self.CouponInformation_request.m_delegate=nil;
+        self.CouponInformation_request=nil;
+    }
+    
     [topImageView release];
     [couponArray release];
     [dataArry release];

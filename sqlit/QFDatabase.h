@@ -31,5 +31,6 @@
 -(void)insertToDatabase:(NSArray *)array;
 -(BOOL)insertItemWithFMDB:(DIIdyModel *)item;
 -(void)createTablePool;
-
+-(NSArray*)readDataWithFMDBaa:(NSString*)iddd;
+-(void)modifyData:(DIIdyModel*)newData;
 @end

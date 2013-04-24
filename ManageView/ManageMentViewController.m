@@ -9,20 +9,22 @@
 #import "ManageMentViewController.h"
 #import "OrderDetailsViewController.h"
 #import "CONST.h"
-#import "SBJson.h"
 #import "AppDelegate.h"
 #import "DIIdyModel.h"
 #import "ManageTableViewCell.h"
 #import "QFDatabase.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import "MobClick.h"
+#import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 
 @interface ManageMentViewController ()
 
 @end
 
 @implementation ManageMentViewController
-@synthesize HUD,m_request;
+@synthesize m_request,manageStat;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -30,6 +32,15 @@
         // Custom initialization
     }
     return self;
+}
+-(id)init
+{
+    self = [super init];
+    if (self) {
+          
+    }
+    return self;
+
 }
 #pragma mark - Self Call
 -(void)setTheNavigationBar
@@ -67,61 +78,51 @@
 -(void)creatNOOrdersView
 {
     
-    UIImage * noOrderImage = [UIImage imageNamed:@"u145_normal.png"];
+    UIImage * noOrderImage = [UIImage imageNamed:@"lifeViewLine2.png"];
     UIImageView* noOrderImageView = [[UIImageView alloc] initWithImage:noOrderImage];
-    noOrderImageView.frame = CGRectMake(20, 20, noOrderImage.size.width, noOrderImage.size.height);
+    noOrderImageView.frame = CGRectMake(20, 20,278.0f,153.0f);
     
-    UILabel * noOrderLable = [[UILabel alloc] initWithFrame:CGRectMake(35.0, 35.0, noOrderImage.size.width -30.0, noOrderImage.size.height -30.0)];
+    UILabel * noOrderLable = [[UILabel alloc] initWithFrame:CGRectMake(35.0, 35.0, 278.0f-30.0,153.0f-30.0)];
     noOrderLable.text =ORDERPROMPT;
     noOrderLable.textColor = [UIColor orangeColor];
     noOrderLable.backgroundColor = [UIColor clearColor];
     noOrderLable.font = [UIFont fontWithName:@"Arial" size:16.0];
-    noOrderLable.lineBreakMode = UILineBreakModeWordWrap;
     noOrderLable.numberOfLines = 0;
-    
-    [self.view addSubview:noOrderLable];
     [self.view addSubview:noOrderImageView];
-    
+    [self.view addSubview:noOrderLable];
     [noOrderImageView release];
     [noOrderLable release];
     
 }
 
-
+-(void)setExtraCellLineHidden: (UITableView *)tableView
+{
+    UIView *view = [UIView new];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+    [view release];
+}
 -(void)creatHaveOrderView
 {
-    CGRect rect;
-    
-    if (100*[listOrderArray count]>400) {
+    if (orderTableView) {
         
-        rect =self.view.bounds;
-        
-    }else {
-        
-        rect = CGRectMake(0.0, 0.0, 320.0, 100*[listOrderArray count]);
-        
+        [orderTableView release];
+        orderTableView=nil;
     }
     
-    UITableView * orderTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
+    CGRect rect = CGRectMake(0.0, 0.0, 320.0, 460.0-44.0);
+    orderTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
     orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    //orderTableView.backgroundColor = [UIColor whiteColor];
+    orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     orderTableView.backgroundView=nil;
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
-    
-    if (100*[listOrderArray count]>400) {
-        
-        orderTableView.scrollEnabled = YES;
-        
-    }else {
-        
-        orderTableView.scrollEnabled = NO;
-    }
-
     orderTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
     
     [self.view addSubview:orderTableView];
-    [orderTableView release];
+    [self setExtraCellLineHidden:orderTableView];
+    
+    [NSThread detachNewThreadSelector:@selector(downloadNewData:) toTarget:self withObject:nil];
     
 }
 #pragma mark-button
@@ -132,23 +133,21 @@
 }
 -(void)refreshStep:(id)sender
 {
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
     
-    if ([r currentReachabilityStatus]==0) {
+    [MobClick event:@"m04_o001_0001_0003"];
+
+    if (![ShareApp connectedToNetwork]) {
         
     }else{
+        
         [self goToTheDownLoadPage];
     }
-    
-
-    
 }
 #pragma mark-HTTPDown
 
 -(void)requFinish:(NSString *)requestString order:(int)nOrder{
     
-    NSLog(@"%@",requestString);
-    
+   
     if ([requestString length]==0) {
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
@@ -170,7 +169,8 @@
 
 -(void)showWithDetails{
     
-    self.HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
+    
+    HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
     [self.navigationController.view addSubview:HUD];
     HUD.delegate=self;
     HUD.labelText=@"Loading";
@@ -183,7 +183,6 @@
     self.m_request.m_delegate = self;
     self.m_request.hasTimeOut = YES;
     [request release];
-    
     [self.m_request requestByUrlByGet: baseUrl];
 }
 -(void)requesttimeout
@@ -193,8 +192,105 @@
     
 }
 
+- (void)downloadNewData:(NSString*)ur{
+
+    NSArray * sqlitArray = [ShareApp.mDatabase readDataWithFMDB];
+
+        for (int i = 0; i<sqlitArray.count;i++) {
+            
+            DIIdyModel * itemMO = [sqlitArray objectAtIndex:i];
+            
+            if ([itemMO.status isEqualToString:@"已受理"]) {
+                
+                NSString*urlString = [NSString stringWithFormat:@"http://www.diidy.com/client/orderlist/%@/%@/%@",ShareApp.mobilNumber,itemMO.createTime,itemMO.orderID];
+                NSLog(@"%@",urlString);
+                urlString = [urlString stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
+                NSURL *url=[NSURL URLWithString:urlString];
+
+                NSError *error=nil;
+                NSString *responseString=[NSString stringWithContentsOfURL:url encoding:NSUTF8StringEncoding error:&error];
+                NSArray* jsonParserstat =[responseString objectFromJSONString];
+                
+                
+                for (int i=0;i<[jsonParserstat count];i++) {
+                    NSDictionary * diidyDictSt = [jsonParserstat objectAtIndex:i];
+                    
+                    if([[diidyDictSt objectForKey:@"status"] intValue]==5||[[diidyDictSt objectForKey:@"status"] intValue]==6){
+                        
+                        DIIdyModel * diidy = [[DIIdyModel alloc] init];
+                        diidy.orderID = [diidyDictSt objectForKey:@"orderid"];
+                        diidy.startTime = [diidyDictSt objectForKey:@"starttime"];
+                        diidy.startAddr = [diidyDictSt objectForKey:@"startaddr"];
+                        diidy.endAddr = [diidyDictSt objectForKey:@"endaddr"];
+                        diidy.ordersNumber = [diidyDictSt objectForKey:@"number"];
+                        diidy.contactName = [diidyDictSt objectForKey:@"contactname"];
+                        diidy.contactMobile = [diidyDictSt objectForKey:@"contactmobile"];
+                        diidy.createTime = [diidyDictSt objectForKey:@"createtime"];
+                        diidy.coupon = [diidyDictSt objectForKey:@"coupon"];
+                        NSString* currentStatus = [diidyDictSt objectForKey:@"status"];
+                        
+                        if ([currentStatus intValue]==5) {
+                            
+                            diidy.status = @"完成";
+                            
+                        }else if ([currentStatus intValue]==6)  {
+                            
+                            diidy.status = @"已取消";
+                            
+                        }
+                        
+                            [ShareApp.mDatabase modifyData:diidy];
+                            [diidy release];
+                    
+                    }
+               
+                }
+                //回到主线程
+                [self performSelectorOnMainThread:@selector(updateInformation) withObject:nil waitUntilDone:YES];
+            }
+    }
+}
+
+-(void)updateInformation
+{
+    
+     NSArray * sqlitArray = [ShareApp.mDatabase readDataWithFMDB];
+    
+    if (listOrderArray) {
+        
+        [listOrderArray removeAllObjects];
+        
+    }else
+    {
+        listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
+        
+    }
+
+    
+    for (int i = 0;i<sqlitArray.count;i++) {
+    
+        DIIdyModel * item = [sqlitArray objectAtIndex:i];
+        item.orderID=item.orderID?item.orderID:@"";
+        item.startTime=item.startTime?item.startTime:@"";
+        item.startAddr=item.startAddr?item.startAddr:@"";
+        item.endAddr=item.endAddr?item.endAddr:@"";
+        item.ordersNumber=item.ordersNumber?item.ordersNumber:@"";
+        item.contactName=item.contactName?item.contactName:@"";
+        item.contactMobile=item.contactMobile?item.contactMobile:@"";
+        item.createTime=item.createTime?item.createTime:@"";
+        item.coupon = item.coupon?item.coupon:@"";
+        item.status= item.status?item.status:@"";
+        [listOrderArray addObject:item];
+      
+    }
+
+     [orderTableView reloadData];
+}
+
 -(void)goToTheDownLoadPage
 {
+    
+    
     NSArray * sqlitArray = [ShareApp.mDatabase readDataWithFMDB];
     
     
@@ -212,8 +308,8 @@
         
         sqlitBool = YES;
         DIIdyModel*diiModel = [sqlitArray objectAtIndex:[sqlitArray count]-1];
-        NSLog(@"%@",diiModel.startTime);
-        if (diiModel.startTime ==NULL||[diiModel.startTime length]==0) {
+       
+       if (diiModel.startTime ==NULL||[diiModel.startTime length]==0) {
             
             baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
             
@@ -222,7 +318,7 @@
             baseUrl = [NSString stringWithFormat:ORDERNUMBERSTARTTIME,ShareApp.mobilNumber,diiModel.startTime];
         
         }
-        
+      
         if (!(diiModel.orderID==NULL||[diiModel.orderID length]==0)) {
             
             baseUrl = [baseUrl stringByAppendingFormat:@"/%@",diiModel.orderID];
@@ -251,31 +347,25 @@
         baseUrl = [NSString stringWithFormat:ORDERNUMBER,ShareApp.mobilNumber];
         
     }
-    
+
     baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-    
-    if ([r currentReachabilityStatus]==0) {
-        
-    }else{
-        
-        [self showWithDetails];
-    }
+
+    [self showWithDetails];
     
 }
 
 - (void)hudWasHidden:(MBProgressHUD *)hud
 {
-    [self.HUD removeFromSuperview];
-    [self.HUD release];
-     self.HUD = nil;
-    
+    [HUD removeFromSuperview];
+    [HUD release];
+     HUD = nil;
 }
 
 -(void)closeConnection
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
@@ -300,7 +390,7 @@
     }
 
     NSArray* jsonParser =[str objectFromJSONString];
-    
+  
     int a;
     
     if (sqlitBool) {
@@ -314,7 +404,7 @@
     }
     
     for(int i=[jsonParser count]-1-a;i>=0;i--){
-        NSLog(@"dddd");
+       
         DIIdyModel * diidy = [[DIIdyModel alloc] init];
         NSDictionary * diidyDict = [jsonParser objectAtIndex:i];
         diidy.orderID = [diidyDict objectForKey:@"orderid"];
@@ -328,15 +418,15 @@
         diidy.coupon = [diidyDict objectForKey:@"coupon"];
         NSString* currentStatus = [diidyDict objectForKey:@"status"];
         
-        if([currentStatus floatValue]>=1.0&&[currentStatus floatValue]<=4.0){
+        if([currentStatus intValue]>=1&&[currentStatus intValue]<=4){
             
             diidy.status = @"已受理";
             
-        }else if ([currentStatus floatValue]==5.0) {
+        }else if ([currentStatus intValue]==5) {
             
             diidy.status = @"完成";
             
-        }else {
+        }else if ([currentStatus intValue]==6){
             
             diidy.status = @"已取消";
             
@@ -351,7 +441,7 @@
             [listOrderArray addObject:diidy];
             
         }else{
-            
+          
             [listOrderArray insertObject:diidy atIndex:0];
         }
             [diidy release];
@@ -361,26 +451,32 @@
            
          [self creatNOOrdersView];
            
-    }else {
+       }else {
         
          [self creatHaveOrderView];
         
     }
 }
 
-
-
 -(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
+     DIIdyModel * diidy = [listOrderArray objectAtIndex:[listOrderArray count]-indexPath.row-1];
+     CGSize size = [diidy.startAddr sizeWithFont:[UIFont systemFontOfSize:13.0] constrainedToSize:CGSizeMake(180, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    if (size.height==16||size.height==0) {
+        
+         return 100;
+        
+    }else{
+        
+     return 70+size.height;
     
-    return 100;
-    
+    }
 }
 
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
     
-    return [listOrderArray count];    
+    return [listOrderArray count];
     
 }
 
@@ -396,7 +492,7 @@
         cell.contentView.backgroundColor = [UIColor whiteColor];
         
     }
-    DIIdyModel * diidy = [listOrderArray objectAtIndex:indexPath.row];
+    DIIdyModel * diidy = [listOrderArray objectAtIndex:[listOrderArray count]-indexPath.row-1];
     
     if ([diidy.status isEqualToString:@"已受理"]) {
         
@@ -415,6 +511,18 @@
         
     }
    
+      CGSize size = [diidy.startAddr sizeWithFont:[UIFont systemFontOfSize:13.0] constrainedToSize:CGSizeMake(180, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    
+    if (size.height==16||size.height==0) {
+        
+        cell.departureLable.frame = CGRectMake(75, 65, 180, 30);
+        
+    }else
+    {
+        cell.departureLable.frame = CGRectMake(75, 65, 180, size.height);
+    
+    }
+    
     cell.orderNumberLable.text = diidy.orderID;
     cell.startTimeLable.text = diidy.startTime;
     cell.departureLable.text =diidy.startAddr;
@@ -426,28 +534,51 @@
 
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    OrderDetailsViewController * orderDetail = [[OrderDetailsViewController alloc] init];
-    orderDetail.diidyModel = [listOrderArray objectAtIndex:indexPath.row];
+    [MobClick event:@"m04_o001_0001"];
+    OrderDetailsViewController * orderDetail = [[OrderDetailsViewController alloc] initWithNibName:@"OrderDetailsViewController" bundle:nil];
+    orderDetail.diidyModel = [listOrderArray objectAtIndex:[listOrderArray count]-indexPath.row-1];
+     
     [self.navigationController pushViewController:orderDetail animated:YES];
     [orderDetail release];
-}
-
-#pragma mark - System Approach
-- (void)viewDidLoad
-{
-    [super viewDidLoad];
-    self.navigationController.navigationBar.tintColor = [UIColor grayColor];
-    self.navigationItem.hidesBackButton = YES;
-    self.view.backgroundColor = [UIColor whiteColor];
-   
-    sqlitBool = YES;
-    listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
-   
-    [self setTheNavigationBar];
-    [self goToTheDownLoadPage];
     
 }
 
+#pragma mark - System Approach
+
+-(void)loadView
+{
+    [super loadView];
+    //self.navigationController.navigationBar.tintColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg-1.png"]];
+    self.navigationItem.hidesBackButton = YES;
+    self.view.backgroundColor = [UIColor whiteColor];
+    [self setTheNavigationBar];
+
+}
+-(void)getManageStat:(NSNotification *)notify {
+    
+    self.manageStat = NO;
+}
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+   // self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+    [MobClick event:@"m04_o001"];
+
+     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getManageStat:) name:@"MANAGESTAT" object:nil];
+   
+    sqlitBool = YES;
+    listOrderArray = [[NSMutableArray alloc] initWithCapacity:0];
+    
+}
+-(void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    if (self.manageStat) {
+        
+        [self goToTheDownLoadPage];
+    }
+}
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -464,8 +595,20 @@
     returnButton.hidden = NO;
     centerLable.hidden = NO;
 }
+
 -(void)dealloc
 {
+    if (m_request) {
+        
+        [self.m_request closeConnection];
+        self.m_request.m_delegate=nil;
+        self.m_request=nil;
+    }
+    if (orderTableView) {
+        
+        [orderTableView release];
+    }
+    
     [centerLable release];
     [listOrderArray release];
     [topImageView release];

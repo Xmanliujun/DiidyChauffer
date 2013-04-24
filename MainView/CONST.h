@@ -28,8 +28,7 @@
 #define FEEDBACK @"http://www.diidy.com/client/feedback/%@/%@"
 #define SUBMITORDERS @"http://www.diidy.com/client/commitorder/%@/%@/%@/%@/%@/%@/%@/%@"
 #define VERSION  @"http://www.diidy.com/ios/client/version.txt"
-#define CURRENTVERSION  @"1.0"
-
+#define CURRENTVERSION  @"1.1"
 
 #define COUPONTITLE0 @"http://coupon.diidy.com/coupon_0.php"
 #define COUPONTITLE1 @"http://coupon.diidy.com/coupon_1.php"

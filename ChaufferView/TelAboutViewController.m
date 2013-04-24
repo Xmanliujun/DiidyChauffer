@@ -9,6 +9,7 @@
 #import "TelAboutViewController.h"
 #import "MainViewController.h"
 #import "AppDelegate.h"
+#import "MobClick.h"
 @interface TelAboutViewController ()
 
 @end
@@ -26,16 +27,11 @@
 
 -(void)makeACall:(id)sender
 {
-//    UIActionSheet *menu = [[[UIActionSheet alloc]
-//                           initWithTitle:nil
-//                           delegate:self
-//                           cancelButtonTitle:@"取消"
-//                           destructiveButtonTitle:@"400 696 0666"
-//                           otherButtonTitles:nil] autorelease];
-//    [menu showInView:[UIApplication sharedApplication].keyWindow];
-    
+    [MobClick event:@"m03_d001_0001"];
+
     UIWebView*callWebview =[[UIWebView alloc] init];
     NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
+    
     [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
     //记得添加到view上
     [self.view addSubview:callWebview];

@@ -37,27 +37,24 @@
    	if (error == 0) {
         
         NSArray* name = result.poiList;
-        NSLog(@"%d",[name count]);
         for (int i = 0; i<[name count]; i++) {
             
             BMKPoiInfo* moreNes =[name objectAtIndex:i];
-            NSLog(@"%@",moreNes.name);
-            NSLog(@"%@",moreNes.address);
             [addressinformationArray addObject:moreNes];
         }
         
-        CGRect rect;
-        
-        if ([addressinformationArray count]*44<246) {
-            
-            rect = CGRectMake(0, 170, 320, [addressinformationArray count]*44);
-            
-        }else {
-            
-            rect = CGRectMake(0, 170, 320, 460-44-170);
-            
-        }
-            orderTableView.frame = rect;
+//        CGRect rect;
+//        
+//        if ([addressinformationArray count]*44<246) {
+//            
+//            rect = CGRectMake(0, 170, 320, [addressinformationArray count]*44);
+//            
+//        }else {
+//            
+//            rect = CGRectMake(0, 170, 320, 460-44-170);
+//            
+//        }
+//            orderTableView.frame = rect;
             [orderTableView reloadData];
 	}
 }
@@ -66,7 +63,7 @@
 {
    
     NSLog(@"%f %f ",self.locationDe.latitude,self.locationDe.longitude);
-    BOOL flag = [_search reverseGeocode:self.locationDe];
+    BOOL flag = [search reverseGeocode:self.locationDe];
   
     if (!flag) {
         
@@ -274,6 +271,13 @@
     [self.navigationController.navigationBar addSubview:rigthbutton];
     
 }
+-(void)setExtraCellLineHidden: (UITableView *)tableView
+{
+    UIView *view = [UIView new];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+    [view release];
+}
 
 - (void)viewDidLoad
 {
@@ -284,11 +288,11 @@
     [self setTheNavigationBar];
 
     addressinformationArray = [[NSMutableArray alloc] initWithCapacity:0];
-    _search = [[BMKSearch alloc]init];
-	_search.delegate = self;
+    search = [[BMKSearch alloc]init];
+	search.delegate = self;
     
     UILabel *departureLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 120, 30)];
-    departureLable.font = [UIFont fontWithName:@"Arial" size:14.0];
+    departureLable.font = [UIFont fontWithName:@"Arial" size:16.0];
     departureLable.textColor = [UIColor orangeColor];
     departureLable.backgroundColor = [UIColor clearColor];
     departureLable.textAlignment = NSTextAlignmentLeft;
@@ -313,13 +317,12 @@
     [self.view addSubview:departureView];
     
     [[departureView layer] setBorderColor:[UIColor grayColor].CGColor];
-     [[departureView layer] setBorderWidth:1];
+    [[departureView layer] setBorderWidth:1];
     [[departureView layer] setCornerRadius:5];
     [departureView setClipsToBounds: YES];
     
-    
     UILabel *peripheryLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 135, 120, 40)];
-    peripheryLable.font = [UIFont fontWithName:@"Arial" size:14.0];
+    peripheryLable.font = [UIFont fontWithName:@"Arial" size:16.0];
     peripheryLable.textColor = [UIColor orangeColor];
     peripheryLable.backgroundColor = [UIColor clearColor];
     peripheryLable.textAlignment = NSTextAlignmentLeft;
@@ -332,14 +335,15 @@
     [self.view addSubview:lineImageView];
     [lineImageView release];
     
-    orderTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 170, 320, 0) style:UITableViewStylePlain];
+    orderTableView = [[UITableView alloc] initWithFrame:CGRectMake(0, 170, 320, 460-44-170) style:UITableViewStylePlain];
     orderTableView.separatorColor = [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
     // orderTableView.separatorStyle =UITableViewCellEditingStyleNone;
-    //orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    orderTableView.backgroundColor = [UIColor whiteColor];
+    orderTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
+   // orderTableView.backgroundColor = [UIColor whiteColor];
     orderTableView.delegate = self;
     orderTableView.dataSource = self;
     [self.view addSubview:orderTableView];
+    [self setExtraCellLineHidden:orderTableView];
     
     [self getPeripheralInformation];
 }
@@ -356,13 +360,14 @@
 }
 -(void)dealloc
 {
+    search.delegate=nil;
     [addressinformationArray release]; 
     [centerLable release];
     [departure release];
     [departureName release];
     [departureView release];
     [topImageView release];
-    [_search release];
+    [search release];
     [orderTableView release];
     [super dealloc];
 }

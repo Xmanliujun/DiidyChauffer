@@ -58,15 +58,20 @@
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     if (indexPath.row==0) {
+        
         FeedBackViewController * feedBack = [[FeedBackViewController alloc] init];
         feedBack.judge = @"notLog";
         [self.navigationController pushViewController:feedBack animated:YES];
         [feedBack release];
+        
     }else if(indexPath.row ==1){
+        
         AboutDiiDyViewController * aboutDiidy = [[AboutDiiDyViewController alloc] initWithNibName:@"AboutDiiDyViewController" bundle:nil];
         [self.navigationController pushViewController:aboutDiidy animated:YES];
         [aboutDiidy release];
+        
     }else {
+        
         NoviceGuidanceViewController * noviceGudice= [[NoviceGuidanceViewController alloc] init];
         noviceGudice.noviceGuidan = @"novice";
        // [self.navigationController pushViewController:noviceGudice animated:YES];
@@ -78,8 +83,11 @@
 -(void)returnORLandingView:(UIButton*)sender
 {
        if (sender.tag ==201) {
+           
             [self dismissModalViewControllerAnimated:NO];
+           
         }else {
+            
             LandingViewController * land = [[LandingViewController alloc] init];
             UINavigationController * landNa = [[UINavigationController alloc] initWithRootViewController:land];
             ShareApp.pageManageMent = @"notLog";
@@ -133,7 +141,7 @@
     centerLable.text = @"更 多";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0f];
     [self.navigationController.navigationBar addSubview:centerLable];
     

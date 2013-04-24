@@ -9,7 +9,6 @@
 #import "DetailPageViewController.h"
 #import <QuartzCore/QuartzCore.h>
 #import "CONST.h"
-#import "SBJson.h"
 #import "AppDelegate.h"
 #import "JSONKit.h"
 @interface DetailPageViewController ()
@@ -32,7 +31,7 @@
     UILabel * giftNumberLable = [[UILabel alloc] initWithFrame:CGRectMake(5.0, 10.0, 90.0, 40.0)];
     giftNumberLable.text = @"赠送给(手机号) :";
     giftNumberLable.backgroundColor = [UIColor clearColor];
-    giftNumberLable.textAlignment = UITextAlignmentCenter;
+    giftNumberLable.textAlignment = NSTextAlignmentCenter;
     giftNumberLable.font = [UIFont fontWithName:@"Arial" size:12.0];
     
     UIImage * giftImage = [UIImage imageNamed:@"u84_line.png"];
@@ -103,7 +102,7 @@
     detailCenterLable.text = @"优 惠 劵 详 情 页";
     detailCenterLable.textColor = [UIColor whiteColor];
     detailCenterLable.backgroundColor = [UIColor clearColor];
-    detailCenterLable.textAlignment = UITextAlignmentCenter;
+    detailCenterLable.textAlignment = NSTextAlignmentCenter;
     detailCenterLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:detailCenterLable];
     

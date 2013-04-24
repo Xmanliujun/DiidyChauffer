@@ -7,7 +7,7 @@
 //
 
 #import "PriceViewController.h"
-
+#import "MobClick.h"
 @interface PriceViewController ()
 
 @end
@@ -28,11 +28,15 @@
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
     //[self.navigationController setNavigationBarHidden:NO];
-    topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    UIImage *imgBackground = [[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"bg-1.png" ofType:nil]];
+    //topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
+    UIImageView*  topImageView = [[UIImageView alloc] initWithImage:imgBackground];
     topImageView.frame = CGRectMake(0.0f, -2.0f, 320.0f, 49.0f);
     [self.navigationController.navigationBar addSubview:topImageView];
+    [topImageView release];
+    [imgBackground release];
     
-    returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
+    UIButton* returnButton = [UIButton buttonWithType:UIButtonTypeCustom];
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
     [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
@@ -49,8 +53,8 @@
     self.navigationItem.titleView = centerLable;
     [centerLable release];
     
-    UIImage *priceImage =[UIImage imageNamed:@"pricenew.png"];
-    priceImageView = [[UIImageView alloc] initWithImage:priceImage];
+    UIImage *priceImage =[[UIImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForResource:@"pricenew.png" ofType:nil]];
+    UIImageView*  priceImageView = [[UIImageView alloc] initWithImage:priceImage];
     priceImageView.userInteractionEnabled = YES;
     priceImageView.frame = CGRectMake(0.0f,0.0f, 320.0f, 416.0f);
     
@@ -61,46 +65,32 @@
     [telButton addTarget:self action:@selector(telephoneInquiries:) forControlEvents:UIControlEventTouchUpInside];
     [priceImageView addSubview:telButton];
     [self.view addSubview:priceImageView];
+    [priceImageView release];
+    [priceImage release];
 
 }
 
 -(void)telephoneInquiries:(id)sender
 {
-    
-//    
-//    UIActionSheet *menu = [[[UIActionSheet alloc]
-//                            initWithTitle:nil
-//                            delegate:self
-//                            cancelButtonTitle:@"取消"
-//                            destructiveButtonTitle:@"400 696 0666"
-//                            otherButtonTitles:nil] autorelease];
-//    [menu showInView:self.view];
-    
+    [MobClick event:@"m01_p001"];
+
     UIWebView*callWebview =[[UIWebView alloc] init];
     NSURL *telURL =[NSURL URLWithString:@"tel:4006960666"];
     [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
     [self.view addSubview:callWebview];
     [callWebview release];
     
-    
 }
-//- (void)actionSheet:(UIActionSheet *)actionSheet clickedButtonAtIndex:(NSInteger)buttonIndex
-//{
-//    
-//    
-//    if(buttonIndex==0){
-//        
-//       
-//    }else {
-//       
-//    }
-//    
-//}
 
+-(void)dealloc
+{
 
+    [super dealloc];
+
+}
 -(void)returnMainView:(id)sender
 {
-    [self dismissModalViewControllerAnimated:NO];
+    [self dismissViewControllerAnimated:NO completion:nil];
     //[self.navigationController popToRootViewControllerAnimated:YES];
     
 }

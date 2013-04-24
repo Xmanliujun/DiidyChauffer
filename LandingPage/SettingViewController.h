@@ -17,11 +17,7 @@
     UITextField * passWordText;
     UITextField * confirmText;
     UIButton *regainbutton;
-    //UIImageView* promptImageView;
-  //  UILabel * promtLable;
     NSString*_judge;
-    //UIImageView *modifyImageView;
-    //UILabel* modifyLable;
     NSString * returenNews;
     UIButton*returnButton;
     UIImageView*topImageView;

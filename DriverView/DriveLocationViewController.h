@@ -20,7 +20,7 @@
     MapAnnotion * mapAnnon;
     DrivePosition * drivePositin;
     MapPointAnnotion* item;
-    MapPointAnnotion* driveAnnotation;
+   // MapPointAnnotion* driveAnnotation;
     BOOL locationPeson;
     BOOL readonly;
     BOOL firstLoaded;
@@ -29,21 +29,20 @@
       
     NSString * driveName;
     NSString * driverMobile;
-    double _long;
-    double _lat;
     
-    
-    //    UIView                          *_markerView;
-    //    UIImageView                     *_markerTip;
-    //    UIImageView                     *_markerShadow;
-    // UILabel *textLabel;
-    //UIView                          *_glassMenuView;
+    NSMutableArray*dataArray;
+    NSMutableArray*mobileArray;
+     NSMutableArray*annArray;
+   
 }
 
 @property (nonatomic, readwrite) BOOL readonly;
+
+@property (nonatomic, readwrite) BOOL seedrive;
 @property(nonatomic,assign)id<CouponDelegate>LocationDelegate;
 @property (nonatomic, retain) MapAnnotion *mapAnnon;
 
-- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withLatitude:(double)lat withLongtitude:(double)lng;
+- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withCLLocation:(NSString*)locati WithTag:(int)tag;
 -(void)backToTheOriginalPosition;
+-(void)seeDrive:(int)buttonMA;
 @end

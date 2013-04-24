@@ -14,7 +14,7 @@
 {
     UITableView * orderTableView;
     UITextView *departureView ;
-    BMKSearch* _search;
+    BMKSearch* search;
     
     UIImageView*topImageView;
     UIButton*returnButton;

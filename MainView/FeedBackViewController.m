@@ -9,10 +9,10 @@
 #import "FeedBackViewController.h"
 #import "AppDelegate.h"
 #import "CONST.h"
-#import "SBJson.h"
 #import "JSONKit.h"
 #import "Reachability.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 @interface FeedBackViewController ()
 
 @end
@@ -29,15 +29,15 @@
 }
 -(void)returnORSubmit:(UIButton*)sender
 {
-
+    
+    [MobClick event:@"m07_s003_0005_0001"];
     if (sender.tag==201) {
         
         [self.navigationController popViewControllerAnimated:YES];
         
     }else {
         
-        Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-        if ([r currentReachabilityStatus]==0) {
+        if (![ShareApp connectedToNetwork]) {
             
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                            message:@"联网失败,请稍后再试"
@@ -48,8 +48,8 @@
             [alert release];
             
         }else{
-
-            NSString * baseUrl = [NSString stringWithFormat:FEEDBACK,ShareApp.mobilNumber,feedBackText.text]; 
+            
+            NSString * baseUrl = [NSString stringWithFormat:FEEDBACK,ShareApp.mobilNumber,feedBackText.text];
             baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
             
             HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
@@ -70,32 +70,31 @@
             [self.feedBack_request requestByUrlByGet: baseUrl];
         }
     }
-
+    
 }
 
 -(void)parseStringJson:(NSString *)str
 {
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
     }
-    
     
     NSDictionary * jsonParser =[str objectFromJSONString];
     NSString * returenNews =[jsonParser objectForKey:@"r"];
     NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:returenNews,@"return", nil];
     if ([self.judge isEqualToString:@"more"]) {
         
-         [[NSNotificationCenter defaultCenter] postNotificationName:MORE_QUEST object:self userInfo:dict];
+        [[NSNotificationCenter defaultCenter] postNotificationName:MORE_QUEST object:self userInfo:dict];
         
     }else {
         
         [[NSNotificationCenter defaultCenter] postNotificationName:REQUEST_COMPLETE object:self userInfo:dict];
     }
-       
+    
 }
-
 
 -(void)requFinish:(NSString *)requestString order:(int)nOrder
 {
@@ -111,7 +110,7 @@
         
     }else{
         
-         [self parseStringJson:requestString];
+        [self parseStringJson:requestString];
     }
 }
 
@@ -119,11 +118,11 @@
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
         HUD = nil;
     }
-    
     
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
     [alertView show];
@@ -144,8 +143,6 @@
     [HUD release];
     HUD = nil;
 }
-
-
 
 -(void)creatNavigationBar
 {
@@ -171,13 +168,12 @@
     returnButton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
     returnButton.tag = 201;
     returnButton.frame=CGRectMake(7.0f, 7.0f, 50.0f, 30.0f);
-    [returnButton setTitle:@" 返回" forState:UIControlStateNormal];
+    [returnButton setTitle:@"返回" forState:UIControlStateNormal];
     [returnButton setBackgroundImage:[UIImage imageNamed:@"btn_back.png"] forState:UIControlStateNormal];
     [returnButton addTarget:self action:@selector(returnORSubmit:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:returnButton];
     
 }
-
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -198,25 +194,19 @@
     [self.view addSubview:landingLable];
     [landingLable release];
     
-    UIView *feedBackView =[[UIView alloc] initWithFrame: CGRectMake(6.0f, 40.f, 308.0f, 120.0f)];
-    feedBackView.backgroundColor=[UIColor whiteColor];
-    [[feedBackView layer] setShadowOffset:CGSizeMake(1, 1)];
-    [[feedBackView layer] setShadowRadius:5];
-    [[feedBackView layer] setShadowOpacity:1];
-    [[feedBackView layer] setShadowColor:[UIColor whiteColor].CGColor];
-    [[feedBackView layer] setCornerRadius:7];
-    [[feedBackView layer] setBorderWidth:1];
-    [[feedBackView layer] setBorderColor:[UIColor grayColor].CGColor];
-    [self.view addSubview:feedBackView];
-    [feedBackView release];
-    
     feedBackText = [[UITextView alloc] initWithFrame:CGRectMake(10.0f, 44.0f, 300.0f, 110.0f)];
     feedBackText.textColor = [UIColor blackColor];
+    feedBackText.backgroundColor=[UIColor whiteColor];
     feedBackText.text = @"提几句建议吧。。。";
     [feedBackText becomeFirstResponder];
     feedBackText.returnKeyType = UIReturnKeyDefault;
     feedBackText.font = [UIFont fontWithName:@"Arial" size:14.0f];
     feedBackText.keyboardType = UIKeyboardTypeDefault;
+    feedBackText.layer.backgroundColor = [[UIColor whiteColor] CGColor];
+    feedBackText.layer.borderColor = [[UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1]CGColor];
+    feedBackText.layer.borderWidth = 1.0;
+    feedBackText.layer.cornerRadius = 6.0f;
+    [feedBackText.layer setMasksToBounds:YES];
     [self.view addSubview:feedBackText];
 }
 
@@ -227,7 +217,7 @@
     centerLable.hidden = YES;
     returnButton.hidden = YES;
     rigthbutton.hidden = YES;
-
+    
 }
 -(void)dealloc
 {
@@ -236,7 +226,7 @@
     [judge release];
     [topImageView release];
     [super dealloc];
-
+    
 }
 - (void)viewDidUnload
 {

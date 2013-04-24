@@ -51,4 +51,6 @@
 @property(nonatomic,retain)IBOutlet UIView *informationView;
 @property(nonatomic,retain)IBOutlet UIView *feeInforView;
 @property(nonatomic,retain)IBOutlet UIView *timeInforView;
+@property(nonatomic,retain)NSString*originalTime;
+@property(nonatomic,retain)NSString*originalMinute;
 @end

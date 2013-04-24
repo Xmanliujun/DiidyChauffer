@@ -9,20 +9,19 @@
 #import "OrdersPreviewTwoViewController.h"
 #import "CONST.h"
 #import "AppDelegate.h"
-#import "SBJson.h"
 #import "MainViewController.h"
 #import "JSONKit.h"
 #import "Reachability.h"
-#import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 @interface OrdersPreviewTwoViewController ()
 
 @end
 
 @implementation OrdersPreviewTwoViewController
 
-@synthesize departureLable,departureTimeLable,numberOfPeopleLable,destinationLable,contactLable,mobilNumberLable,orderArray;
+@synthesize orderArray;
 @synthesize submit_request;
-@synthesize orderPreView,inforPreView,markPre;
+@synthesize markPre;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -64,8 +63,10 @@
         
     }else {
         
-        Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-        if ([r currentReachabilityStatus]==0) {
+        [MobClick event:@"m03_d002_0003"];
+        [MobClick event:@"m03_d002_0004_0002"];
+        
+        if (![ShareApp connectedToNetwork]) {
             
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                            message:@"联网失败,请稍后再试"
@@ -76,48 +77,52 @@
             [alert release];
             
         }else{
+         
+            NSString*departureString = [self.orderArray objectAtIndex:0];
+            NSString*departureTimeString = [self.orderArray objectAtIndex:1];
+            NSString*numberOfPeopleString = [self.orderArray objectAtIndex:2];
+            NSString*destinationString = [self.orderArray objectAtIndex:3];
+            NSString*contactString = [self.orderArray objectAtIndex:4];
+            NSString*mobilNumberString = [self.orderArray objectAtIndex:5];
             
             
-            if (self.departureTimeLable.text==NULL||[self.departureTimeLable.text length]==0) {
+            if ([self.orderArray objectAtIndex:0]==NULL||[[self.orderArray objectAtIndex:0] length]==0) {
                 
-                self.departureTimeLable.text = @"无";
                 
+                departureString = @"无";
+
+                
+            }
+            if ([self.orderArray objectAtIndex:1]==NULL||[[self.orderArray objectAtIndex:1] length]==0) {
+                
+                departureTimeString =@"无";
             }
             
-            if (self.departureLable.text==NULL||[self.departureLable.text length]==0) {
+           if ([self.orderArray objectAtIndex:2]==NULL||[[self.orderArray objectAtIndex:2] length]==0) {
                 
-                self.departureLable.text =@"无";
-                
-            }
-            if (self.numberOfPeopleLable.text==NULL||[self.numberOfPeopleLable.text length]==0) {
-                
-                self.numberOfPeopleLable.text = @"无";
+               numberOfPeopleString = @"无";
                 
             }
-            if (self.contactLable.text==NULL||[self.contactLable.text length]==0) {
-                
-                self.contactLable.text = @"无";
-                
-            }
-            if (self.destinationLable.text==NULL||[self.destinationLable.text length]==0) {
-                
-                self.destinationLable.text = @"无";
-                
-            }
-            if (self.mobilNumberLable.text==NULL||[self.mobilNumberLable.text length]==0) {
-                
-                self.mobilNumberLable.text = @"无";
-                
-            }
-            
-            
-            if (self.contactLable.text==NULL||[self.contactLable.text length]==0) {
-                
-                self.contactLable.text = @"无";
+            if ([self.orderArray objectAtIndex:3]==NULL||[[self.orderArray objectAtIndex:3] length]==0) {
+               
+                destinationString = @"无";
                 
             }
 
-            NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,self.departureTimeLable.text,self.departureLable.text,self.numberOfPeopleLable.text,self.destinationLable.text,self.mobilNumberLable.text,self.contactLable.text,@"无",ShareApp.mobilNumber];
+            if ([self.orderArray objectAtIndex:4]==NULL||[[self.orderArray objectAtIndex:4] length]==0) {
+                
+               contactString  = @"无";
+                
+            }
+            if ([self.orderArray objectAtIndex:5]==NULL||[[self.orderArray objectAtIndex:5] length]==0) {
+                
+                mobilNumberString = @"无";
+                
+            }
+        
+
+            NSString * baseUrl = [NSString stringWithFormat:SUBMITORDERS,departureTimeString, departureString,numberOfPeopleString,destinationString,mobilNumberString,contactString,@"无",ShareApp.mobilNumber];
+            NSLog(@"xxx   %@",baseUrl);
             baseUrl = [baseUrl stringByAddingPercentEscapesUsingEncoding:NSUTF8StringEncoding];
         
             HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
@@ -127,7 +132,7 @@
             //HUD.detailsLabelText=@"正在加载...";
             HUD.square=YES;
             [HUD show:YES];
-        
+            
             HTTPRequest *request = [[HTTPRequest alloc] init];
             request.forwordFlag = 500;
             self.submit_request = request;
@@ -138,7 +143,6 @@
 
         }
     }
-    
 }
 -(void)parseStringJson:(NSString *)str
 {
@@ -223,40 +227,15 @@
 }
 
 #pragma mark - System Approach
--(void)creatOrderPreView
-{
-    self.orderPreView.backgroundColor=[UIColor whiteColor];
-    [[self.orderPreView layer] setShadowOffset:CGSizeMake(1, 1)];
-    [[self.orderPreView layer] setShadowRadius:5];
-    [[self.orderPreView layer] setShadowOpacity:1];
-    [[self.orderPreView layer] setShadowColor:[UIColor whiteColor].CGColor];
-    [[self.orderPreView layer] setCornerRadius:7];
-    [[self.orderPreView layer] setBorderWidth:1];
-    [[self.orderPreView layer] setBorderColor:[UIColor grayColor].CGColor];
-    [self.view sendSubviewToBack:self.orderPreView];
-    
-    self.inforPreView.backgroundColor=[UIColor whiteColor];
-    [[self.inforPreView layer] setShadowOffset:CGSizeMake(1, 1)];
-    [[self.inforPreView layer] setShadowRadius:5];
-    [[self.inforPreView layer] setShadowOpacity:1];
-    [[self.inforPreView layer] setShadowColor:[UIColor whiteColor].CGColor];
-    [[self.inforPreView layer] setCornerRadius:7];
-    [[self.inforPreView layer] setBorderWidth:1];
-    [[self.inforPreView layer] setBorderColor:[UIColor grayColor].CGColor];
-    [self.view sendSubviewToBack:self.inforPreView];
-
-}
 
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    
+     [MobClick event:@"m03_d002_0002"];
     self.navigationItem.hidesBackButton = YES;
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
-    self.departureLable.numberOfLines = 0;
-    [self creatOrderPreView];
-    
+
     topImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg-1.png"]];
     topImageView.frame = CGRectMake(0.0, -2.0, 320.0, 49.0);
     [self.navigationController.navigationBar addSubview:topImageView];
@@ -270,26 +249,16 @@
     [self.navigationController.navigationBar addSubview:returnButton];
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
-    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"orderPre.png"] forState:UIControlStateNormal];
+    [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
+    
+    //orderPre
     [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
-    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 58.0f, 31.0f);
+    rigthbutton.frame=CGRectMake(256.0f, 7.0f, 58.0f, 31.0f);
     [rigthbutton setTitle:@"提交订单" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(submitOrders:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];
     
-    self.departureLable.text =[self.orderArray objectAtIndex:0];//出发地
-    self.departureTimeLable.text = [self.orderArray objectAtIndex:1];//出发时间
-    self.numberOfPeopleLable.text =[self.orderArray objectAtIndex:2];//人数
-    self.destinationLable.text = [self.orderArray objectAtIndex:3];//目的地
-    self.contactLable.text = [self.orderArray objectAtIndex:4];//联系人
-    self.mobilNumberLable.text = [self.orderArray objectAtIndex:5];//手机号码
-    if (self.mobilNumberLable.text==NULL||[self.mobilNumberLable.text length]==0) {
-        
-        self.mobilNumberLable.text = ShareApp.mobilNumber;
-        
-    }
-
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0f, 0.0f, 160.0f, 44.0f)];
     centerLable.font = [UIFont systemFontOfSize:17];
     centerLable.textColor = [UIColor whiteColor];
@@ -297,11 +266,210 @@
     centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text =@"订 单 预 览";
     [self.navigationController.navigationBar addSubview:centerLable];
+
+    UITableView*  orderTableView = [[UITableView alloc] initWithFrame:CGRectMake(0.0f, 0.0f, 320.0f, 416.0f) style:UITableViewStyleGrouped];
+    orderTableView.backgroundColor = [UIColor clearColor];
+    orderTableView.backgroundView=nil;
+    orderTableView.delegate = self;
+    orderTableView.dataSource = self;
+    [self.view addSubview:orderTableView];
+}
+
+
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+    return 2;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView* myView = [[[UIView alloc] init] autorelease];
+    myView.backgroundColor = [UIColor clearColor];
+    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, 90, 22)];
+    titleLabel.textColor=[UIColor orangeColor];
+    titleLabel.backgroundColor = [UIColor clearColor];
+    if (section==0) {
+        
+        titleLabel.text = @"订单信息";
+        
+    }else if (section==1){
+        
+       titleLabel.text = @"联系人信息";
     
-    self.departureLable.numberOfLines = 0;
+    }
+    [myView addSubview:titleLabel];
+    [titleLabel release];
+    return myView;
+}
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
+{
+   
+    if (section==0) {
+      
+        return @"订单信息";
+        
+    }else
+        
+       return @"联系人信息";
+}
+
+-(CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.section==0&&indexPath.row==0) {
+        
+         CGSize size1 = [[self.orderArray objectAtIndex:0] sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(230, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+     
+        if (size1.height==18.0) {
+            
+            return 44;
+            
+        }else
+            
+        return 30+size1.height-18;
+        
+    }else if (indexPath.section==0&&indexPath.row==3){
+        
+          CGSize size2 = [[self.orderArray objectAtIndex:3] sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(230, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+        
+        if (size2.height==18.0||size2.height==0) {
+            
+            return 44;
+            
+        }else
+            
+            return 30+size2.height-18;
+    
+    }
+            return 44;
     
 }
 
+-(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+    
+    if (section==0) {
+        
+        return 4;
+        
+    }else
+        
+        return 2;
+    
+}
+
+-(UITableViewCell*)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    NSString * cellID = @"cellID";
+    
+    UITableViewCell * cell = [tableView dequeueReusableCellWithIdentifier:cellID];
+    
+    if(cell ==nil)
+    {
+        cell = [[[UITableViewCell alloc] initWithStyle:UITableViewCellStyleSubtitle reuseIdentifier:cellID] autorelease];
+        
+        [cell setSelectionStyle:UITableViewCellEditingStyleNone];
+        cell.backgroundColor = [UIColor whiteColor];
+        UILabel*  markLable = [[UILabel alloc] initWithFrame:CGRectMake(3.0f, 0.0f, 60.0f, 44.0f)];
+        markLable.font = [UIFont systemFontOfSize:14];
+        markLable.textColor = [UIColor colorWithRed:28.0/255.0 green:28.0/255.0 blue:28.0/255.0 alpha:1];
+        markLable.tag =60;
+        markLable.numberOfLines=0;
+        markLable.backgroundColor = [UIColor clearColor];
+        markLable.textAlignment = NSTextAlignmentLeft;
+        [cell.contentView addSubview:markLable];
+        [markLable release];
+        
+         UILabel*  messageLable = [[UILabel alloc] initWithFrame:CGRectMake(65.0f, 0.0f, 230.0f, 44.0f)];
+         messageLable.font = [UIFont systemFontOfSize:14];
+         messageLable.numberOfLines = 0;
+         messageLable.tag = 61;
+         messageLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+         messageLable.backgroundColor = [UIColor clearColor];
+         messageLable.textAlignment = NSTextAlignmentLeft;
+         [cell.contentView addSubview:messageLable];
+         [messageLable release];
+    }
+    cell.detailTextLabel.backgroundColor = [UIColor clearColor];
+    cell.textLabel.backgroundColor = [UIColor clearColor];
+   
+    UILabel*markLable =(UILabel*)[cell.contentView viewWithTag:60];
+    UILabel*  messageLable =(UILabel*)[cell.contentView viewWithTag:61];
+    
+    CGSize size = [[self.orderArray objectAtIndex:0] sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(230, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+
+    CGSize size2 = [[self.orderArray objectAtIndex:3] sizeWithFont:[UIFont systemFontOfSize:14.0] constrainedToSize:CGSizeMake(230, 1000) lineBreakMode:UILineBreakModeCharacterWrap];
+    
+    if (indexPath.section==0&&indexPath.row==0) {
+        
+        if (size.height==18.0) {
+            
+            messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f, 44);
+        
+        }else{
+            
+            messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f,30+size.height-18 );
+            
+        }
+            
+    }else if(indexPath.section==0&&indexPath.row==3){
+        
+        
+        if (size2.height==18.0) {
+            
+            messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f, 44);
+            
+        }else{
+            
+            messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f,30+size2.height-18 );
+    
+        }
+    }else{
+    
+        messageLable.frame = CGRectMake(65.0f, 0.0f, 230.0f, 44);
+    }
+
+
+    if (indexPath.section==0&&indexPath.row==0) {
+    
+        markLable.text = @"出发地:";
+        messageLable.text = [self.orderArray objectAtIndex:0];
+
+    }else if (indexPath.section==0&&indexPath.row==1) {
+        
+         markLable.text = @"出发时间:";
+         messageLable.text = [self.orderArray objectAtIndex:1];
+        
+    }else if (indexPath.section==0&&indexPath.row==2) {
+        
+         markLable.text = @"司机个数:";
+         messageLable.text = [self.orderArray objectAtIndex:2];
+        
+    }else if (indexPath.section==0&&indexPath.row==3) {
+        
+         markLable.text = @"目的地:";
+         messageLable.text = [self.orderArray objectAtIndex:3];
+    }
+    if (indexPath.section==1&&indexPath.row==0) {
+        
+        markLable.text = @"姓名:";
+        messageLable.text = [self.orderArray objectAtIndex:4];
+        
+    }else if(indexPath.section==1&&indexPath.row==1)
+    {
+        markLable.text = @"手机号:";
+        if ([self.orderArray objectAtIndex:5]==NULL||[[self.orderArray objectAtIndex:5]length]==0) {
+           
+            messageLable.text = ShareApp.mobilNumber;
+            
+        }else
+            
+            messageLable.text = [self.orderArray objectAtIndex:5];
+
+        }
+    
+        return cell;
+    
+}
 
 -(void)viewWillDisappear:(BOOL)animated
 {
@@ -313,16 +481,8 @@
 }
 -(void)dealloc
 {
-    [orderPreView release];
-    [inforPreView release];
-    [contactLable release];
     [centerLable release];
-    [departureLable release];
-    [departureTimeLable release];
-    [destinationLable release];
     [orderArray release];
-    [mobilNumberLable release];
-    [numberOfPeopleLable  release]; 
     [topImageView release];
     [super dealloc];
     

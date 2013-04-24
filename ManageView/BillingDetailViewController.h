@@ -11,7 +11,7 @@
 #import "HTTPRequest.h"
 #import "MBProgressHUD.h"
 @interface BillingDetailViewController : UIViewController
-<ASIHTTPRequestDelegate,HTTPRequestDelegate,MBProgressHUDDelegate>
+<ASIHTTPRequestDelegate,HTTPRequestDelegate,MBProgressHUDDelegate,UITableViewDataSource,UITableViewDelegate>
 {
     
     UIButton* returnButton;
@@ -19,17 +19,20 @@
     UILabel*centerLable;
     ASIHTTPRequest *billRequest;
     MBProgressHUD *HUD;
+    UITableView*  orderTableView;
+
 }
-@property(nonatomic,retain)IBOutlet UILabel *feesReceivableLable;//应收费用
-@property(nonatomic,retain)IBOutlet UILabel *couponLable;//优惠劵
-@property(nonatomic,retain)IBOutlet UILabel *enioyCardLable;//畅享卡
-@property(nonatomic,retain)IBOutlet UILabel *giftCardLable;//礼品卡
-@property(nonatomic,retain)IBOutlet UILabel *diidyWalletLable;//滴滴钱包
-@property(nonatomic,retain)IBOutlet UILabel *discountLable;//折扣
-@property(nonatomic,retain)IBOutlet UILabel *implementationFeesLable;//实收费用
-@property(nonatomic,retain)IBOutlet UIView *billInforView;
+@property(nonatomic,retain) NSString *feesReceivablString;//应收费用
+@property(nonatomic,retain) NSString *couponString;//优惠劵
+@property(nonatomic,retain)  NSString *enioyCardString;//畅享卡
+@property(nonatomic,retain)NSString *giftCardString;//礼品卡
+@property(nonatomic,retain) NSString *diidyWalletString;//滴滴钱包
+@property(nonatomic,retain) NSString *discountString;//折扣
+@property(nonatomic,retain) NSString *implementationFeesString;//实收费用
+
 
 @property(nonatomic,retain)NSString * orderID;
 @property(nonatomic, retain)HTTPRequest *bill_request;
-@property (nonatomic, retain) MBProgressHUD *HUD;
+//@property (nonatomic, retain) MBProgressHUD *HUD;
+
 @end

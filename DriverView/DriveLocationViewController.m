@@ -8,7 +8,7 @@
 
 #import "DriveLocationViewController.h"
 #import <QuartzCore/QuartzCore.h>
-
+#import "AppDelegate.h"
 #define NAV_BAR_HEIGHT          44.0
 #define NAV_BAR_BLANK_BUTTON    60.0
 #define NAV_BAR_BUTTON_MARGIN   7.0
@@ -25,7 +25,7 @@
 @implementation DriveLocationViewController
 
 
-@synthesize readonly,mapAnnon,LocationDelegate;
+@synthesize readonly,mapAnnon,LocationDelegate,seedrive;
 // The designated initializer.  Override if you create the controller programmatically and want to perform customization that is not appropriate for viewDidLoad.
 /*
  - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil {
@@ -39,14 +39,60 @@
 
 // Implement viewDidLoad to do additional setup after loading the view, typically from a nib.
 
-- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withLatitude:(double)lat withLongtitude:(double)lng
-{//39.915101, 116.403981  
+-(id)init
+{
+    self = [super init];
+    if (self) {
+        
+      
+        
+        if (dataArray) {
+            
+            [dataArray removeAllObjects];
+            
+        }else{
+            
+            dataArray = [[NSMutableArray alloc] initWithCapacity:0];
+        
+        }
+        
+        if (mobileArray) {
+            
+            [mobileArray removeAllObjects];
+            
+        }else{
+        
+            mobileArray = [[NSMutableArray alloc] initWithCapacity:0];
+        }
+        
+        if (annArray) {
+            
+            [annArray removeAllObjects];
+            
+        }else{
+            
+            annArray = [[NSMutableArray alloc] initWithCapacity:0];
+        }
+
+        
+    }
+    return self;
+}
+
+
+- (void) initWithTitle:(NSString *)drive withSubtitle:(NSString *)mobile withCLLocation:(NSString *)locati WithTag:(int)tag
+{
+  
+    [dataArray addObject:locati];
+    [mobileArray addObject:mobile];
+    
+    NSArray * geoArray= [locati componentsSeparatedByString:@","];
+    double Latitude = [[geoArray objectAtIndex:1] doubleValue];
+    double Longtitude = [[geoArray objectAtIndex:0] doubleValue];
+    
     driveName = [drive retain];
     driverMobile = [mobile retain];
-    _lat =lat;
-    _long = lng;
-    
-    
+
     BMKCoordinateSpan span;
 	
     span.latitudeDelta = 0.01f; //zoom level
@@ -54,43 +100,41 @@
     
     BMKCoordinateRegion region;
     region.span = span;
-    region.center.latitude = lat;
-    region.center.longitude = lng;
+    region.center.latitude = Latitude;
+    region.center.longitude = Longtitude;
     
     //_mapView.showsUserLocation=YES;
     [_mapView setRegion:region animated:YES];
     
-    driveAnnotation = [[MapPointAnnotion alloc]init];
-    
-    driveAnnotation.tag = 1;
-	CLLocationCoordinate2D coor;
-	coor.latitude = lat;
-	coor.longitude = lng;
-	 driveAnnotation.coordinate = coor;
-	
-	 driveAnnotation.title = @"司机";
-	 driveAnnotation.subtitle = @"呼叫我";
-    [_mapView  selectAnnotation:driveAnnotation animated:NO];
-	[_mapView addAnnotation: driveAnnotation];
-    
+    MapPointAnnotion* driveAnnotation = [[MapPointAnnotion alloc]init];
+    driveAnnotation.tag = tag;
+    CLLocationCoordinate2D coor;
+    coor.latitude = Latitude;
+    coor.longitude = Longtitude;
+    driveAnnotation.coordinate = coor;
+        
+    driveAnnotation.title = drive;
+    driveAnnotation.subtitle = @"呼叫我";
+        
+    [_mapView selectAnnotation:driveAnnotation animated:NO];
+    [_mapView addAnnotation: driveAnnotation];
+     [annArray addObject:driveAnnotation];
+    [driveAnnotation release];
+        
 }
 
 -(void)backToTheOriginalPosition
 {
-    BMKCoordinateSpan span;
-	
-    span.latitudeDelta = 0.01f; //zoom level
-    span.longitudeDelta = 0.01f; //zoom level
     
-    NSLog(@"%f",location.latitude);
-    NSLog(@"%f",location.longitude);
+    if (![ShareApp connectedToNetwork]) {
+        
+       
+    }else{
+       
+        self.seedrive = YES;
+         _mapView.showsUserLocation=YES;
     
-    BMKCoordinateRegion region;
-    region.span = span;
-    region.center = location;
-   // _mapView.showsUserLocation=YES;
-    [_mapView setRegion:region animated:YES];
-    
+    }
 }
 - (void)setCurrentLocation{
     
@@ -102,6 +146,7 @@
 }
 
 -(void)cantLocateAlert:(NSString *)errorMsg{
+    
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示信息" 
                                                         message:errorMsg 
                                                        delegate:self
@@ -117,20 +162,19 @@
     if (error == 0) {
         
         item = [[MapPointAnnotion alloc]init];
-        item.tag = 2;
+        item.tag =100;
 		item.coordinate = result.geoPt;
 		item.title =@"我的位置";
         item.subtitle= result.strAddr;
 		[_mapView addAnnotation:item];
-		[item release];
+		
     }
 }
 
 - (void)mapView:(BMKMapView *)mapView didUpdateUserLocation:(BMKUserLocation *)userLocation
 {
-   
-    
-     if (userLocation != nil) {
+
+    if (userLocation != nil) {
 		
         CLLocationCoordinate2D center;
         center.latitude = userLocation.location.coordinate.latitude;
@@ -146,33 +190,64 @@
         region.center = userLocation.location.coordinate;
         
          _mapView.showsUserLocation=NO;
-        
-         [_mapView setRegion:region animated:YES];
-                      // NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
-                    //  [_mapView removeAnnotation:item];
-//                        array = [NSArray arrayWithArray:_mapView.overlays];
-//                      [_mapView removeOverlays:array];
+         if (self.seedrive) {
+             
+             [_mapView setRegion:region animated:YES];
+             // NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
+             if (item) {
+                 
+                [_mapView removeAnnotation:item];
+                 item=nil;
+                 
+             }
+            
+             //                        array = [NSArray arrayWithArray:_mapView.overlays];
+             //                      [_mapView removeOverlays:array];
+             
+             CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
+             
+             pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
+             
+             BOOL flag = [_search reverseGeocode:pt];
+             
+             if (!flag) {
+                 
+                 NSLog(@"search failed!");
+                 
+            }else{
          
-                        CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
-                       
-                            pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
-                        
-                        BOOL flag = [_search reverseGeocode:pt];
-                        
-                        if (!flag) {
-                           NSLog(@"search failed!");
-                        }
+         }
+         
+//                      // NSArray* array = [NSArray arrayWithArray:_mapView.annotations];
+//                      [_mapView removeAnnotation:item];
+////                        array = [NSArray arrayWithArray:_mapView.overlays];
+////                      [_mapView removeOverlays:array];
+//         
+//                        CLLocationCoordinate2D pt = (CLLocationCoordinate2D){0, 0};
+//                       
+//                            pt = (CLLocationCoordinate2D){userLocation.location.coordinate.latitude,userLocation.location.coordinate.longitude};
+//                        
+//                        BOOL flag = [_search reverseGeocode:pt];
+//                        
+//                        if (!flag) {
+//                            
+//                           NSLog(@"search failed!");
+             
+            }
         
-    }
-	
+        }
 }
 
 - (void)mapView:(BMKMapView *)mapView didFailToLocateUserWithError:(NSError *)error
 {
 	if (error != nil)
+        
 		NSLog(@"locate failed: %@", [error localizedDescription]);
+    
 	else {
+        
 		NSLog(@"locate failed");
+        
 	}
     
     
@@ -195,34 +270,43 @@
 //    userLocation.title = @"我的位置";
 //    [_mapView addAnnotation:userLocation];
     
-   
 }
 
 -(void)mapView:(BMKMapView *)mapView didAddAnnotationViews:(NSArray *)views
-
 {
-    
-    [_mapView selectAnnotation:driveAnnotation animated:YES];
-    
+    for (int i= 0; i<[views count]; i++) {
+
+        BMKAnnotationView *ss = [views objectAtIndex:i];
+        if ([ss.annotation.title isEqualToString:@"我的位置"]) {
+            
+        }else{
+       
+            [_mapView selectAnnotation:ss.annotation animated:NO];
+        }
+        
+    }
 }
 
 - (BMKAnnotationView *)mapView:(BMKMapView *)mapView viewForAnnotation:(id <BMKAnnotation>)annotation
 {
     
-   
-    if ([annotation isKindOfClass:[BMKPointAnnotation class]]) {
+   if ([annotation isKindOfClass:[BMKPointAnnotation class]]) {
         
         MapPointAnnotion* pointAnnotation=(MapPointAnnotion*)annotation;
-        NSString *AnnotationViewID = [NSString stringWithFormat:@"iAnnotation-%i",pointAnnotation.tag];
+        NSString *AnnotationViewID = [NSString stringWithFormat:@"iAnnotation-%i",pointAnnotation.tag+1];
+       
 		BMKPinAnnotationView *newAnnotation = [[[BMKPinAnnotationView alloc] initWithAnnotation:annotation reuseIdentifier:AnnotationViewID]autorelease];
-        if (pointAnnotation.tag ==1) {
-           
-             newAnnotation.pinColor = BMKPinAnnotationColorPurple;
+        if (pointAnnotation.tag !=100) {
+            
+            newAnnotation.pinColor = BMKPinAnnotationColorPurple;
             UIButton *rightButton = [UIButton buttonWithType:UIButtonTypeDetailDisclosure];
+            rightButton.tag=pointAnnotation.tag+40;
             [rightButton addTarget:self action:@selector(telDrive:) forControlEvents:UIControlEventTouchUpInside];
             [newAnnotation setCanShowCallout:YES]; //点击能否显示
             [newAnnotation setRightCalloutAccessoryView:rightButton];
+            
         }else{
+            
             newAnnotation.pinColor = BMKPinAnnotationColorRed;
         }
 		newAnnotation.animatesDrop = NO;
@@ -242,13 +326,43 @@
 }
 - (void)mapView:(BMKMapView *)mapView didDeselectAnnotationView:(BMKAnnotationView *)view
 {
-    [_mapView selectAnnotation:driveAnnotation animated:NO];
-
+   // [_mapView selectAnnotation:driveAnnotation animated:NO];
+   // view.selected = YES;
+  // [_mapView selectAnnotation:view.annotation animated:NO];
+    
 }
--(void)telDrive:(id)sender
-{ 
+
+-(void)seeDrive:(int)buttonMA
+{
+    self.seedrive = YES;
+    NSArray * geoArray= [[dataArray objectAtIndex:buttonMA] componentsSeparatedByString:@","];
+   
+    double Latitude = [[geoArray objectAtIndex:1] doubleValue];
+    double Longtitude = [[geoArray objectAtIndex:0] doubleValue];
+    
+    BMKCoordinateSpan span;
+	
+    span.latitudeDelta = 0.01f; //zoom level
+    span.longitudeDelta = 0.01f; //zoom level
+    
+    BMKCoordinateRegion region;
+    region.span = span;
+    region.center.latitude = Latitude;
+    region.center.longitude = Longtitude;
+    
+    //_mapView.showsUserLocation=YES;
+    [_mapView setRegion:region animated:YES];
+  
+    MapPointAnnotion* driveAnnotation = [annArray objectAtIndex:buttonMA];
+    [_mapView selectAnnotation:driveAnnotation animated:NO];
+    
+    
+}
+-(void)telDrive:(UIButton*)sender
+{
+    NSLog(@"%@",[mobileArray objectAtIndex:sender.tag-40]);
     UIWebView*callWebview =[[UIWebView alloc] init];
-    NSString * telMobile = [NSString stringWithFormat:@"tel:%@",driverMobile];
+    NSString * telMobile = [NSString stringWithFormat:@"tel:%@",[mobileArray objectAtIndex:sender.tag-40]];
     NSURL *telURL =[NSURL URLWithString:telMobile];
     [callWebview loadRequest:[NSURLRequest requestWithURL:telURL]];
     //记得添加到view上
@@ -258,8 +372,11 @@
 }
 #pragma mark - System Approach
 - (void)viewDidLoad {
+    
     [super viewDidLoad];
-   
+    
+    self.seedrive=YES;
+    
     _mapView = [[BMKMapView alloc] initWithFrame:CGRectMake(0, 0, 320, 360)];
     _mapView.delegate = self;
     //_mapView.exclusiveTouch = YES;
@@ -280,11 +397,24 @@
 }
 
 - (void)dealloc {
+    
+    if (_mapView) {
+        
+         _mapView.delegate=nil;
+        [_mapView release];
+
+        
+    }
+    _search.delegate=nil;
+   
+    [annArray release];
+    [mobileArray release];
+    [dataArray release];
+    [item release];
     [_search release];
     [drivePositin release];
     [driveName release];
     [driverMobile release];
-    [_mapView release];
     [mapAnnon release];
     //[_markerView release];
     [super dealloc];
@@ -302,148 +432,12 @@
     // e.g. self.myOutlet = nil;
 }
 
-/*
+
  // Override to allow orientations other than the default portrait orientation.
  - (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
  // Return YES for supported orientations.
- return (interfaceOrientation == UIInterfaceOrientationPortrait);
+     return (interfaceOrientation == UIInterfaceOrientationPortrait);
  }
- */
-
-
-#pragma NO  Use
-//-(void)createMarker{
-//    
-//    
-//    if(!_markerView){
-//        CGRect f = _mapView.frame;
-//        NSLog(@"saxxx%f %f",f.origin.x,f.origin.y);
-//        _markerView = [[UIView alloc] initWithFrame:CGRectMake(f.origin.x + f.size.width/2,
-//                                                               f.origin.y + f.size.height/2, 
-//                                                               32, 36)];
-//        _markerView.backgroundColor = [UIColor clearColor];
-//        _markerTip = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 200, 80)];
-//        [_markerTip setImage:[UIImage imageNamed:@"btn_map_current1.png"]];
-//        [_markerView addSubview:_markerTip];
-//        
-//        _markerShadow = [[UIImageView alloc] initWithFrame:CGRectMake(0, 32, 32, 4)];
-//        //  [_markerShadow setImage:[UIImage imageNamed:@"u923_normal.png"]];
-//        // [_markerView addSubview:_markerShadow];
-//        
-//        [self glassMenuWithLoadingStyle];
-//        
-//        [self.view addSubview:_markerView];
-//    }
-//}
-
-//-(void)animateMarker:(void (^)())completed
-//{
-//    [UIView animateWithDuration:0.3
-//                     animations:^{
-//                         [_markerTip setFrame:CGRectMake(0, -16, 32, 32)];
-//                         [_markerShadow setFrame:CGRectMake(16, 34, 0, 0)];
-//                     } 
-//                     completion:^(BOOL finished) {
-//                         
-//                         [UIView animateWithDuration:0.2
-//                                          animations:^{
-//                                              [_markerTip setFrame:CGRectMake(0, 0, 32, 32)];
-//                                              [_markerShadow setFrame:CGRectMake(0, 32, 32, 4)];
-//                                          } 
-//                                          completion:^(BOOL finished) {
-//                                              completed();
-//                                          }];
-//                     }];
-//}
-//-(void)glassMenuWithLoadingStyle{
-//    if(_glassMenuView) {
-//        [_glassMenuView removeFromSuperview];
-//        _glassMenuView = nil;
-//    }
-//    NSLog(@"中心   %f",_mapView.center.x);
-//    _glassMenuView = [[UIView alloc] initWithFrame:CGRectMake(-15, -50, 60, 60)];
-//    _glassMenuView.backgroundColor = [UIColor blackColor];
-//    
-//    UIActivityIndicatorView *indicatorView = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleWhite];
-//    [indicatorView setFrame:CGRectMake(26, 26, 20, 20)];
-//    indicatorView.hidesWhenStopped = YES;
-//    [indicatorView startAnimating];
-//    [_glassMenuView addSubview:indicatorView];
-//    [indicatorView release];
-//    
-//    _markerView.backgroundColor = [UIColor clearColor];
-//    [_markerView addSubview:_glassMenuView];
-//}
-//-(void)glassMenuWithContent:(NSString *)text{
-//    
-//    if(_glassMenuView) {
-//        [_glassMenuView removeFromSuperview];
-//        _glassMenuView = nil;
-//    }
-//    
-//    CGSize fontSize = [text sizeWithFont:[UIFont systemFontOfSize:12]];
-//    CGFloat width = 0;
-//    if(fontSize.width + 30 < WIDTH_GLASSMENU_MIN){
-//        width = WIDTH_GLASSMENU_MIN;
-//    }
-//    else if(fontSize.width + 30 > WIDTH_GLASSMENU_MAX){
-//        width = WIDTH_GLASSMENU_MAX;
-//    }else {
-//        width = fontSize.width + 30;
-//    }
-//    // CGFloat borderWidth = width/2 - 11;
-//    CGRect f = _mapView.frame;
-//    _markerView = [[UIView alloc] initWithFrame:CGRectMake(f.origin.x + f.size.width/2 ,
-//                                                           f.origin.y + f.size.height/2, 
-//                                                           200, 80)];
-//    UIImage *glassMenuImgMid = [UIImage imageNamed:@"main_map_loinbg_fold.9.png"];
-//    
-//    UIImageView * newinmage = [[UIImageView alloc] initWithImage:glassMenuImgMid];
-//    newinmage.frame =CGRectMake(0, 0, 200, 60);
-//    newinmage.userInteractionEnabled = YES;
-//    
-//    UIButton *newButton = [UIButton buttonWithType:UIButtonTypeCustom];
-//    newButton.frame = CGRectMake(140, 5, 60, 40);
-//    [newButton setImage:[UIImage imageNamed:@"u118_normal.png"] forState:UIControlStateNormal];
-//    [newButton addTarget:self action:@selector(selectTheCurrentLocation:) forControlEvents:UIControlEventTouchUpInside];
-//    _glassMenuView = [[UIView alloc] initWithFrame:CGRectMake(f.origin.x + f.size.width/2-86, f.origin.y + f.size.height/2-53, 200, 60)];
-//    _glassMenuView.backgroundColor = [UIColor clearColor];
-//    textLabel = [[UILabel alloc] initWithFrame:CGRectMake(10, 0, _glassMenuView.frame.size.width - 50, 60)];
-//    textLabel.backgroundColor = [UIColor clearColor];
-//    textLabel.numberOfLines = 0;
-//    [textLabel setFont:[UIFont systemFontOfSize:12]];
-//    [textLabel setTextColor:[UIColor whiteColor]];
-//    [textLabel setTextAlignment:UITextAlignmentCenter];
-//    [textLabel setText:text];
-//    [newinmage addSubview:textLabel];
-//    [textLabel release];   
-//    [newinmage addSubview:newButton];
-//    [_glassMenuView addSubview:newinmage];
-//    
-//    [self.view addSubview:_glassMenuView];
-//    
-//    
-//}
-
-//-(void)searchAddress:(CLLocationCoordinate2D)centerLocation {
-//    
-//    [self animateMarker:^{
-//        [self glassMenuWithLoadingStyle];
-//        if(_search != nil){
-//            
-//            CLLocation *l = [[CLLocation alloc] initWithLatitude:centerLocation.latitude longitude:centerLocation.longitude];
-//            CLLocationCoordinate2D pt = (CLLocationCoordinate2D){39.915101, 116.403981};
-//            //mapAnnon = [[MapAnnotion alloc] initWithCoordinate:l.coordinate andAddress:@""];
-//            drivePositin = [[DrivePosition alloc] initWithTitle:@"beijing" withSubtitle:@"12222222" withLatitude:pt.latitude withLongtitude:pt.longitude];
-//            
-//            BOOL flag = [_search reverseGeocode:pt];
-//            
-//            if (!flag) {
-//                [self glassMenuWithContent:@"无法定位当前位置"];
-//            }
-//        }}];
-//    
-//}
 
 
 @end

@@ -19,6 +19,9 @@
     DriveLocationViewController* driveMap;
     MBProgressHUD *HUD;
     MBProgressHUD *HUDB;
+    
+     int buttonMark;
+    int orderNumber;
 }
 //@property (nonatomic, copy) NSString *urlordering;
 //@property (nonatomic, copy) NSString *urlpositionDriver;

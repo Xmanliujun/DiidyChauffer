@@ -20,8 +20,8 @@
     UIView*opaqueview;
     UIActivityIndicatorView * activityIndicator;
 }
-@property(nonatomic,retain)IBOutlet UILabel *eventName;//点单编号
-@property(nonatomic,retain)NSString*diidyTitle;
-@property(nonatomic,retain)NSString * diidyContent;
+
+//@property(nonatomic,retain)NSString*diidyTitle;
+//@property(nonatomic,retain)NSString * diidyContent;
 @property(nonatomic,retain)NSString*coponurl;
 @end

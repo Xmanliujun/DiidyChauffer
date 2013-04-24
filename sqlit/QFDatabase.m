@@ -108,6 +108,51 @@
     return isSuccessed;
 }
 
+-(void)modifyData:(DIIdyModel*)newData
+{
+    NSLog(@"dddddddddccccccccccccccccc");
+    [fmdb executeUpdate:@"UPDATE news SET status  = ? WHERE orderid = ? ",newData.status,newData.orderID];
+    [fmdb executeUpdate:@"UPDATE news SET starttime  = ? WHERE orderid = ? ",newData.startTime,newData.orderID];
+    [fmdb executeUpdate:@"UPDATE news SET startaddr  = ? WHERE orderid = ? ",newData.startAddr,newData.orderID];
+    [fmdb executeUpdate:@"UPDATE news SET endaddr  = ? WHERE orderid = ? ",newData.endAddr,newData.orderID];
+    [fmdb executeUpdate:@"UPDATE news SET number  = ? WHERE orderid = ? ",newData.number,newData.orderID];
+    [fmdb executeUpdate:@"UPDATE news SET contactname  = ? WHERE orderid = ? ",newData.contactName,newData.orderID];
+    [fmdb executeUpdate:@"UPDATE news SET contactmobile  = ? WHERE orderid = ? ",newData.contactMobile,newData.orderID];
+    [fmdb executeUpdate:@"UPDATE news SET coupon  = ? WHERE orderid = ? ",newData.coupon,newData.orderID];
+}
+
+-(NSArray*)readDataWithFMDBaa:(NSString*)iddd
+{
+    
+    FMResultSet *rs=[fmdb executeQuery:@"SELECT * FROM news"];
+    rs=[fmdb executeQuery:@"SELECT * FROM news WHERE orderid = ?",iddd];
+    
+    
+    NSLog(@"idddddddddddd  %@",iddd);
+    while ([rs next]) {
+        
+        DIIdyModel *item=[[DIIdyModel alloc] init];
+        item.orderID = [rs stringForColumn:@"orderid"];
+        item.startTime =[rs stringForColumn:@"starttime"];
+        item.startAddr=[rs stringForColumn:@"startaddr"];
+        item.endAddr=[rs stringForColumn:@"endaddr"];
+        item.ordersNumber=[rs stringForColumn:@"number"];
+        item.contactName=[rs stringForColumn:@"contactname"];
+        item.contactMobile=[rs stringForColumn:@"contactmobile"];
+        item.createTime=[rs stringForColumn:@"createtime"];
+        item.coupon=[rs stringForColumn:@"coupon"];
+        item.status=[rs stringForColumn:@"status"];
+        NSLog(@"stttttttttttttttt %@",item.status);
+        
+       
+    }
+    return nil;
+
+    
+
+}
+
+
 //fmdb方式读取数据
 -(NSArray*)readDataWithFMDB
 {

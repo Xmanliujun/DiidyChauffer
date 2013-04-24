@@ -100,6 +100,7 @@
             tabLable2.font = [UIFont fontWithName:@"Helvetica" size:15.0f];
             [btn addSubview:tabLable2];
             tabLable2.textColor = [UIColor orangeColor];
+            
         }
         
 		[btn setTag:i];
@@ -108,6 +109,8 @@
         [self.view addSubview:btn];
 		[btn addTarget:self action:@selector(button_clicked_tag:) forControlEvents:UIControlEventTouchUpInside];
 		[btn release];
+        
+        
 	}
 }
 

@@ -58,6 +58,7 @@
 }
 -(NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
+    NSLog(@"sssssss   %@",tableView.dataSource);
     return [self.possibleCityArray count];
 
 }
@@ -145,13 +146,15 @@
     BMKPoiInfo * bmn = [self.possibleCityArray objectAtIndex:indexPath.row];
     CLLocationCoordinate2D ptCenter = bmn.pt;
     NSString * cityName =bmn.name;
-  
+   
     TelAboutViewController * chau = [[[TelAboutViewController alloc] init] autorelease];
     ShareApp.pageManageMent = @"chauffer";
     
     UINavigationController * na = [[[UINavigationController alloc] initWithRootViewController:chau] autorelease];
+    
     OnLineAboutViewController * online = [[[OnLineAboutViewController alloc] init] autorelease];
     online.possible = NO;
+    online.coupossible=YES;
     online.possibleLocation = ptCenter;
     online.cityName = cityName;
     UINavigationController * onlineNa = [[[UINavigationController alloc] initWithRootViewController:online] autorelease];
@@ -165,6 +168,7 @@
     tabController.viewControllers = viewControllerArray;
     tabController.selectedIndex = 1;
     [ShareApp.window setRootViewController:tabController];
+    
 }
 
 -(void)returnMainView:(id)sender
@@ -173,6 +177,16 @@
     
 }
 #pragma mark - System Approach
+
+-(void)setExtraCellLineHidden: (UITableView *)tableView
+{
+    UIView *view = [UIView new];
+    view.backgroundColor = [UIColor clearColor];
+    [tableView setTableFooterView:view];
+    [view release];
+}
+
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
@@ -201,38 +215,19 @@
     centerLable.text = @"选择可能的出发地";
     [self.navigationController.navigationBar addSubview:centerLable];
     
-    CGRect rect;
-    if ([self.possibleCityArray count]*44.0<416.0) {
+    CGRect rect = CGRectMake(0.0, 0.0, 320.0, 460.0-44.0);
         
-        rect = CGRectMake(0.0, 0.0, 320.0, [self.possibleCityArray count]*44.0);
-        
-    }else {
-        
-        rect = CGRectMake(0.0, 0.0, 320.0, 460.0-44.0);
-        
-    }
-    
     UITableView * possibleTableView = [[UITableView alloc] initWithFrame:rect style:UITableViewStylePlain];
+    possibleTableView.scrollEnabled = YES;
     possibleTableView.separatorColor =  [UIColor colorWithRed:182.0/255.0 green:182.0/255.0 blue:182.0/255.0 alpha:1];
-  // possibleTableView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     possibleTableView.backgroundColor = [UIColor clearColor];
-   
-    if ([self.possibleCityArray count]*44.0<416.0) {
-   
-        possibleTableView.scrollEnabled = NO;
-        
-        
-    }else {
-        
-        possibleTableView.scrollEnabled = YES;
-        
-    }
-
     possibleTableView.delegate = self;
     possibleTableView.dataSource = self;
     [self.view addSubview: possibleTableView];
+    [self setExtraCellLineHidden:possibleTableView];
+
     [possibleTableView  release];
-    
+        
 }
 
 -(void)viewWillDisappear:(BOOL)animated

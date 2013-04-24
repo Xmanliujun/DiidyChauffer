@@ -10,7 +10,7 @@
 #import "MBProgressHUD.h"
 #import "HTTPRequest.h"
 @interface RegisteredViewController : UIViewController
-<UIAlertViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate>
+<UIAlertViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate,UITextFieldDelegate>
 {
     UILabel * contentLable;
     UILabel * promptLable;

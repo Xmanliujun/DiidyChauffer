@@ -11,13 +11,14 @@
 #import "OrdersPreviewViewController.h"
 #import "OrdersPreviewTwoViewController.h"
 #import "FillOrdersViewController.h"
+#import "MobClick.h"
 @interface SelectCouponViewController ()
 
 @end
 
 @implementation SelectCouponViewController
 @synthesize selectCouponAray,rowNumber;
-@synthesize delegate,mark,orderPreArray;
+@synthesize delegate,mark,orderPreArray,rowdelegate;
 @synthesize indexAray;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -74,7 +75,8 @@
         timeLable.numberOfLines = 0;
         timeLable.backgroundColor = [UIColor clearColor];
         timeLable.font = [UIFont fontWithName:@"Arial" size:12];
-        timeLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];        timeLable.tag = 82;
+        timeLable.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
+        timeLable.tag = 82;
         [cell.contentView addSubview:timeLable];
         [timeLable release];
         cell.contentView.backgroundColor = [UIColor whiteColor];
@@ -216,10 +218,18 @@
     
     if (self.mark) {
         
+        NSString *rownumber = [NSString stringWithFormat:@"%d",rowNumber];
+        NSLog(@"%@",rownumber);
+        NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:selectCouponAray,@"array", rownumber,@"number",nil];
+       
+            
+        [[NSNotificationCenter defaultCenter] postNotificationName:@"COUPONDATA" object:self userInfo:dict];
+        
+
         [self dismissModalViewControllerAnimated:NO];
         
     }else{
-        
+          
         [self.navigationController popViewControllerAnimated:YES];
         
     }
@@ -248,7 +258,7 @@
             
         NSLog(@"%d",[useSelectCouponArray count]);
         [delegate selectedCoupon:useSelectCouponArray];
-            [self.navigationController popViewControllerAnimated:YES];
+        [self.navigationController popViewControllerAnimated:YES];
         }
         
     }else {
@@ -279,11 +289,11 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+     [MobClick event:@"m03_d002_0004"];
    // self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     self.view.backgroundColor= [UIColor whiteColor];
     self.navigationItem.hidesBackButton = YES;
     
-
     useSelectCouponArray = [[NSMutableArray alloc] initWithCapacity:0];
     dearSecationArray = [[NSMutableArray alloc] initWithCapacity:0];
     
@@ -309,15 +319,18 @@
      
     NSString * title;
     UIImage*nextd;
+    CGRect rectb;
     if(self.mark){
         
-        title = @"下一步 ";
+        title = @"下一步  ";
         nextd = [UIImage imageNamed:@"button4.png"];
+        rectb=CGRectMake(260.0f, 7.0f, 56.0f, 31.0f);
         
     }else {
         
         title = @"完成";
         nextd = [UIImage imageNamed:@"33.png"];
+        rectb=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
     }
     
     rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
@@ -325,7 +338,7 @@
     [rigthbutton setTitleColor:[UIColor whiteColor] forState:UIControlStateNormal];
     [rigthbutton setTitle:title forState:UIControlStateNormal];
     rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:13.0f];
-    rigthbutton.frame=CGRectMake(260.0f, 7.0f, 50.0f, 30.0f);
+    rigthbutton.frame=rectb;
     [rigthbutton setTitle:title forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(nextStep:) forControlEvents:UIControlEventTouchUpInside];
     [self.navigationController.navigationBar addSubview:rigthbutton];

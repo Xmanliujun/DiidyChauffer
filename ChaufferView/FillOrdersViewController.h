@@ -9,18 +9,17 @@
 #import <UIKit/UIKit.h>
 #import "CouponDelegate.h"
 #import "BMapKit.h"
-#import "HTTPRequest.h"
+
 @interface FillOrdersViewController : UIViewController
-<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,CouponDelegate,HTTPRequestDelegate>
+<UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,CouponDelegate,UITableViewDataSource,UITableViewDelegate>
 {
    
-    
     CLLocationCoordinate2D   location;
     NSMutableArray *peopleArray;
     NSArray *minuteArray;
-    NSMutableArray * dataArry;//存放数据类
+   // NSMutableArray * dataArry;//存放数据类
     NSArray *timeArray;
-    NSString * departure;
+   
     UIDatePicker *datePicker;
     UIPickerView *peoplePickView;
     UIImageView *pickImageView;
@@ -30,38 +29,25 @@
     UILabel*centerLable ;
     BOOL landed;
     int total;
+    int totalNumber;
     
     NSDate* _date;
-   
     NSDateFormatter*dateformatter;
-    
-    UIView * viewTest;
+    UILabel * travelTimeLableq;
+    UITableView*  orderTableView;
 }
-
 @property(nonatomic,retain)NSArray*couponaArray;//存放选择的优惠劵
-
 @property(nonatomic,assign) BOOL landed;
-
-@property(nonatomic,retain)IBOutlet UITextField *nameField;
-@property(nonatomic,retain)IBOutlet UITextField *telNumberField;
-@property(nonatomic,retain)IBOutlet UIView *backGroundView;
-@property(nonatomic,retain)IBOutlet UIImageView *newsImangeView;
-@property(nonatomic,retain)IBOutlet UILabel *departureLable;//出发地
-@property(nonatomic,retain)IBOutlet UILabel *destinationLable;
-@property(nonatomic,retain)IBOutlet UILabel *departureMinuteLable;//出发时间
-@property(nonatomic,retain)IBOutlet UILabel *numberPeopleLable;//人数
-@property(nonatomic,retain)IBOutlet UIView *couponView;
-@property(nonatomic,retain)IBOutlet UILabel *couponLable;
-
-@property(nonatomic,retain)IBOutlet UIView *bookInforView;
-@property(nonatomic,retain)IBOutlet UIView *contactInforView;
-@property(nonatomic,retain)IBOutlet UIView *couponInforView;
--(IBAction)selectDeparture:(id)sender;
--(IBAction)selectDestination:(id)sender;
--(IBAction)selectDepartureTime:(id)sender;
--(IBAction)selectNumberPeople:(id)sender;
--(IBAction)useCoupon:(id)sender;
+@property(nonatomic,retain) NSString *departureMinuteString;//出发时间
+@property(nonatomic,retain) NSString *couponString;//优惠劵
+@property(nonatomic,retain) NSString * departure;//出发地
+@property(nonatomic,retain) NSString *destinationString;//目的地
+@property(nonatomic,retain) NSString *numberPeopleString;//人数
+@property(nonatomic,assign) int total;
+@property(nonatomic,retain)NSString*originalTime;
+@property(nonatomic,retain)NSString*originalNumber;
+@property(nonatomic,retain)NSString*nameString;
+@property(nonatomic,retain)NSString*telString;
+@property(nonatomic,retain)NSArray*dataArraya;//存放数据
 -(id)initWithDeparture:(NSString*)departureString CLLocation:(CLLocationCoordinate2D)centers;
-
-@property(nonatomic, retain)HTTPRequest *getCoupon_request;
 @end

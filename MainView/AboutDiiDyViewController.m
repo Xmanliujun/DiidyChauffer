@@ -10,6 +10,8 @@
 #import "CONST.h"
 #import "JSONKit.h"
 #import "Reachability.h"
+#import "AppDelegate.h"
+#import "MobClick.h"
 @interface AboutDiiDyViewController ()
 
 @end
@@ -30,7 +32,8 @@ int my_strcmp(const char *s1,const char *s2){
     while((*s2 == *s1)&& *s2)
     {
         s1++;
-        s2++;}
+        s2++;
+    }
       return *s1-*s2;
     
 }
@@ -83,13 +86,10 @@ char* getlf(char* s)
     [self.main_request requestByUrlByGet: baseUrl];
 
 }
-
-
 -(void)versionUpGrades:(id)sender
 {
-    
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-    if ([r currentReachabilityStatus]==0) {
+    [MobClick event:@"m07_s003_0006_0001"];
+   if (![ShareApp connectedToNetwork]) {        
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
@@ -126,7 +126,6 @@ char* getlf(char* s)
 #pragma DownLoad Parsing
 -(void)parseNewStringJson:(NSString*)res
 {
-    
     char* responschar = (char*)[res UTF8String];
     char*nlf = getlf(responschar);
     char* point1 = getoutpoint(responschar);
@@ -146,7 +145,7 @@ char* getlf(char* s)
         
         [HUD removeFromSuperview];
         [HUD release];
-        HUD = nil;
+         HUD = nil;
     }
 
     char* responschar = (char*)[responseString UTF8String];
@@ -197,7 +196,7 @@ char* getlf(char* s)
 {
     if (buttonIndex==1) {
         
-        NSString *webLink = @"itms-apps://phobos.apple.com/WebObjects/MZStore.woa/wa/viewSoftware?id=4574";
+        NSString *webLink = @"http://itunes.apple.com/us/app/di-di-dai-jia/id587269030?ls=1&mt=8";
         [[UIApplication sharedApplication] openURL:[NSURL URLWithString:webLink]];
         
     }else
@@ -211,11 +210,11 @@ char* getlf(char* s)
 {
     
     if (HUD){
+        
         [HUD removeFromSuperview];
         [HUD release];
          HUD = nil;
     }
-    
     
     UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"提示" message:@"网络超时" delegate:nil cancelButtonTitle:@"确定" otherButtonTitles:nil];
     [alertView show];
@@ -264,7 +263,7 @@ char* getlf(char* s)
 {
     [HUD removeFromSuperview];
     [HUD release];
-    HUD = nil;
+     HUD = nil;
 }
 
 -(void)returnORMoreView:(id)sender
@@ -316,9 +315,7 @@ char* getlf(char* s)
     topImageView.hidden = YES;
     centerLable.hidden = YES;
     returnButton.hidden = YES;
-    
 }
-
 - (void)viewDidUnload
 {
     [super viewDidUnload];

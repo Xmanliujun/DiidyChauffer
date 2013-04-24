@@ -8,6 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "CouponDelegate.h"
+#import "CouponDelegate.h"
 @interface SelectCouponViewController : UIViewController
 <UITableViewDataSource,UITableViewDelegate>
 {
@@ -24,6 +25,9 @@
     int number;
 }
 @property(nonatomic,assign)id<CouponDelegate>delegate;
+@property(nonatomic,assign)id<CouponDelegate>rowdelegate;
+
+
 @property(nonatomic,retain)NSArray * selectCouponAray;//存放数据类
 @property(nonatomic,retain)NSArray * indexAray;//存放数据类
 @property(nonatomic,assign)int  rowNumber;

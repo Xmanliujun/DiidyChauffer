@@ -42,7 +42,7 @@
     centerLable.font = [UIFont systemFontOfSize:17];
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.text =@"编 辑 目 的 地";
     [self.navigationController.navigationBar addSubview:centerLable];
     
@@ -66,7 +66,6 @@
 -(void)nextStep:(id)sender
 {
   
-    NSLog(@"%@",destinationView.text);
     [DestionDelegate selectThePlaceOfDestion:destinationView.text];
     [self.navigationController popViewControllerAnimated:YES];
     
@@ -86,8 +85,11 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view.
+     self.view.backgroundColor =[UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
      self.navigationItem.hidesBackButton = YES;
+    
     [self setTheNavigationBar];
+    
     UILabel *departureLable = [[UILabel alloc] initWithFrame:CGRectMake(10, 10, 120, 30)];
     departureLable.font = [UIFont fontWithName:@"Arial" size:14.0];
     departureLable.textColor = [UIColor orangeColor];
@@ -104,18 +106,16 @@
     destinationView.font = [UIFont fontWithName:@"Arial" size:14.0];
     destinationView.keyboardType = UIKeyboardTypeDefault;
     [destinationView becomeFirstResponder];
-    [self.view addSubview:destinationView];
-    
     [[destinationView layer] setBorderColor:[UIColor grayColor].CGColor];
     [[destinationView layer] setBorderWidth:1];
     [[destinationView layer] setCornerRadius:5];
     [destinationView setClipsToBounds: YES];
-
+    [self.view addSubview:destinationView];
+    
 }
 -(void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    
     topImageView.hidden = YES;
     returnButton.hidden = YES;
     rigthbutton.hidden = YES;
@@ -126,7 +126,6 @@
 {
     [destinationView release];
     [centerLable release];
-    [destinationView release];
     [topImageView release];
     [super dealloc];
 

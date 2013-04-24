@@ -9,10 +9,8 @@
 #import <UIKit/UIKit.h>
 #import "MBProgressHUD.h"
 #import "HTTPRequest.h"
-#import "ASIHTTPRequest.h"
 @interface CouponViewController : UIViewController
-<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate,
-ASIHTTPRequestDelegate,UIAlertViewDelegate>
+<UIScrollViewDelegate,UITableViewDataSource,UITableViewDelegate,MBProgressHUDDelegate,HTTPRequestDelegate,UIAlertViewDelegate>
 {
    // UIImageView* leftImage;
     UIPageControl * couponPage;
@@ -28,11 +26,23 @@ ASIHTTPRequestDelegate,UIAlertViewDelegate>
     
     UITextField * giftNumberText;
     UIView * giftFrientView;
+    UITableView * couponTableView;
+    
    
 }
 @property(nonatomic, retain)HTTPRequest *order_request;
+@property(nonatomic, retain)HTTPRequest *order_stat;
+@property(nonatomic, retain)HTTPRequest *order_send;
+@property(nonatomic, retain)HTTPRequest *order_number;
+
 @property(nonatomic,retain)NSString* detailCoupon;
 @property(nonatomic,retain)NSString * couponID;
+@property(nonatomic,retain)NSString * verCoupon;
+@property(nonatomic,retain)NSString * timeString;
+@property(nonatomic,retain)UIPageControl * couponPage;
+
+@property(nonatomic,assign) BOOL couponStat;
+@property (nonatomic, retain) NSTimer *couponTimer;
 //@property(nonatomic,retain)NSString * content;
 //@property(nonatomic,retain)UILabel * contentLable;
 

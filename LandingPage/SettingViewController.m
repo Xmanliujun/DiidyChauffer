@@ -9,7 +9,7 @@
 #import "SettingViewController.h"
 #import "CONST.h"
 #import "NSString+Hashing.h"
-#import "SBJson.h"
+
 #import "AppDelegate.h"
 #import "NSString+Hashing.h"
 #import "CouponViewController.h"
@@ -17,6 +17,7 @@
 #import "JSONKit.h"
 #import "Reachability.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 @interface SettingViewController ()
 
 @end
@@ -33,7 +34,8 @@
 }
 -(id)initWithRegisteredOrForgot:(NSString*)judge
 {
-    if([super init])
+    self=[super init];
+    if(self)
     {
         
         _judge = [judge retain];
@@ -259,7 +261,8 @@
     if([_judge isEqualToString:@"TRUE"]){
        
         if([returenNews isEqualToString:@"s"]){
-          
+            [MobClick event:@"m09_u001_0002_0001"];
+
             if([ShareApp.pageManageMent isEqualToString:@"coupon"]){
                
                 CouponViewController * cou = [[[CouponViewController alloc] init] autorelease];
@@ -268,11 +271,13 @@
             }else {
                 
                 ManageMentViewController * manage = [[[ManageMentViewController alloc] init] autorelease];
+                 manage.manageStat = YES;
                 [self.navigationController pushViewController:manage animated:YES];
                 
             }
         }else {
             
+            [MobClick event:@"m09_u001_0002_0002"];
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                            message:@"输入错误,在试试看吧!"
                                                           delegate:nil
@@ -286,7 +291,7 @@
     }else {
         if([returenNews isEqualToString:@"s"]){
           
-            
+            [MobClick event:@"m09_u003_0002_0001"];
             UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                            message:@"您已成功修改密码"
                                                           delegate:self
@@ -299,6 +304,7 @@
 
        }else{
            
+            [MobClick event:@"m09_u003_0002_0002"];
            UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示" 
                                                           message: @"您修改密码失败,请重试"
                                                          delegate:nil
@@ -404,14 +410,14 @@
 {
     [HUD removeFromSuperview];
     [HUD release];
-    HUD = nil;
+     HUD = nil;
 }
 #pragma mark-button
 
 -(void)pushCompleteView:(id)sender
 {
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-    if ([r currentReachabilityStatus]==0) {
+     if (![ShareApp connectedToNetwork]) {
+         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
                                                       delegate:nil
@@ -419,6 +425,7 @@
                                              otherButtonTitles:nil];
         [alert show];
         [alert release];
+        
     }else{
 
         HUD=[[MBProgressHUD alloc]initWithView:self.navigationController.view];
@@ -434,14 +441,25 @@
     
 }
 
-
-
 -(void)returRegisteredView:(id)sender
 {
     [self.navigationController popViewControllerAnimated:YES];
     
 }
+-(void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    if([_judge isEqualToString:@"TRUE"]){
+        
+        [MobClick event:@"m09_u001_0002"];
+    
+    }else
+    {
+        [MobClick event:@"m09_u003_0002"];
+    
+    }
 
+
+}
 - (BOOL)textFieldShouldReturn:(UITextField *)textField
 {
     [verificationText resignFirstResponder];
@@ -453,9 +471,10 @@
 
 -(void)getSMSCodeAgain:(id)sender
 {
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-    if ([r currentReachabilityStatus]==0) {
-        
+    [MobClick event:@"m09_u001_0003"];
+
+     if (![ShareApp connectedToNetwork]) {
+         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"
                                                       delegate:nil
@@ -550,7 +569,6 @@
     confirmText.contentVerticalAlignment = UIControlContentVerticalAlignmentCenter;
     confirmText.delegate = self;
     
-       
     UIView *informationView =[[UIView alloc] initWithFrame: CGRectMake(10.0, 20.0, 294.0f, 121.0f)];
     informationView.backgroundColor=[UIColor whiteColor];
     [[informationView layer] setShadowOffset:CGSizeMake(1, 1)];
@@ -560,7 +578,6 @@
     [[informationView layer] setCornerRadius:7];
     [[informationView layer] setBorderWidth:1];
     [[informationView layer] setBorderColor:[UIColor grayColor].CGColor];
-    
     
     NSArray * lableAArray =[NSArray arrayWithObjects:@"验证码",@"密码",@"确认密码",nil];
     NSArray * lableBArray = [NSArray arrayWithObjects:@"验证码",@"新密码",@"确认密码", nil];
@@ -578,12 +595,11 @@
         }
         
         firstLable.backgroundColor = [UIColor clearColor];
-        firstLable.textAlignment = UITextAlignmentCenter;
+        firstLable.textAlignment = NSTextAlignmentCenter;
         firstLable.font = [UIFont fontWithName:@"Arial" size:14.0f];
         [informationView addSubview:firstLable];
         [firstLable release];
     }
-    
     
     [informationView addSubview:confirmText];
     [informationView addSubview:passWordText];
@@ -621,7 +637,6 @@
     [NSTimer scheduledTimerWithTimeInterval:1.0f target:self selector:@selector(startASetNumber:) userInfo:nil repeats:YES];
 }
 
-
 -(void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];
@@ -631,6 +646,19 @@
 }
 -(void)dealloc
 {
+    if (comRequest_request) {
+        
+        [self.comRequest_request closeConnection];
+        self.comRequest_request.m_delegate=nil;
+        self.comRequest_request=nil;
+    }
+    
+    if (again_request) {
+        
+        [self.again_request closeConnection];
+        self.again_request.m_delegate=nil;
+        self.again_request=nil;
+    }
     [topImageView release];
     [returenNews release];
     [optype release];

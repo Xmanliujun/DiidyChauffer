@@ -55,11 +55,17 @@
     [self.navigationController pushViewController:fromPossible animated:YES];
     [fromPossible release];
 }
+
+
+
+
 #pragma mark-GetPoi
 - (void)onGetPoiResult:(NSArray*)poiResultList searchType:(int)type errorCode:(int)error
 {
     
     [cityArray removeAllObjects];
+    
+    NSLog(@"%@",poiResultList);
     BMKPoiResult * na = [poiResultList objectAtIndex:0];
     int c = na.totalPoiNum;
     NSLog(@"%d",c);
@@ -68,16 +74,27 @@
     for (int i = 0; i<[name count]; i++) {
         
         BMKPoiInfo * bmk = [name objectAtIndex:i];
+        NSLog(@"aaaa      %@",bmk.name);
+        NSLog(@"%f %f",bmk.pt.latitude,bmk.pt.longitude);
         [cityArray addObject:bmk];
+        
     }
     
     FromPossibleViewController * fromPossible = [[FromPossibleViewController alloc] init];
     fromPossible.possibleCityArray = cityArray;
     [self.navigationController pushViewController:fromPossible animated:YES];
     [fromPossible release];
+    
+    
 }
+
+
+
 - (void)searchBarSearchButtonClicked:(UISearchBar *)searchBar
 {
+    
+    NSLog(@" 搜索界面 %@",searchBar.text);
+    
     [searchBar resignFirstResponder];
     CLLocationCoordinate2D  venter;
     venter.latitude = 39.915101;
@@ -86,6 +103,9 @@
     [_search poiSearchNearBy:searchBar.text center:venter radius:30000 pageIndex:0];
 
 }
+
+
+
 -(void)returnMainView:(id)sender
 {
     [self dismissModalViewControllerAnimated:NO];
@@ -161,8 +181,6 @@
     [self.view addSubview:startAddrSearchBar];  
    
 }
-
-
 -(void)viewDidDisappear:(BOOL)animated
 {
     [super viewDidDisappear:animated];

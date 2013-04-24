@@ -14,7 +14,7 @@
 @end
 
 @implementation ActivityViewController
-@synthesize diidyTitle,diidyContent,eventName,coponurl;
+@synthesize coponurl;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -30,10 +30,10 @@
     [self.navigationController.navigationBar addSubview:topImageView];
     
     centerLable = [[UILabel alloc] initWithFrame:CGRectMake(80.0, 0.0, 160.0, 44.0)];
-    centerLable.text = @"优 惠 劵 列 表";
+    centerLable.text = @"活 动 页 面";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0];
     [self.navigationController.navigationBar addSubview:centerLable];
     
@@ -46,17 +46,16 @@
     [self.navigationController.navigationBar addSubview:returnButton];
     
     
-    self.eventName.text = self.diidyTitle;
-    VerticallyAlignedLabel * activeLable = [[VerticallyAlignedLabel alloc] init];
-    activeLable.frame = CGRectMake(0, 90, 320,460);
-    activeLable.numberOfLines = 0;
-    activeLable.text=self.diidyContent;
-    activeLable.font = [UIFont fontWithName:@"Arial" size:14];
-    activeLable.textColor = [UIColor blackColor];
-    activeLable.verticalAlignment = VerticalAlignmentTop;
-    activeLable.backgroundColor = [UIColor clearColor];
-    [self.view addSubview:activeLable];
-    [activeLable release];
+   
+//    VerticallyAlignedLabel * activeLable = [[VerticallyAlignedLabel alloc] init];
+//    activeLable.frame = CGRectMake(0, 90, 320,460);
+//    activeLable.numberOfLines = 0;
+//       activeLable.font = [UIFont fontWithName:@"Arial" size:14];
+//    activeLable.textColor = [UIColor blackColor];
+//    activeLable.verticalAlignment = VerticalAlignmentTop;
+//    activeLable.backgroundColor = [UIColor clearColor];
+//    [self.view addSubview:activeLable];
+//    [activeLable release];
 }
 - (void)viewDidLoad
 {
@@ -66,6 +65,8 @@
 
     [self setTheNavigationBar];
     
+    
+    NSLog(@"         %@",self.coponurl);
     WebView  = [[UIWebView  alloc]initWithFrame: CGRectMake(0.0f,0.0f,320.0f,416.0f)];
     WebView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg2.png"]];
     [WebView setUserInteractionEnabled:YES];
@@ -102,6 +103,10 @@
 }
 -(void)returnCouponView:(id)sender
 {
+    
+    NSDictionary *dict = [NSDictionary dictionaryWithObjectsAndKeys:@"COUPON",@"STATUS", nil];
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"COUPONSTAT" object:self userInfo:dict];
+
     [self.navigationController popViewControllerAnimated:YES];
 
 }
@@ -118,9 +123,6 @@
     [WebView release];
     [coponurl release];
     [centerLable release];
-    [diidyTitle release];
-    [diidyContent release];
-    [eventName release];
     [topImageView release];
     [super dealloc];
 }

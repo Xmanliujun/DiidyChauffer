@@ -10,6 +10,7 @@
 #import "MainViewController.h"
 #import "AppDelegate.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 @interface MathViewController ()
 
 @end
@@ -18,7 +19,7 @@
 @synthesize totalCostLable;
 @synthesize travelTimeLable,time,cost;
 @synthesize travelTimeSlider,informationView,feeInforView;
-@synthesize timeInforView;
+@synthesize timeInforView,originalTime,originalMinute;
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -71,26 +72,30 @@
 }
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component {
     
+    NSLog(@"获取时间信息");
     
     switch (component) {
         case 0:
             travelTime.text = [NSString stringWithFormat:@"%d:",row];
             if (row>=21||row<6) {
                 if (_sixOutSide.selected) {
+                    
                      startLable.text = @"出发地在六环外加收:50元";
                 }
                 
                 if (_deSixOutSide.selected) {
+                    
                      endLable.text = @"目的地在五环外加收:50元";
                 }
             
             }else {
                 if (_sixOutSide.selected) {
-                    startLable.text = @"出发地在六环外加收:20元";
+                    
+                    startLable.text = @"出发地在六环外加收:50元";
                 }
                 
                 if (_deSixOutSide.selected) {
-                    endLable.text = @"目的地在五环外加收:20元";
+                    endLable.text = @"目的地在五环外加收:50元";
                 }
 
             }
@@ -99,9 +104,13 @@
             break;
         case 1:
             if(row<10){
+                
                 travelMinute.text = [NSString stringWithFormat:@"0%d",row];
+                
             }else {
+                
                 travelMinute.text = [NSString stringWithFormat:@"%d",row];
+                
             }
             break;
         default:
@@ -111,7 +120,7 @@
 #pragma mark-Button
 -(IBAction)updateValue:(id)sender
 {
-    
+     [MobClick event:@"m03_d003_0001"];
     int travelTimea= self.travelTimeSlider.value;
     
     if (self.travelTimeSlider.value/60>=1) {
@@ -193,7 +202,7 @@
                     if(tempTimeLong < 0){
                         flag = NO;
                     }
-                }else if((tempHour >= 0 && tempHour < 8)||tempHour>=23){
+                }else if((tempHour >= 0 && tempHour < 8)||tempHour >= 23){
                     tempTimeLong -= 30;
                     tempMinute += 30;
                     if(tempMinute / 60 ==1){
@@ -473,6 +482,9 @@
     int departureTimeINT = [[travelTimeArray objectAtIndex:0] intValue];
     int departureMinuteINT = [travelMinute.text intValue];
     
+    self.originalTime = travelTime.text;
+    self.originalMinute = travelMinute.text;
+    
     self.time.text = [NSString stringWithFormat:@"出发时间:  %d点%d分",departureTimeINT,departureMinuteINT];
     
     pickImageView.hidden = YES;
@@ -484,6 +496,8 @@
 {
     pickImageView.hidden = YES;
     timePickerView.alpha = 0;
+   travelTime.text= [NSString stringWithFormat:@"%@",self.originalTime];
+   travelMinute.text= self.originalMinute;
 
 
 }
@@ -575,8 +589,8 @@
                 self.feeInforView.frame = CGRectMake(self.feeInforView.frame.origin.x, self.feeInforView.frame.origin.y, self.feeInforView.frame.size.width, 110.0f);
                 
             }else{
-                startLable.text=@"出发地在六环外加收:20元";
-                additional= 20;
+                startLable.text=@"出发地在六环外加收:50元";
+                additional= 50;
                 int total = additional+price+endAddional;
                 startLable.frame =CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
@@ -598,8 +612,8 @@
                 
             }else{
                 
-                startLable.text=@"出发地在六环外加收:20元";
-                additional= 20;
+                startLable.text=@"出发地在六环外加收:50元";
+                additional= 50;
                 int total = additional+price+endAddional;
                 startLable.frame =CGRectMake(costRect.origin.x, 293.0f, costRect.size.width, costRect.size.height);
                 endLable.frame = CGRectMake(endRect.origin.x, 313.0f, endRect.size.width, endRect.size.height);
@@ -705,8 +719,8 @@
                 
             }else{
                 
-                endLable.text=@"目的地在六环外加收:20元";
-                endAddional= 20;
+                endLable.text=@"目的地在六环外加收:50元";
+                endAddional= 50;
                 int total = endAddional+price+additional;
                 endLable.frame = CGRectMake(endRect.origin.x, 293.0f, endRect.size.width, endRect.size.height);
                 totalCostLable.frame = CGRectMake(costRect.origin.x, 313.0f, costRect.size.width, costRect.size.height);
@@ -730,8 +744,8 @@
                 
             }else{
                 
-                endLable.text=@"目的地在六环外加收:20元";
-                endAddional= 20;
+                endLable.text=@"目的地在六环外加收:50元";
+                endAddional= 50;
                 int total =endAddional+price+additional;
                 startLable.frame = CGRectMake(endRect.origin.x, 293.0f, endRect.size.width, endRect.size.height);
                 endLable.frame = CGRectMake(endRect.origin.x, 313.0f, endRect.size.width, endRect.size.height);
@@ -743,8 +757,6 @@
         }
         
     }
-
-
 }
 #pragma mark - System Approach
 -(void)setMathView
@@ -778,11 +790,7 @@
     [[self.timeInforView layer] setCornerRadius:7];
     [[self.timeInforView layer] setBorderWidth:1];
     [[self.timeInforView layer] setBorderColor:[UIColor grayColor].CGColor];
-   
-
 }
-
-
 
 - (void)viewDidLoad
 {
@@ -857,30 +865,33 @@
     travelTime.text = [NSString stringWithFormat:@"%@:",[timesArray objectAtIndex:0]];
     travelMinute.text = [NSString stringWithFormat:@"%@",[timesArray objectAtIndex:1]];
     self.time.text = [NSString stringWithFormat:@"出发时间:  %@点%@分",[timesArray objectAtIndex:0],[timesArray objectAtIndex:1]];
+    self.originalTime = travelTime.text;
+    self.originalMinute = travelMinute.text;
     
     UIButton *rigthbutton = [UIButton buttonWithType:UIButtonTypeCustom];
     [rigthbutton setBackgroundImage:[UIImage imageNamed:@"33.png"] forState:UIControlStateNormal];
-    rigthbutton.frame=CGRectMake(260.0,7.0, 50.0, 30.0);
+    rigthbutton.frame=CGRectMake(262.0f,7.0f, 49.0f, 30.0f);
     rigthbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
     [rigthbutton setTitle:@"完成" forState:UIControlStateNormal];
     [rigthbutton addTarget:self action:@selector(selectOK:) forControlEvents:UIControlEventTouchUpInside];
     
-    
     UIButton *cancelbutton = [UIButton buttonWithType:UIButtonTypeCustom];
+    cancelbutton.backgroundColor = [UIColor clearColor];
     [cancelbutton setBackgroundImage:[UIImage imageNamed:@"button-3.png"] forState:UIControlStateNormal];
-    cancelbutton.frame=CGRectMake(8.0,7.0, 50.0, 30.0);
-     cancelbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
+    //[cancelbutton setImage:[UIImage imageNamed:@"button-3.png"] forState:UIControlStateNormal];
+    cancelbutton.titleLabel.font = [UIFont fontWithName:@"Arial" size:14.0f];
     [cancelbutton setTitle:@"取消" forState:UIControlStateNormal];
+    cancelbutton.frame=CGRectMake(9.0f,7.0f,49.0f, 30.0f);
     [cancelbutton addTarget:self action:@selector(selectCancel:) forControlEvents:UIControlEventTouchUpInside];
     
-    UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100, 0, 120, 42)];
+    UILabel * travelTimeLableq = [[UILabel alloc] initWithFrame:CGRectMake(100.0f, 0.0f, 120.0f, 42.0f)];
     travelTimeLableq.text = @"选择出发时间";
-    travelTimeLableq.font = [UIFont fontWithName:@"Arial" size:14];
+    travelTimeLableq.font = [UIFont fontWithName:@"Arial" size:14.0f];
     travelTimeLableq.textAlignment = NSTextAlignmentCenter;
     travelTimeLableq.backgroundColor = [UIColor clearColor];
     travelTimeLableq.textColor = [UIColor whiteColor];
     
-    pickImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_023@2x.png"]];
+    pickImageView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"bg_023.png"]];
     pickImageView.frame = CGRectMake(0.0f, 156.0f, 320.0f, 44.0f);
     pickImageView.hidden = YES;
     pickImageView.userInteractionEnabled = YES;
@@ -912,7 +923,8 @@
     [feeInforView release];
     [informationView release];
     [timeInforView release];
-    
+    [originalTime release];
+    [originalMinute release];
     [cost release];
     [endLable release];
     [dateformatter release];

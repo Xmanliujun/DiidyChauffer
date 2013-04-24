@@ -10,11 +10,12 @@
 #import "CONST.h"
 #import "NSString+Hashing.h"
 #import "AppDelegate.h"
-#import "SBJson.h"
 #import "MoreViewController.h"
 #import "JSONKit.h"
 #import "Reachability.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
+
 @interface ChangePasswordViewController ()
 
 @end
@@ -39,9 +40,10 @@
 
 -(void)saveNewPassWord:(id)sender
 {
-    
-    Reachability * r =[Reachability reachabilityWithHostName:@"www.apple.com"];
-    if ([r currentReachabilityStatus]==0) {
+    [MobClick event:@"m07_s003_0002_0001"];
+
+   if (![ShareApp connectedToNetwork]) {
+        
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"提示"
                                                        message:@"联网失败,请稍后再试"

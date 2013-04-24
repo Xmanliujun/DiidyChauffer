@@ -16,6 +16,7 @@
 #import "MainViewController.h"
 #import "AppDelegate.h"
 #import <QuartzCore/QuartzCore.h>
+#import "MobClick.h"
 @interface MoreViewController ()
 
 @end
@@ -34,10 +35,13 @@
 -(void)returnORLandingView:(UIButton*)sender
 {
     if ([self.whereLand isEqualToString:@"Land"]) {
+        
         MainViewController * main = [[MainViewController alloc] init];
         [ShareApp.window setRootViewController:main];
         [main release];
+        
     }else {
+        
         [self dismissModalViewControllerAnimated:NO];
     }
   
@@ -87,9 +91,11 @@
     cell.textLabel.backgroundColor = [UIColor clearColor];
     cell.textLabel.textColor = [UIColor colorWithRed:79.0/255.0 green:79.0/255.0 blue:79.0/255.0 alpha:1];
     if(indexPath.section==0){
+        
         cell.textLabel.text = [moreNameArray objectAtIndex:indexPath.row];
        
     }else {
+        
         cell.textLabel.text = [moreNameArray objectAtIndex:indexPath.row+indexPath.section];
 
     }
@@ -100,12 +106,16 @@
 {
     if(indexPath.section ==0&&indexPath.row ==0){
         
+        [MobClick event:@"m07_s003_0002"];
+       
         ChangePasswordViewController * road =[[ChangePasswordViewController alloc] init];
         [self.navigationController pushViewController:road animated:YES];
         [road release];
         
     }else if (indexPath.section==1&&indexPath.row==0) {
         
+        [MobClick event:@"m07_s003_0005"];
+
         FeedBackViewController * feedBack = [[FeedBackViewController alloc] init];
         feedBack.judge = @"more";
         [self.navigationController pushViewController:feedBack animated:YES];
@@ -113,21 +123,27 @@
         
     }else if (indexPath.section==1&&indexPath.row ==1) {
         
+         [MobClick event:@"m07_s003_0006"];
+        
         AboutDiiDyViewController*aboutDiidy = [[AboutDiiDyViewController alloc] initWithNibName:@"AboutDiiDyViewController" bundle:nil];
         [self.navigationController pushViewController:aboutDiidy animated:YES];
         [aboutDiidy release];
         
     }else if (indexPath.section==1&&indexPath.row==2) {
         
+         [MobClick event:@"m07_s003_0007"];
+        
         NoviceGuidanceViewController * noviceGudice= [[NoviceGuidanceViewController alloc] init];
         noviceGudice.noviceGuidan = @"more";
-         [self presentModalViewController:noviceGudice animated:NO];
+        [self presentModalViewController:noviceGudice animated:NO];
         //[self.navigationController pushViewController:noviceGudice animated:YES];
         [noviceGudice release];
         
     }else if (indexPath.section==1&&indexPath.row ==3) {
         
-        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"确定要注销登陆吗？"
+        [MobClick event:@"exit"];
+        
+        UIAlertView *alert =[[UIAlertView alloc] initWithTitle:@"确定要注销登录吗？"
                                                        message:@""
                                                       delegate:self 
                                              cancelButtonTitle:@"确定" 
@@ -143,6 +159,7 @@
 {
     
     if (buttonIndex==0) {
+        
         NSArray *paths =NSSearchPathForDirectoriesInDomains(NSDocumentDirectory,NSUserDomainMask, YES);  
         NSString *documentsDirectory = [paths objectAtIndex:0];
         NSString *plistPath = [documentsDirectory stringByAppendingPathComponent:@"test.plist"];
@@ -155,15 +172,15 @@
         [dictplist release];
         [plugin1 release];
         [self dismissModalViewControllerAnimated:NO];
+        
     }
-
-
 }
 -(void)onRequestCompelte:(NSNotification *)notification
 {
     NSDictionary *dict = notification.userInfo;
     NSString * returnNews = [dict objectForKey:@"return"];
     if ([returnNews isEqualToString:@"s"]) {
+        
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:nil 
                                                        message:@"提交成功！我们会认真参考您的建议,非常感谢！"
                                                       delegate:nil 
@@ -171,6 +188,7 @@
                                              otherButtonTitles:nil ];
         [alert show];
         [alert release];
+        
     }else {
         
         UIAlertView *alert =[[UIAlertView alloc] initWithTitle:nil 
@@ -207,7 +225,7 @@
     centerLable.text = @"更 多";
     centerLable.textColor = [UIColor whiteColor];
     centerLable.backgroundColor = [UIColor clearColor];
-    centerLable.textAlignment = UITextAlignmentCenter;
+    centerLable.textAlignment = NSTextAlignmentCenter;
     centerLable.font = [UIFont fontWithName:@"Arial" size:18.0f];
     [self.navigationController.navigationBar addSubview:centerLable];
    

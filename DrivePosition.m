@@ -46,5 +46,6 @@
 	[newtitle release];
 	[super dealloc];
 }
+
 @end
 

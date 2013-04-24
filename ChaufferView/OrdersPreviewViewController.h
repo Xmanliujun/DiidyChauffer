@@ -12,7 +12,7 @@
 #import "HTTPRequest.h"
 #import "MBProgressHUD.h"
 @interface OrdersPreviewViewController : UIViewController
-<UIAlertViewDelegate,HTTPRequestDelegate,MBProgressHUDDelegate>
+<UIAlertViewDelegate,HTTPRequestDelegate,MBProgressHUDDelegate,UITableViewDataSource,UITableViewDelegate>
 {
     NSMutableArray * couponArray;
     UIButton*returnButton;
@@ -20,22 +20,13 @@
     UIImageView*topImageView;
     UILabel* centerLable;
     MBProgressHUD *HUD;
+    
+    NSMutableString *couString;
 }
 @property(nonatomic,retain)NSArray * orderArray;//存放填写的内容
 @property(nonatomic,retain)NSArray * useCouponArray;//存放选择的优惠劵
 @property(nonatomic,retain)NSArray * selectArray;//存放数据类
-@property(nonatomic,retain)IBOutlet UILabel *departureLable;//出发地
-@property(nonatomic,retain)IBOutlet UILabel *departureTimeLable;//出发时间
-@property(nonatomic,retain)IBOutlet UILabel *numberOfPeopleLable;//人数
-@property(nonatomic,retain)IBOutlet UILabel *destinationLable;//目的地
-@property(nonatomic,retain)IBOutlet UILabel *contactLable;//联系人
-@property(nonatomic,retain)IBOutlet UILabel *mobilNumberLable;//手机号码
-@property(nonatomic,retain)IBOutlet UILabel *remarkLable;//备注
 @property(nonatomic,retain) VerticallyAlignedLabel *couponLable;//优惠劵
 @property(nonatomic, retain)HTTPRequest *submit_request;
-
-@property(nonatomic,retain)IBOutlet UIView *orderPreView;
-@property(nonatomic,retain)IBOutlet UIView *inforPreView;
-@property(nonatomic,retain)IBOutlet UIView *couponView;
 
 @end
